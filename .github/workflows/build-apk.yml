@@ -1,39 +1,59 @@
 name: Build APK
-"on":
+
+on:
   push:
   workflow_dispatch:
+
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
+
       - name: Unpack www
-        run: mkdir -p www && unzip -o www.zip -d www && ls www
+        run: |
+          mkdir -p www
+          unzip -o www.zip -d www
+          ls www
+
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: "17"
+          java-version: '17'
+
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: '20'
+
       - uses: android-actions/setup-android@v3
+
       - name: Maven mirrors
         run: |
           mkdir -p $HOME/.gradle
-          echo "allprojects { buildscript { repositories { maven { url 'https://maven.google.com' }; maven { url 'https://repo1.maven.org/maven2' }; maven { url 'https://plugins.gradle.org/m2' }; maven { url 'https://jitpack.io' }; google(); mavenCentral() } }; repositories { maven { url 'https://maven.google.com' }; maven { url 'https://repo1.maven.org/maven2' }; maven { url 'https://plugins.gradle.org/m2' }; maven { url 'https://jitpack.io' }; google(); mavenCentral() } }" > $HOME/.gradle/init.gradle
-          echo "org.gradle.daemon=false" > $HOME/.gradle/gradle.properties
-          echo "org.gradle.jvmargs=-Xmx3g" >> $HOME/.gradle/gradle.properties
+          cp init.gradle $HOME/.gradle/init.gradle
+          echo org.gradle.daemon=false > $HOME/.gradle/gradle.properties
+          echo org.gradle.jvmargs=-Xmx3g >> $HOME/.gradle/gradle.properties
           cat $HOME/.gradle/init.gradle
+
       - name: Install Cordova
         run: npm install -g cordova@12
+
       - name: Add Android platform
         run: cordova platform add android@13 --no-telemetry
+
       - name: Build APK
-        run: cordova build android --no-telemetry || (sleep 20 && cordova build android --no-telemetry)
+        run: |
+          cordova build android --no-telemetry || sleep 20
+          cordova build android --no-telemetry
+
       - name: Collect APK
-        run: mkdir -p out && find platforms/android -name "*.apk" -exec cp {} out/ArseniyGod.apk ";" && ls -la out
+        run: |
+          mkdir -p out
+          cp $(find platforms/android -type f -iname \*.apk | head -1) out/ArseniyGod.apk
+          ls -la out
+
       - uses: actions/upload-artifact@v4
         with:
           name: ArseniyGod-APK
           path: out/ArseniyGod.apk
-​
