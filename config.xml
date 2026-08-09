@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<widget id="com.vithel.arseniygod" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>Арсений God</name>
+    <description>Игра в стиле алхимии: соединяй элементы и проходи квесты.</description>
+    <author email="vithel@example.com" href="https://example.com">Vithel</author>
+    <content src="index.html" />
+    <access origin="*" />
+    <allow-intent href="http://*/*" />
+    <allow-intent href="https://*/*" />
+    <preference name="Fullscreen" value="true" />
+    <preference name="Orientation" value="portrait" />
+    <preference name="BackgroundColor" value="0xffe1d3b6" />
+    <preference name="SplashScreenDelay" value="1500" />
+    <preference name="AndroidWindowSplashScreenBackground" value="#e1d3b6" />
+    <preference name="AndroidWindowSplashScreenAnimatedIcon" value="res/icon.png" />
+    <preference name="android-minSdkVersion" value="24" />
+    <preference name="android-targetSdkVersion" value="34" />
+    <preference name="AndroidInsecureFileModeEnabled" value="true" />
+    <preference name="DisallowOverscroll" value="true" />
+    <platform name="android">
+        <icon density="ldpi" src="res/icon.png" />
+        <icon density="mdpi" src="res/icon.png" />
+        <icon density="hdpi" src="res/icon.png" />
+        <icon density="xhdpi" src="res/icon.png" />
+        <icon density="xxhdpi" src="res/icon.png" />
+        <icon density="xxxhdpi" src="res/icon.png" />
+    </platform>
+</widget>

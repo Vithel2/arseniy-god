@@ -1,0 +1,16 @@
+{
+  "name": "arseniy-god",
+  "displayName": "Арсений God",
+  "version": "1.0.0",
+  "description": "Arseniy God offline game",
+  "author": "Vithel",
+  "license": "MIT",
+  "devDependencies": {
+    "cordova-android": "^13.0.0"
+  },
+  "cordova": {
+    "platforms": [
+      "android"
+    ]
+  }
+}

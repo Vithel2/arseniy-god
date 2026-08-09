@@ -1,0 +1,49 @@
+name: Build APK
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Unpack www.zip
+        run: |
+          mkdir -p www
+          unzip -o www.zip -d www
+          ls www | head
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Cordova
+        run: npm install -g cordova@12
+
+      - name: Add Android platform
+        run: cordova platform add android@13 --no-telemetry
+
+      - name: Build debug APK
+        run: cordova build android --no-telemetry
+
+      - name: Collect APK
+        run: |
+          mkdir -p out
+          find platforms/android -name "*.apk" -exec cp {} out/ArseniyGod.apk \;
+          ls -la out
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ArseniyGod-APK
+          path: out/ArseniyGod.apk
