@@ -7,34 +7,26 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
 
-      - name: Unpack www
+      - name: Unpack www.zip
         run: |
           mkdir -p www
           unzip -o www.zip -d www
-          ls www
+          ls www | head
 
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '17'
+          java-version: "17"
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
 
-      - uses: android-actions/setup-android@v3
-
-      - name: Maven mirrors
-        run: |
-          mkdir -p $HOME/.gradle
-          cp init.gradle $HOME/.gradle/init.gradle
-          echo org.gradle.daemon=false > $HOME/.gradle/gradle.properties
-          echo org.gradle.jvmargs=-Xmx3g >> $HOME/.gradle/gradle.properties
-          cat $HOME/.gradle/init.gradle
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
 
       - name: Install Cordova
         run: npm install -g cordova@12
@@ -42,15 +34,13 @@ jobs:
       - name: Add Android platform
         run: cordova platform add android@13 --no-telemetry
 
-      - name: Build APK
-        run: |
-          cordova build android --no-telemetry || sleep 20
-          cordova build android --no-telemetry
+      - name: Build debug APK
+        run: cordova build android --no-telemetry
 
-      - name: Collect APK
+      - name: Rename APK
         run: |
           mkdir -p out
-          cp $(find platforms/android -type f -iname \*.apk | head -1) out/ArseniyGod.apk
+          find platforms/android -name "*.apk" -exec cp {} out/ArseniyGod.apk \;
           ls -la out
 
       - uses: actions/upload-artifact@v4
