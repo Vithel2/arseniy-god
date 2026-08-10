@@ -34,16 +34,16 @@ jobs:
       - name: Add Android platform
         run: cordova platform add android@13 --no-telemetry
 
-      - name: Build debug APK
-        run: cordova build android --no-telemetry
+      - name: Build release APK
+        run: cordova build android --release --no-telemetry
 
-      - name: Rename APK
+      - name: Collect release APK
         run: |
           mkdir -p out
-          find platforms/android -name "*.apk" -exec cp {} out/ArseniyGod.apk \;
+          cp platforms/android/app/build/outputs/apk/release/app-release.apk out/ArseniyGod-release.apk
           ls -la out
 
       - uses: actions/upload-artifact@v4
         with:
-          name: ArseniyGod-APK
-          path: out/ArseniyGod.apk
+          name: ArseniyGod-release-APK
+          path: out/ArseniyGod-release.apk
