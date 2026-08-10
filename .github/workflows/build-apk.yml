@@ -40,7 +40,24 @@ jobs:
       - name: Collect release APK
         run: |
           mkdir -p out
-          cp platforms/android/app/build/outputs/apk/release/app-release.apk out/ArseniyGod-release.apk
+
+          echo "All APK files:"
+          find platforms/android -type f -name "*.apk" -print
+
+          APK_PATH="$(find platforms/android -type f -name "*release*.apk" | head -n 1)"
+
+          if [ -z "$APK_PATH" ]; then
+            echo "Release APK not found. Trying any APK..."
+            APK_PATH="$(find platforms/android -type f -name "*.apk" | head -n 1)"
+          fi
+
+          if [ -z "$APK_PATH" ]; then
+            echo "No APK produced. Build probably failed earlier."
+            exit 1
+          fi
+
+          echo "Using APK: $APK_PATH"
+          cp "$APK_PATH" out/ArseniyGod-release.apk
           ls -la out
 
       - uses: actions/upload-artifact@v4
