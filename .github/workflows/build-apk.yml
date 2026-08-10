@@ -34,33 +34,47 @@ jobs:
       - name: Add Android platform
         run: cordova platform add android@13 --no-telemetry
 
+      # ВАЖНО: форсим именно APK (а не AAB)
       - name: Build release APK
-        run: cordova build android --release --no-telemetry
+        run: |
+          cordova build android --release --no-telemetry -- --packageType=apk
 
-      - name: Collect release APK
+      - name: Show Android outputs (debug)
+        run: |
+          echo "platforms/android tree (top):"
+          ls -la platforms || true
+          ls -la platforms/android || true
+          echo "outputs folder:"
+          find platforms/android -maxdepth 6 -type d -name outputs -print || true
+          echo "APK files:"
+          find platforms/android -type f -name "*.apk" -print || true
+          echo "AAB files:"
+          find platforms/android -type f -name "*.aab" -print || true
+
+      - name: Collect release artifact
         run: |
           mkdir -p out
 
-          echo "All APK files:"
-          find platforms/android -type f -name "*.apk" -print
-
           APK_PATH="$(find platforms/android -type f -name "*release*.apk" | head -n 1)"
-
-          if [ -z "$APK_PATH" ]; then
-            echo "Release APK not found. Trying any APK..."
-            APK_PATH="$(find platforms/android -type f -name "*.apk" | head -n 1)"
+          if [ -n "$APK_PATH" ]; then
+            echo "Using APK: $APK_PATH"
+            cp "$APK_PATH" out/ArseniyGod-release.apk
+            ls -la out
+            exit 0
           fi
 
-          if [ -z "$APK_PATH" ]; then
-            echo "No APK produced. Build probably failed earlier."
-            exit 1
+          AAB_PATH="$(find platforms/android -type f -name "*release*.aab" | head -n 1)"
+          if [ -n "$AAB_PATH" ]; then
+            echo "APK not found, but AAB found: $AAB_PATH"
+            cp "$AAB_PATH" out/ArseniyGod-release.aab
+            ls -la out
+            exit 0
           fi
 
-          echo "Using APK: $APK_PATH"
-          cp "$APK_PATH" out/ArseniyGod-release.apk
-          ls -la out
+          echo "No APK/AAB produced. Open 'Build release APK' logs выше — там причина."
+          exit 1
 
       - uses: actions/upload-artifact@v4
         with:
-          name: ArseniyGod-release-APK
-          path: out/ArseniyGod-release.apk
+          name: ArseniyGod-release
+          path: out/*
