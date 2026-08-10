@@ -1,4 +1,4 @@
-name: Build APK
+name: Build APK (debug signing)
 
 on:
   push:
@@ -33,15 +33,33 @@ jobs:
       - name: Add Android platform
         run: cordova platform add android@13 --no-telemetry
 
-      - name: Decode keystore
+      # 1) Проверяем, что base64 вообще декодится в файл
+      - name: Decode keystore (from secret)
         run: |
+          set -e
           printf '%s' "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > release.jks
-          ls -la release.jks
+          echo "Decoded release.jks:"
+          ls -lh release.jks || true
+          echo "First bytes (should NOT be empty):"
+          head -c 16 release.jks | xxd || true
 
-      - name: Verify keystore
+      # 2) Проверяем пароль хранилища (KEYSTORE_PASSWORD)
+      - name: Verify keystore password
         run: |
-          keytool -list -keystore release.jks -storepass "${{ secrets.KEYSTORE_PASSWORD }}"
+          set -e
+          echo "Verifying keystore with KEYSTORE_PASSWORD..."
+          keytool -list -keystore release.jks -storepass "${{ secrets.KEYSTORE_PASSWORD }}" >/dev/null
+          echo "OK: KEYSTORE_BASE64 + KEYSTORE_PASSWORD are valid"
 
+      # 3) Проверяем, что alias существует (KEY_ALIAS)
+      - name: Verify alias exists
+        run: |
+          set -e
+          echo "Checking alias '${{ secrets.KEY_ALIAS }}'..."
+          keytool -list -keystore release.jks -storepass "${{ secrets.KEYSTORE_PASSWORD }}" | grep -i "${{ secrets.KEY_ALIAS }}" >/dev/null
+          echo "OK: KEY_ALIAS exists in keystore"
+
+      # 4) Пробуем подписанную release сборку (проверяет KEY_PASSWORD на практике)
       - name: Build signed release APK
         run: >
           cordova build android --release --no-telemetry -- --packageType=apk
@@ -52,9 +70,16 @@ jobs:
 
       - name: Collect release APK
         run: |
+          set -e
           mkdir -p out
+          echo "Searching for release APK..."
+          find platforms/android -type f -name "*.apk" -print || true
           APK_PATH="$(find platforms/android -type f -name "*release*.apk" | head -n 1)"
-          test -n "$APK_PATH"
+          if [ -z "$APK_PATH" ]; then
+            echo "ERROR: No release APK found. Look at the build logs above."
+            exit 1
+          fi
+          echo "Using APK: $APK_PATH"
           cp "$APK_PATH" out/ArseniyGod-release.apk
           ls -la out
 
