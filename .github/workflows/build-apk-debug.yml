@@ -13,7 +13,7 @@ jobs:
       - name: Unpack www.zip
         run: |
           mkdir -p www
-          unzip -o www.zip -d www
+                    python3 -c "import zipfile; zipfile.ZipFile('www.zip').extractall('www')"
           ls www | head
 
       - uses: actions/setup-java@v4
