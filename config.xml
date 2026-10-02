@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<widget id="com.vithel.arseniygod" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="com.vithel.arseniygod" version="1.1.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Арсений God</name>
     <description>Игра в стиле алхимии: соединяй элементы и проходи квесты.</description>
     <author email="vithel@example.com" href="https://example.com">Vithel</author>
