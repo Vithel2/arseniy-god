@@ -62,21 +62,22 @@ jobs:
           set -e
           if [ -n "${{ secrets.KEYSTORE_BASE64 }}" ]; then
             printf '%s' "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > release.jks
+            keytool -list -keystore release.jks -storepass "${{ secrets.KEYSTORE_PASSWORD }}" >/dev/null
+            echo "Using keystore from secrets (verified)."
             echo "STOREPASS=${{ secrets.KEYSTORE_PASSWORD }}" >> $GITHUB_ENV
             echo "KEYALIAS=${{ secrets.KEY_ALIAS }}" >> $GITHUB_ENV
             echo "KEYPASS=${{ secrets.KEY_PASSWORD }}" >> $GITHUB_ENV
-            echo "Using keystore from secrets."
           else
             echo "WARNING: no keystore secrets found - generating a FRESH key."
             echo "WARNING: this APK will NOT update over the old one, reinstall will be needed."
             echo "WARNING: save GENERATED-release.jks into secrets after this build!"
             keytool -genkeypair -keystore release.jks -alias arseniygod -keyalg RSA -keysize 2048 -validity 10000 -storepass android -keypass android -dname "CN=Vithel"
+            keytool -list -keystore release.jks -storepass android >/dev/null
             echo "STOREPASS=android" >> $GITHUB_ENV
             echo "KEYALIAS=arseniygod" >> $GITHUB_ENV
             echo "KEYPASS=android" >> $GITHUB_ENV
             echo "GENERATED_KEYSTORE=1" >> $GITHUB_ENV
           fi
-          keytool -list -keystore release.jks -storepass "$STOREPASS" >/dev/null
           ls -lh release.jks
 
       - name: Build signed release APK
@@ -101,4 +102,3 @@ jobs:
         with:
           name: ArseniyGod-release-APK
           path: out/
-
