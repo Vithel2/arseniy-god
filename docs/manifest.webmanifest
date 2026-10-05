@@ -1,0 +1,25 @@
+{
+ "name": "Арсений God",
+ "short_name": "Арсений God",
+ "description": "Алхимия Сергиополя",
+ "start_url": "./index.html",
+ "scope": "./",
+ "display": "fullscreen",
+ "orientation": "any",
+ "background_color": "#e1d3b6",
+ "theme_color": "#e1d3b6",
+ "icons": [
+  {
+   "src": "icon-192.png",
+   "sizes": "192x192",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "any"
+  }
+ ]
+}
