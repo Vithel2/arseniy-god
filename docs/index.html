@@ -367,6 +367,9 @@ button,input,textarea{font-family:inherit}
 .t2048.pop img{animation:tpop .3s var(--spring)}
 @keyframes tin{from{opacity:0;transform:scale(.4)}to{opacity:1;transform:scale(1)}}
 @keyframes tpop{0%{transform:scale(.55)}55%{transform:scale(1.2)}100%{transform:scale(1)}}
+.mcell.drop img{animation:mdrop .32s ease}
+@keyframes mdrop{from{opacity:0;transform:translateY(-26px) scale(.9)}to{opacity:1;transform:none}}
+@media (max-width:760px){#rating .xbtn{display:none}}
 .btn.busy{animation:btnpulse 1s ease-in-out infinite;opacity:.85}
 @keyframes btnpulse{50%{opacity:.55}}
 #rotate-tip{display:none}
@@ -532,11 +535,17 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 @media (max-width:760px){
   .lbl{display:none}
   #hdr{padding:calc(7px + env(safe-area-inset-top)) 10px 8px;gap:7px}
-  .hdr-top{flex-wrap:wrap;row-gap:6px}
-  #hdr h1{min-width:0;flex:1 1 auto}
-  .ttl{min-width:0}
-  .ttl b.t1{white-space:normal;line-height:1.1}
-  .stats{flex:1 1 100%;justify-content:flex-end;flex-wrap:wrap;row-gap:5px}
+  .hdr-top{flex-wrap:nowrap;gap:8px}
+  #hdr h1{flex:0 1 auto;min-width:0}
+  .ttl{min-width:0;flex:0 1 auto}
+  .ttl b.t1{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .ttl small{display:none}
+  .stats{flex:1 1 auto;min-width:0;flex-wrap:nowrap;overflow-x:auto;justify-content:flex-end;scrollbar-width:none}
+  .stats::-webkit-scrollbar{display:none}
+  .pill{flex:0 0 auto}
+  .hdr-actions{display:flex;overflow-x:auto;scrollbar-width:none}
+  .hdr-actions::-webkit-scrollbar{display:none}
+  .hdr-actions .btn{flex:0 0 auto}
   .ttl b.t1{font-size:17px}
   .logo{width:34px;height:34px;border-radius:12px}
   .logo .ic{width:20px;height:20px}
@@ -560,6 +569,11 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
   .ec{font-size:9.5px;padding:4px 2px 3px}
   .ec img{max-width:54px;border-radius:14px}
   .ec .en{max-width:64px}
+  .gall{display:none}
+  #account .box{padding:16px 12px 12px}
+  #account h2{font-size:20px;margin-bottom:8px}
+  #account .srow{padding:8px 0;font-size:13px}
+  #account .hrow{padding:7px 2px;font-size:12px}
   .bar{gap:7px;padding:10px 10px calc(10px + env(safe-area-inset-bottom))}
   #msg,#qmsg{display:none}
   .slot{width:64px;min-width:64px;height:64px;border-radius:18px}
@@ -577,7 +591,8 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
   .box{padding:20px 16px 16px;max-width:94vw}
   .shop-item{padding:10px;gap:9px 10px;border-radius:18px}
   .shop-item .t{font-size:13.5px}
-  #funpanel{overflow-x:auto;justify-content:flex-start;font-size:11px;flex-wrap:nowrap;white-space:nowrap}
+  #funpanel{justify-content:center;font-size:11px;flex-wrap:wrap;white-space:normal;row-gap:6px}
+  #funpanel input[type=range]{width:64px}
   #mazepad{grid-template-columns:repeat(3,58px)}
   #qhdr{gap:7px;padding:calc(7px + env(safe-area-inset-top)) 10px 9px}
   #qhdr .qt{font-size:15px;line-height:1.15}
@@ -591,9 +606,9 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
   .srow{font-size:13px}
   .credits{font-size:12.5px}
   /* длинные окна на телефоне — нижние шторки */
-  #settings,#shop,#quests,#ach,#history,#news,#privacy,#cheat{align-items:flex-end;padding:0}
-  #settings .box,#shop .box,#quests .box,#ach .box,#history .box,#news .box,#privacy .box,#cheat .box{max-width:none;border-radius:28px 28px 0 0;max-height:92dvh;padding-bottom:calc(16px + env(safe-area-inset-bottom));animation:sheetin .36s cubic-bezier(.2,.9,.3,1)}
-  #settings .box::before,#shop .box::before,#quests .box::before,#ach .box::before,#history .box::before,#news .box::before,#privacy .box::before,#cheat .box::before{content:"";display:block;width:42px;height:5px;border-radius:5px;background:rgba(43,35,24,.22);margin:-12px auto 12px}
+  #settings,#shop,#quests,#ach,#history,#news,#privacy,#cheat,#account,#rating{align-items:flex-end;padding:0}
+  #settings .box,#shop .box,#quests .box,#ach .box,#history .box,#news .box,#privacy .box,#cheat .box,#account .box,#rating .box{max-width:none;border-radius:28px 28px 0 0;max-height:92dvh;padding-bottom:calc(16px + env(safe-area-inset-bottom));animation:sheetin .36s cubic-bezier(.2,.9,.3,1)}
+  #settings .box::before,#shop .box::before,#quests .box::before,#ach .box::before,#history .box::before,#news .box::before,#privacy .box::before,#cheat .box::before,#account .box::before,#rating .box::before{content:"";display:block;width:42px;height:5px;border-radius:5px;background:rgba(43,35,24,.22);margin:-12px auto 12px}
   @keyframes sheetin{from{transform:translateY(100%)}to{transform:none}}
 }
 @media (max-width:380px){
@@ -885,7 +900,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
       Файл: <b id="save-hint-name">arseniy-god-save.json</b>. На ПК — «Сохранить как». На телефоне надёжнее «Поделиться» или «Копировать код»: скачивание в WebView иногда молча пропадает.
     </details>
     <div class="sgroup">О игре</div>
-    <div class="credits">Разработчик: <b>Vithel</b><br>Рисовщики: <b>Vithel</b> и <b>Mathil</b><br><span id="verclick" onclick="verTap()" title="v1.36 beta" style="font-size:11px;cursor:pointer;-webkit-user-select:none;user-select:none;color:var(--ink2)">v1.36 beta</span></div>
+    <div class="credits">Разработчик: <b>Vithel</b><br>Рисовщики: <b>Vithel</b> и <b>Mathil</b><br><span id="verclick" onclick="verTap()" title="v1.37 beta" style="font-size:11px;cursor:pointer;-webkit-user-select:none;user-select:none;color:var(--ink2)">v1.37 beta</span></div>
     <div class="credits donate" style="text-align:center"><svg class="ic"><use href="#i-heart" xlink:href="#i-heart"/></svg> Поддержи разработчика<br><span style="font-size:11px">Чтобы увидеть номер, кликни по тексту</span><br><b id="donate-num" onclick="revealDonate()" style="filter:blur(5px);cursor:pointer;-webkit-user-select:none;user-select:none">4279 3806 8503 3450</b><br><span id="donate-name" style="display:none">Шакин В.<br><span style="font-size:11px">Спасибо за доброту! Ты лучший! ❤️</span></span></div>
     <button class="btn wide" onclick="openPrivacy()"><svg class="ic"><use href="#i-lock" xlink:href="#i-lock"/></svg> Политика конфиденциальности</button>
     <div class="sgroup">Опасная зона</div>
@@ -1004,12 +1019,13 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
     <div class="sgroup">Сообщения от автора</div>
     <div id="author-feed"><div class="hrow">Открой новости с интернетом — подгрузим послания ✉️</div></div>
     <div class="hlist">
+      <div class="hrow"><b>v1.37</b><span>Рейтинг и ники, коды на почту, 2048 с анимациями, секреты, честная Ольга</span></div>
       <div class="hrow"><b>v1.36</b><span>Лабиринт 11×11 и честная Ольга, мини-игра 2048, группа на весь экран, 10 новых реакций, обратная анимация в квестах</span></div>
       <div class="hrow"><b>v1.35</b><span>Обучение для новичков, квест «Ядерная триада», 1300+ реакций, счётчики в квестах</span></div>
-      <div class="hrow"><b>v1.31</b><span>Перетаскивание элементов, новости, 30+ новых реакций</span></div>
+      <div id="news-old" style="display:none"><div class="hrow"><b>v1.31</b><span>Перетаскивание элементов, новости, 30+ новых реакций</span></div>
       <div class="hrow"><b>v1.3</b><span>Рулетка с элементами, квесты по очереди, бонусы в мини-играх</span></div>
       <div class="hrow"><b>v1.2</b><span>Магазин, рулетка, 18 достижений, чит-меню</span></div>
-      <div class="hrow"><b>v1.0</b><span>470+ реакций, 8 квестов, 238 элементов</span></div>
+      <div class="hrow"><b>v1.0</b><span>470+ реакций, 8 квестов, 238 элементов</span></div></div><button class="btn" style="width:100%;margin-top:8px;min-height:40px" onclick="var o=document.getElementById('news-old');o.style.display=o.style.display==='none'?'':'none';this.textContent=o.style.display==='none'?'Показать старые обновы':'Скрыть'">Показать старые обновы</button>
     </div>
     <button class="bigbtn" style="margin-top:14px" onclick="closeOvl('news')">Закрыть</button>
   </div>
@@ -1159,6 +1175,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
     <div id="acc-out" style="display:none">
       <button class="btn wide" onclick="accLogout()">Выйти из аккаунта</button>
     </div>
+    <div class="srow"><span>Ник для рейтинга</span><span><input id="acc-nick" class="num" style="width:130px" maxlength="16" placeholder="Алхимик"> <button class="btn hint" onclick="accSaveNick()">ОК</button></span></div>
     <div class="sgroup">Статистика</div>
     <div id="acc-stats" class="hlist"></div>
 
@@ -1176,7 +1193,6 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
       <button class="btn hint" style="flex:1" id="fb-send-btn" onclick="fbSendScore()">Отправить результат</button>
       <button class="btn" style="flex:1" onclick="loadRating()">Обновить</button>
     </div>
-    <button class="btn" style="width:100%;margin-top:8px;min-height:40px" onclick="accCopyRules()">📋 Правила для базы (разработчику)</button>
     <button class="bigbtn" style="margin-top:14px" onclick="closeOvl('rating')">Закрыть</button>
   </div>
 </div>
@@ -2151,7 +2167,7 @@ function miniAdj(a, b){
   const r1 = Math.floor(a / MSZ), c1 = a % MSZ, r2 = Math.floor(b / MSZ), c2 = b % MSZ;
   return Math.abs(r1 - r2) + Math.abs(c1 - c2) === 1;
 }
-function miniDraw(pop){
+function miniDraw(pop, drop){
   const g = document.getElementById('minigrid');
   if (!g) return;
   if (!g.dataset.db){ g.dataset.db = '1'; g.addEventListener('pointerdown', miniDragDown); g.addEventListener('pointermove', miniDragMove); g.addEventListener('pointerup', miniDragUp); }
@@ -2161,7 +2177,8 @@ function miniDraw(pop){
   const frag = document.createDocumentFragment();
   miniBoard.forEach((nm, i) => {
     const d = document.createElement('div');
-    d.className = 'mcell' + (i === miniSel ? ' sel' : '') + (pop && pop.indexOf(i) >= 0 ? ' pop' : '');
+    d.className = 'mcell' + (i === miniSel ? ' sel' : '') + (pop && pop.indexOf(i) >= 0 ? ' pop' : '') + (drop ? ' drop' : '');
+    if (drop) d.style.animationDelay = (Math.floor(i / MSZ) * 45) + 'ms';
     const img = document.createElement('img');
     img.src = encodeURI(imgP(nm)); img.alt = nm; img.draggable = false;
     img.onerror = () => { img.remove(); };
@@ -2231,8 +2248,8 @@ function miniResolve(){
       while (col.length < MSZ) col.push(miniKinds[Math.floor(Math.random() * miniKinds.length)]);
       for (let r = MSZ - 1, k = 0; r >= 0; r--, k++) miniBoard[r * MSZ + c] = col[k];
     }
-    miniDraw();
-    setTimeout(miniResolve, 120);
+    miniDraw(null, true);
+    setTimeout(miniResolve, 160);
   }, 260);
 }
 function openMini(){
@@ -2603,6 +2620,8 @@ function exitQuest(){
 }
 function qRender(){
   const q = Q(); if (!q) return;
+  const qg = document.getElementById('qgrid');
+  const qst = qg ? qg.scrollTop : 0;
   const pct = qPct();
   document.getElementById('q-bar').style.width = pct + '%';
   document.getElementById('q-hint').textContent = hints <= 0 ? 'Подсказка' : (hints === 1 ? 'Подсказка: 1' : ('Подсказки: ' + hints));
@@ -2635,6 +2654,7 @@ function qRender(){
     frag.appendChild(d);
   });
   grid.appendChild(frag);
+  if (qg) qg.scrollTop = qst;
   document.getElementById('q-undo').disabled = qStack.length === 0;
 }
 function qFill(n, slot){
@@ -3101,161 +3121,27 @@ const ACH = [
   {id: 'el10', cat: 'Коллекция', icon: '🌱', t: 'Первоклашка', d: 'Открыть 10 элементов. Мама гордится', c: () => discovered.size >= 10},
   {id: 'el50', cat: 'Коллекция', icon: '🌿', t: 'Собиратель', d: 'Открыть 50 элементов. Уже не стыдно показать', c: () => discovered.size >= 50},
   {id: 'el100', cat: 'Коллекция', icon: '🌳', t: 'Свой в доску', d: 'Открыть 100 элементов. Знаток Сергиополя', c: () => discovered.size >= 100},
-  {id: 'el150', cat: 'Коллекция', icon: '🏫', t: 'Тебя знает завуч', d: 'Открыть 150 элементов. Старожил', c: () => discovered.size >= 150},
   {id: 'el200', cat: 'Коллекция', icon: '👑', t: 'Легенда столовки', d: 'Открыть 200 элементов. Полшколы собрано', c: () => discovered.size >= 200},
-  {id: 'el250', cat: 'Коллекция', icon: '💎', t: 'Почти бог', d: 'Открыть 250 элементов. Рукой подать до трона', c: () => discovered.size >= 250},
   {id: 'elfull', cat: 'Коллекция', icon: '⚗️', t: 'Ты и есть Арсений', d: 'Открыть все элементы. Арсений God', c: () => discovered.size >= TOTAL},
   {id: 'r10', cat: 'Лаборатория', icon: '🧪', t: 'Химичка одобряет', d: 'Сделать 10 реакций. Юный алхимик', c: () => reactions >= 10},
   {id: 'r50', cat: 'Лаборатория', icon: '⚗️', t: 'Колбочки звенят', d: 'Сделать 50 реакций. Алхимик', c: () => reactions >= 50},
   {id: 'r150', cat: 'Лаборатория', icon: '🔥', t: 'Лаборатория дымит', d: 'Сделать 150 реакций. Мастер реакций', c: () => reactions >= 150},
   {id: 'r300', cat: 'Лаборатория', icon: '☄️', t: 'Вызывай МЧС', d: 'Сделать 300 реакций. Бог реакций', c: () => reactions >= 300},
-  {id: 'r500', cat: 'Лаборатория', icon: '🌋', t: 'Пожарная тревога', d: 'Сделать 500 реакций. Живая легенда', c: () => reactions >= 500},
   {id: 'key5', cat: 'Лаборатория', icon: '🔑', t: 'Завхоз нервно курит', d: 'Использовать 5 автоключей. Ключник', c: () => keysUsed >= 5},
-  {id: 'key10', cat: 'Лаборатория', icon: '🗝️', t: 'Ключник-мастер', d: 'Использовать 10 автоключей. Все двери открыты', c: () => keysUsed >= 10},
-  {id: 'tried300', cat: 'Лаборатория', icon: '🎲', t: 'Метод тыка', d: 'Перебрать 300 разных пар. Упорство города берёт', c: () => tried.size >= 300},
-  {id: 'tutor1', cat: 'Лаборатория', icon: '📖', t: 'Прилежный', d: 'Пройти обучение до конца. Так держать', c: () => tutorSeen},
   {id: 'q1', cat: 'Квесты', icon: '📜', t: 'Первачок', d: 'Пройти 1 квест. Дальше — больше', c: () => Object.keys(questDone).length >= 1},
   {id: 'q3', cat: 'Квесты', icon: '🗺️', t: 'Карта почти открыта', d: 'Пройти 3 квеста. Герой квестов', c: () => Object.keys(questDone).length >= 3},
   {id: 'qall', cat: 'Квесты', icon: '🏆', t: 'Легенда Сергиополя', d: 'Пройти все квесты. Покоритель', c: () => QUESTS.every(q => questDone[q.id])},
   {id: 'e500', cat: 'Богатство', icon: '⚡', t: 'Батарейка', d: 'Заработать 500 энергии. Энергичный', c: () => energyEarned >= 500},
-  {id: 'e2000', cat: 'Богатство', icon: '💰', t: 'Олигарх', d: 'Заработать 2000 энергии. Столовка куплена', c: () => energyEarned >= 2000},
   {id: 'shop1', cat: 'Богатство', icon: '🛒', t: 'Завхоз доволен', d: 'Купить рамки или пунктир. Шопоголик', c: () => ownedBlue || ownedDash},
   {id: 'music1', cat: 'Богатство', icon: '🎵', t: 'Меломан', d: 'Купить свою музыку. Теперь с саундтреком', c: () => ownedMusic},
   {id: 'spin1', cat: 'Игры', icon: '🎰', t: 'Казино «Столовка»', d: 'Крутануть рулетку. Счастливчик', c: () => spins >= 1},
-  {id: 'spin10', cat: 'Игры', icon: '🎡', t: 'Постоянный клиент', d: 'Крутануть рулетку 10 раз. Свой человек', c: () => spins >= 10},
   {id: 'maze40', cat: 'Игры', icon: '🏃', t: 'Скороход', d: 'Пройти лабиринт за 40 шагов или быстрее', c: () => mazeBest > 0 && mazeBest <= 40},
-  {id: 'mole100', cat: 'Игры', icon: '🐹', t: 'Ловкие руки', d: 'Набрать 100 очков в «Поймай элемент»', c: () => quizBest >= 100},
-  {id: 'mini300', cat: 'Игры', icon: '🧩', t: 'Мастер трёх в ряд', d: 'Набрать 300 очков в «Три в ряд»', c: () => miniBest >= 300},
   {id: 't2048', cat: 'Игры', icon: '🔢', t: 'Стратег', d: 'Набрать 1000 очков в 2048', c: () => { try{ return (parseInt(localStorage.getItem('ag_2048') || '0', 10) || 0) >= 1000; }catch(e){ return false; } }},
-  {id: 'fun50', cat: 'Игры', icon: '🎈', t: 'Хлопальщик', d: 'Лопнуть 50 падалок. Меткий глаз', c: () => funBest >= 50},
   {id: 'cheat1', cat: 'Секреты', icon: '🔧', t: 'Мы тебя видели', d: 'Разблокировать чит-меню. Хакер', c: () => cheatOn},
   {id: 's_night', cat: 'Секреты', secret: 1, icon: '🦉', t: 'Сова', hint: 'Не спится? Загляни в игру после полуночи (0–5 утра)', c: () => { const h = new Date().getHours(); return h < 5; }},
   {id: 's_moon', cat: 'Секреты', secret: 1, icon: '🌙', t: 'Лунатик', hint: 'Кто-то машет тебе с Луны. Собери его', c: () => discovered.has('Лунтик')},
   {id: 's_gold', cat: 'Секреты', secret: 1, icon: '✨', t: 'Блестящий', hint: 'Самая дорогая чикушка в игре. Добудь её', c: () => discovered.has('золотая чикушка')},
-  {id: 's_olga', cat: 'Секреты', secret: 1, icon: '🍾', t: 'Добрый вечер', hint: 'Познакомься с Ольгой поближе', c: () => discovered.has('Ольга чекушевна')},
   {id: 's_nswf', cat: 'Секреты', secret: 1, icon: '🙈', t: 'Не смотри', hint: 'Тебе туда не надо. Хотя... скрести Тимерхуна с кем-нибудь', c: () => discovered.has('NSWF+')},
-  {id: 's_rich', cat: 'Секреты', secret: 1, icon: '🐷', t: 'Скряга', hint: 'Держи при себе сразу 300 энергии. Не трать!', c: () => energy >= 300},
-  {id: 's_keys', cat: 'Секреты', secret: 1, icon: '🔐', t: 'Запасливый', hint: 'Собери сразу 10 автоключей. Не трать!', c: () => keys >= 10},
-  {id: 's_hints', cat: 'Секреты', secret: 1, icon: '🦊', t: 'Хитрый', hint: 'Накопи сразу 10 подсказок', c: () => hints >= 10}
-];
-function achCount(){ return ACH.filter(a => achGot[a.id]).length; }
-function checkAch(){
-  const hits = [];
-  for (const a of ACH){
-    if (!achGot[a.id]){ try{ if (a.c()){ achGot[a.id] = 1; hits.push(a.t); } }catch(e){} }
-  }
-  if (hits.length){ save(); snd('quest'); toast('🏆 Достижение: ' + hits.slice(0, 2).join(', ') + (hits.length > 2 ? ' и ещё ' + (hits.length - 2) : '')); }
-}
-function renderAch(){
-  document.getElementById('ach-count').textContent = achCount() + '/' + ACH.length;
-  const box = document.getElementById('achlist');
-  box.innerHTML = '';
-  ['Коллекция', 'Лаборатория', 'Квесты', 'Богатство', 'Игры', 'Секреты'].forEach(cat => {
-    const list = ACH.filter(a => (a.cat || 'Коллекция') === cat);
-    if (!list.length) return;
-    const got = list.filter(a => achGot[a.id]).length;
-    const h = document.createElement('div');
-    h.className = 'sgroup';
-    h.textContent = cat + ' · ' + got + '/' + list.length;
-    box.appendChild(h);
-    list.forEach(a => {
-      const has = !!achGot[a.id];
-      const d = document.createElement('div');
-      d.className = 'qcard' + (has ? ' done' : '');
-      if (a.secret && !has) d.innerHTML = '<h3>🔒 Секретное достижение</h3><div class="qd">Подсказка: ' + a.hint + '</div>';
-      else d.innerHTML = '<h3>' + (has ? a.icon : '🔒') + ' ' + (has ? a.t : '???') + (has ? ' ✓' : '') + '</h3>'
-        + '<div class="qd">' + (has ? a.d : '???') + '</div>';
-      box.appendChild(d);
-    });
-  });
-}
-function openAch(){ snd('dialog'); renderAch(); document.getElementById('ach').classList.add('show'); }
-function openNews(){ snd('dialog'); document.getElementById('news').classList.add('show'); try{ renderFeed(); }catch(e){} }
-
-/* ---------- чит-меню (NEW, код VMCT) ---------- */
-function openCheat(){
-  if (!cheatOn) return;
-  snd('dialog');
-  document.getElementById('cheat-keys-n').value = 5;
-  document.getElementById('cheat-energy-n').value = 500;
-  try{ cheatGSyncUI(); }catch(e){}
-  document.getElementById('cheat').classList.add('show');
-}
-function cheatKeys(){
-  const n = Math.max(1, Math.min(999, parseInt(document.getElementById('cheat-keys-n').value, 10) || 0));
-  keys += n; save(); renderAll(); snd('new_a');
-  toast('Выдано ключей: ' + n);
-}
-function cheatEnergy(){
-  const n = Math.max(1, Math.min(99999, parseInt(document.getElementById('cheat-energy-n').value, 10) || 0));
-  energy += n; save(); renderAll(); snd('new_a');
-  toast('Выдано энергии: ' + n);
-}
-function cheatAll(){
-  let n = 0;
-  ELEMENTS.forEach(e => { if (unlock(e.n)) n++; });
-  undoStack = []; save(); renderAll(); snd('new_a');
-  toast(n ? ('Открыто элементов: ' + n) : 'У тебя и так всё открыто!');
-}
-function cheatQuests(){
-  let n = 0;
-  QUESTS.forEach(q => {
-    q.need.forEach(x => { const c = CANON[norm(x)]; if (c && unlock(c)) n++; });
-    questDone[q.id] = 1;
-  });
-  save(); renderAll(); snd('quest');
-  toast('Все квесты пройдены!' + (n ? (' +' + n + ' элементов') : ''));
-}
-function cheatCooldowns(){
-  lastClaim = 0; lastRoulette = 0;
-  save(); snd('btn');
-  toast('Кулдауны сброшены: ключи и рулетка снова доступны!');
-}
-function cheatEl(){
-  const v = document.getElementById('cheat-el-n').value || '';
-  const c = CANON[norm(v)];
-  if (!c || !EL_MAP[c]){ snd('wrong'); toast('Такого элемента нет'); return; }
-  if (EL_MAP[c].q){ snd('wrong'); toast('Квестовый элемент так не выдать'); return; }
-  if (discovered.has(c)){ snd('wrong'); toast(c + ' уже открыт'); return; }
-  unlock(c); newSet.add(c); save(); renderAll(); snd('new_a');
-  toast('Выдан элемент: ' + c);
-}
-function cheatQuestNow(){
-  const q = (typeof Q === 'function') ? Q() : null;
-  if (!q){ snd('wrong'); toast('Открой квест, чтобы пройти его читом'); return; }
-  qNeed().forEach(n => { qSet.add(n); if (qOrder.indexOf(n) < 0) qOrder.push(n); });
-  save(); renderAll(); qRender(); snd('quest');
-  toast('Квест собран читом!');
-  setTimeout(() => qWin(q), 800);
-}
-function cheatAch(){
-  ACH.forEach(a => { achGot[a.id] = 1; });
-  save(); snd('quest');
-  toast('Все достижения открыты!');
-}
-function toggleSearch(){ searchOn = !searchOn; save(); syncPrefsUI(); syncSearch(); renderGrid(); snd('btn'); toast(searchOn ? 'Поиск включён' : 'Поиск выключен'); }
-let qgMode = 0, qgCur = null;
-const QG_BAN = ['навальный', 'тимерхун', 'ольга серёгавна', 'ольга чекушевна', 'грустная ольга немногочекушевна', 'тимермалик', 'еленка', 'башкирка', 'учитель', 'англичанка'];
-function qgPool(){ return ELEMENTS.filter(e => !e.q && QG_BAN.indexOf(norm(e.n)) < 0 && !qgBad(e.n)); }
-function qgSample(arr, n){
-  const pool = arr.slice(); const out = [];
-  while (out.length < n && pool.length) out.push(pool.splice(Math.floor(Math.random() * pool.length), 1)[0]);
-  return out;
-}
-function qgShuffle(a){ for (let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); const t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
-function qgImg(n, cover){ return cover ? '<span class="qg-picwrap"><img class="qg-big" src="' + encodeURI(imgP(n)) + '" alt="" onerror="this.remove()"><span class="qg-cover"></span></span>' : '<img class="qg-big" src="' + encodeURI(imgP(n)) + '" alt="" onerror="this.remove()">'; }
-const QG_BAD = ['NSWF+', 'Это жопа Полная', 'Хоррор', 'Очень Страшно', 'Фильм про убийцу', 'Картун Кэт (Тимофей)', 'Монстр', 'Вейп', 'инцидент с вейпом', 'Найденная одноразка', 'Чикушка', 'золотая чикушка', 'Пьянство', 'Баночка', 'Оружие', 'пистолет', 'AK-47', 'Инцидент с ножиком', 'атака', 'самооборона'];
-function qgBad(n){ return QG_BAD.indexOf(n) >= 0; }
-function qgEsc(s){ return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
-function openQuizGen(){
-  snd('dialog');
-  document.getElementById('quizgen-var').textContent = 1 + Math.floor(Math.random() * 20);
-  qgNew();
-  document.getElementById('quizgen').classList.add('show');
-}
-function qgType(m){ snd('btn'); qgMode = m; qgNew(); }
-const QG_THEMES = [
-  {id: 'all', label: '🎲 Всё подряд', seeds: null},
   {id: 'kl6', label: '6 класс', seeds: ['Данил', 'Вадим', 'Чебулькина', 'Витя', 'Ваня', 'Рувим']},
   {id: 'ars', label: 'Арсений', seeds: ['Арсений']},
   {id: 'ezhp', label: 'ЭЖП', seeds: ['Это жопа Полная']},
@@ -3688,10 +3574,6 @@ function tapGroup(gid, side){
   } else {
     panelR = (panelR === gid) ? 'badges' : gid;
   }
-  if (window.innerWidth <= 760){
-    const cur = side === 'L' ? panelL : panelR;
-    expanded = (cur && cur !== 'badges') ? side : null;
-  }
   buildSidebar(); renderGrid(); flashPanels();}
 function closePanel(which){
   snd('btn');
@@ -3771,6 +3653,7 @@ function dragStart(ev, name, col, mode){
     if (busy || qBusy) return;
     dragOn = true; dragName = name; dragMode = mode;
     snd('click');
+    try{ if (navigator.vibrate) navigator.vibrate(15); }catch(e){}
     dragGhost = document.createElement('img');
     dragGhost.src = imgP(name); dragGhost.alt = '';
     dragGhost.style.cssText = 'position:fixed;z-index:9999;width:64px;height:64px;object-fit:contain;pointer-events:none;opacity:.92;border-radius:16px;box-shadow:0 16px 26px -8px rgba(43,35,24,.6);transform:translate(-50%,-50%) scale(1.1)';
@@ -3852,8 +3735,12 @@ function fillGrid(gridId, gid, q){
 }
 function renderGrid(){
   computeLive();
+  const gl = document.getElementById('gridL'), gr = document.getElementById('gridR');
+  const tl = gl ? gl.scrollTop : 0, tr = gr ? gr.scrollTop : 0;
   renderSide('L');
   renderSide('R');
+  if (gl) gl.scrollTop = tl;
+  if (gr) gr.scrollTop = tr;
 }
 function makeCard(e, col){
   const d = document.createElement('div');
@@ -4239,6 +4126,7 @@ function fbNeedVerified(){
 }
 function openRating(){ snd('dialog'); document.getElementById('rating').classList.add('show'); try{ loadRating(); }catch(e){} }
 function fbPlayerName(){
+  try{ const nick = localStorage.getItem('ag_nick'); if (nick && nick.trim()) return nick.trim().slice(0, 24); }catch(e){}
   const u = FB.user;
   if (!u) return '?';
   return ((u.displayName || (u.email || '?').split('@')[0]) + '').slice(0, 24);
@@ -4261,7 +4149,7 @@ function loadRating(){
         i++;
       });
       box.innerHTML = html;
-    }).catch(() => { box.innerHTML = '<div class="hrow">Не загрузилось. Проверь правила Firestore.</div>'; });
+    }).catch(() => { box.innerHTML = adminHtml + '<div class="hrow">Не загрузилось. Проверь правила Firestore.</div>'; });
   });
 }
 function fbSendBtn(st){
@@ -4289,6 +4177,25 @@ function fbSendScore(){
     FB.db.collection('players').doc(FB.user.uid).set({name: fbPlayerName(), el: discovered.size, reactions: reactions, quests: Object.keys(questDone).length, ach: achCount(), ts: firebase.firestore.FieldValue.serverTimestamp()}, {merge: true}).then(() => { try{ localStorage.setItem('ag_lastscore', JSON.stringify({t: Date.now(), el: discovered.size, r: reactions})); }catch(e){} snd('new_a'); fbSendBtn('done'); toast('Результат отправлен в рейтинг!'); loadRating(); }).catch(() => { fbSendBtn('idle'); toast('Не вышло отправить'); });
   });
 }
+const NICK_BAD = ['хуй','хуе','хуё','пизд','пезд','ебан','ебл','еби','ебу','бля','сука','сучк','мраз','пидор','пидр','гандон','уеб','уёб','хуесос','долбо','мудак','мудил','говн','сран','залуп','fuck','shit','dick','pussy','bitch','nigga','nigger','whore','cunt','asshole','fag','dumbass'];
+function nickClean(s){
+  s = String(s || '').toLowerCase();
+  const leet = {a:'а',b:'б',c:'с',d:'д',e:'е',f:'ф',g:'г',h:'н',i:'и',j:'й',k:'к',l:'л',m:'м',n:'н',o:'о',p:'р',q:'к',r:'р',s:'с',t:'т',u:'у',v:'в',w:'ш',x:'х',y:'у',z:'з','0':'о','1':'и','3':'з','4':'а','5':'с','6':'б','7':'т','8':'в','9':'д','@':'а','$':'с'};
+  let out = '';
+  for (const ch of s){ const l = leet[ch] || ch; if (/[а-яё]/.test(l)) out += l; }
+  return out.replace(/(.)\1+/g, '$1');
+}
+function accSaveNick(){
+  const inp = document.getElementById('acc-nick');
+  const v = String((inp && inp.value) || '').trim().replace(/\s+/g, ' ');
+  const len = [...v].length;
+  if (len < 3){ snd('wrong'); toast('Ник короткий — минимум 3 символа'); return; }
+  if (len > 16){ snd('wrong'); toast('Ник длинный — максимум 16 символов'); return; }
+  if (NICK_BAD.some(w => nickClean(v).indexOf(w) >= 0)){ snd('wrong'); toast('Такой ник нельзя 🚫'); return; }
+  try{ localStorage.setItem('ag_nick', v); }catch(e){}
+  snd('new_a'); toast('Ник: ' + v);
+  try{ renderAccount(); }catch(e){}
+}
 function openAccount(){ snd('dialog'); try{ renderAccount(); }catch(e){} document.getElementById('account').classList.add('show'); }
 function accFmtDate(ms){ try{ return new Date(ms).toLocaleDateString('ru-RU'); }catch(e){ return '—'; } }
 function accFmtTime(sec){
@@ -4313,6 +4220,8 @@ function renderAccount(){
     au.style.display = accPending ? 'none' : ''; ou.style.display = 'none'; vf.style.display = 'none';
     cd.style.display = accPending ? '' : 'none';
   }
+  const ni = document.getElementById('acc-nick');
+  if (ni && document.activeElement !== ni){ try{ ni.value = localStorage.getItem('ag_nick') || ''; }catch(e){} }
   const box = document.getElementById('acc-stats');
   let tb = 0;
   try{ tb = parseInt(localStorage.getItem('ag_2048') || '0', 10) || 0; }catch(e){}
@@ -4452,8 +4361,12 @@ function renderFeed(){
   ensureFB(ok => {
     if (!ok){ box.innerHTML = '<div class="hrow">📴 Нет связи. Открой новости с интернетом.</div>'; return; }
     box.innerHTML = '<div class="hrow">Загрузка посланий... ✉️</div>';
+    const isAdmin = FB.user && FIREBASE_ADMIN_UID && FB.user.uid === FIREBASE_ADMIN_UID;
+    const adminHtml = isAdmin ? '<div class="qcard"><div class="qd">Ты — автор ✍️ Пиши сюда — увидят все игроки</div>'
+      + '<textarea id="feed-new" rows="2" style="width:100%;background:var(--surf-hi);border:1.5px solid var(--line2);border-radius:12px;padding:8px;font-family:inherit;font-size:13px" placeholder="Всем привет!.."></textarea>'
+      + '<button class="btn hint wide" style="margin-top:6px" onclick="feedPost()">Опубликовать</button></div>' : '';
     FB.db.collection('author_posts').orderBy('ts', 'desc').limit(20).get().then(snap => {
-      if (snap.empty){ box.innerHTML = '<div class="hrow">Пока тихо. Автор что-нибудь напишет! ✍️</div>'; return; }
+      if (snap.empty){ box.innerHTML = adminHtml + '<div class="hrow">Пока тихо. Автор что-нибудь напишет! ✍️</div>'; return; }
       const liked = feedLiked();
       let html = '';
       snap.forEach(doc => {
@@ -4472,12 +4385,7 @@ function renderFeed(){
           + '<div class="cmts" id="cmts-' + id + '" style="display:none;margin-top:8px"></div>'
           + '</div>';
       });
-      if (FB.user && FIREBASE_ADMIN_UID && FB.user.uid === FIREBASE_ADMIN_UID){
-        html = '<div class="qcard"><div class="qd">Ты — автор ✍️</div>'
-          + '<textarea id="feed-new" rows="2" style="width:100%;background:var(--surf-hi);border:1.5px solid var(--line2);border-radius:12px;padding:8px;font-family:inherit;font-size:13px" placeholder="Всем привет!.."></textarea>'
-          + '<button class="btn hint wide" style="margin-top:6px" onclick="feedPost()">Опубликовать</button></div>' + html;
-      }
-      box.innerHTML = html;
+      box.innerHTML = adminHtml + html;
     }).catch(() => { box.innerHTML = '<div class="hrow">Не загрузилось. Проверь правила Firestore.</div>'; });
   });
 }
