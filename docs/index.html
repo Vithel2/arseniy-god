@@ -367,6 +367,8 @@ button,input,textarea{font-family:inherit}
 .t2048.pop img{animation:tpop .3s var(--spring)}
 @keyframes tin{from{opacity:0;transform:scale(.4)}to{opacity:1;transform:scale(1)}}
 @keyframes tpop{0%{transform:scale(.55)}55%{transform:scale(1.2)}100%{transform:scale(1)}}
+.btn.busy{animation:btnpulse 1s ease-in-out infinite;opacity:.85}
+@keyframes btnpulse{50%{opacity:.55}}
 body.nofx *,body.nofx *::before,body.nofx *::after{animation-duration:.01s !important;transition-duration:.01s !important}
 #fun{background:radial-gradient(circle at 50% 30%,#f6ecd3,#d9c9a6 75%);overflow:hidden}
 #funbox{position:absolute;inset:0;overflow:hidden}
@@ -525,6 +527,11 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 @media (max-width:760px){
   .lbl{display:none}
   #hdr{padding:calc(7px + env(safe-area-inset-top)) 10px 8px;gap:7px}
+  .hdr-top{flex-wrap:wrap;row-gap:6px}
+  #hdr h1{min-width:0;flex:1 1 auto}
+  .ttl{min-width:0}
+  .ttl b.t1{white-space:normal;line-height:1.1}
+  .stats{flex:1 1 100%;justify-content:flex-end;flex-wrap:wrap;row-gap:5px}
   .ttl b.t1{font-size:17px}
   .logo{width:34px;height:34px;border-radius:12px}
   .logo .ic{width:20px;height:20px}
@@ -568,7 +575,11 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
   #funpanel{overflow-x:auto;justify-content:flex-start;font-size:11px;flex-wrap:nowrap;white-space:nowrap}
   #mazepad{grid-template-columns:repeat(3,58px)}
   #qhdr{gap:7px;padding:calc(7px + env(safe-area-inset-top)) 10px 9px}
-  #qhdr .qt{font-size:17px}
+  #qhdr .qt{font-size:15px;line-height:1.15}
+  .qrow1{flex-wrap:wrap;row-gap:6px}
+  .qicons{margin-left:auto}
+  #qgoal{font-size:11.5px}
+  .qrow3 .btn{min-height:42px}
   #qtodo{font-size:10.5px;flex-wrap:nowrap;overflow-x:auto;max-height:none;scrollbar-width:none;-webkit-mask-image:linear-gradient(90deg,#000 90%,transparent);mask-image:linear-gradient(90deg,#000 90%,transparent)}
   #qtodo::-webkit-scrollbar{display:none}
   #qtodo>*{flex:0 0 auto;white-space:nowrap}
@@ -1156,7 +1167,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
     <p>Топ-25 по числу элементов. Нажми «Отправить результат», чтобы попасть в таблицу.</p>
     <div class="hlist" id="rating-list"></div>
     <div class="btnrow">
-      <button class="btn hint" style="flex:1" onclick="fbSendScore()">Отправить результат</button>
+      <button class="btn hint" style="flex:1" id="fb-send-btn" onclick="fbSendScore()">Отправить результат</button>
       <button class="btn" style="flex:1" onclick="loadRating()">Обновить</button>
     </div>
     <button class="btn" style="width:100%;margin-top:8px;min-height:40px" onclick="accCopyRules()">📋 Правила для базы (разработчику)</button>
@@ -3671,8 +3682,11 @@ function tapGroup(gid, side){
   } else {
     panelR = (panelR === gid) ? 'badges' : gid;
   }
-  buildSidebar(); renderGrid(); flashPanels();
-}
+  if (window.innerWidth <= 760){
+    const cur = side === 'L' ? panelL : panelR;
+    expanded = (cur && cur !== 'badges') ? side : null;
+  }
+  buildSidebar(); renderGrid(); flashPanels();}
 function closePanel(which){
   snd('btn');
   expanded = null;
@@ -4244,6 +4258,13 @@ function loadRating(){
     }).catch(() => { box.innerHTML = '<div class="hrow">Не загрузилось. Проверь правила Firestore.</div>'; });
   });
 }
+function fbSendBtn(st){
+  const b = document.getElementById('fb-send-btn');
+  if (!b) return;
+  if (st === 'send'){ b.disabled = true; b.textContent = 'Отправляю…'; b.classList.add('busy'); }
+  else if (st === 'done'){ b.disabled = true; b.textContent = '✓ Отправлено'; b.classList.remove('busy'); setTimeout(() => fbSendBtn('idle'), 2200); }
+  else { b.disabled = false; b.textContent = 'Отправить результат'; b.classList.remove('busy'); }
+}
 function fbSendScore(){
   let last = null;
   try{ last = JSON.parse(localStorage.getItem('ag_lastscore') || 'null'); }catch(e){}
@@ -4255,10 +4276,11 @@ function fbSendScore(){
     return;
   }
   if (last && discovered.size <= last.el && reactions <= last.r){ snd('wrong'); toast('Результат не улучшился — отправлять нечего'); return; }
+  fbSendBtn('send');
   ensureFB(ok => {
-    if (!ok) return;
-    if (!FB.user){ toast('Сначала войди в аккаунт'); return; }
-    FB.db.collection('players').doc(FB.user.uid).set({name: fbPlayerName(), el: discovered.size, reactions: reactions, quests: Object.keys(questDone).length, ach: achCount(), ts: firebase.firestore.FieldValue.serverTimestamp()}, {merge: true}).then(() => { try{ localStorage.setItem('ag_lastscore', JSON.stringify({t: Date.now(), el: discovered.size, r: reactions})); }catch(e){} snd('new_a'); toast('Результат отправлен в рейтинг!'); loadRating(); }).catch(() => toast('Не вышло отправить'));
+    if (!ok){ fbSendBtn('idle'); return; }
+    if (!FB.user){ fbSendBtn('idle'); toast('Сначала войди в аккаунт'); return; }
+    FB.db.collection('players').doc(FB.user.uid).set({name: fbPlayerName(), el: discovered.size, reactions: reactions, quests: Object.keys(questDone).length, ach: achCount(), ts: firebase.firestore.FieldValue.serverTimestamp()}, {merge: true}).then(() => { try{ localStorage.setItem('ag_lastscore', JSON.stringify({t: Date.now(), el: discovered.size, r: reactions})); }catch(e){} snd('new_a'); fbSendBtn('done'); toast('Результат отправлен в рейтинг!'); loadRating(); }).catch(() => { fbSendBtn('idle'); toast('Не вышло отправить'); });
   });
 }
 function openAccount(){ snd('dialog'); try{ renderAccount(); }catch(e){} document.getElementById('account').classList.add('show'); }
