@@ -172,6 +172,7 @@ button,input,textarea{font-family:inherit}
 .gall .gtrack i{display:block;height:100%;border-radius:8px;background:repeating-linear-gradient(115deg,rgba(255,255,255,.28) 0 8px,transparent 8px 16px),linear-gradient(90deg,var(--gold),var(--new));transition:width .6s ease}
 .grid{flex:1;overflow-y:auto;padding:12px;display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px;align-content:start;-webkit-overflow-scrolling:touch}
 .ec{background:transparent;border:none;border-radius:20px;padding:6px 4px 5px;cursor:pointer;transition:transform .16s var(--spring),background .15s;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11px;font-weight:800;font-family:inherit;text-align:center;color:var(--ink);position:relative;-webkit-user-select:none;user-select:none;touch-action:pan-y;-webkit-touch-callout:none}
+img{-webkit-touch-callout:none;-webkit-user-drag:none;user-select:none;-webkit-user-select:none}
 .ec:active{transform:scale(.93)}
 .ec img{width:100%;max-width:80px;height:auto;aspect-ratio:1;object-fit:contain;display:block;background:rgba(255,253,246,.55);border-radius:18px;box-shadow:0 0 0 1.5px rgba(43,35,24,.16),0 6px 12px -6px rgba(43,35,24,.5);transition:box-shadow .15s}
 .ec.sel{background:rgba(189,79,5,.12)}
@@ -567,7 +568,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
   .gall .grow{font-size:13px}
   .gall .grow b{font-size:22px}
   .ec{font-size:9.5px;padding:4px 2px 3px}
-  .ec img{max-width:54px;border-radius:14px}
+  .ec img{max-width:54px;border-radius:14px;box-shadow:0 0 0 1.5px rgba(43,35,24,.16)}
   .ec .en{max-width:64px}
   .gall{display:none}
   #account .box{padding:16px 12px 12px}
@@ -900,7 +901,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
       Файл: <b id="save-hint-name">arseniy-god-save.json</b>. На ПК — «Сохранить как». На телефоне надёжнее «Поделиться» или «Копировать код»: скачивание в WebView иногда молча пропадает.
     </details>
     <div class="sgroup">О игре</div>
-    <div class="credits">Разработчик: <b>Vithel</b><br>Рисовщики: <b>Vithel</b> и <b>Mathil</b><br><span id="verclick" onclick="verTap()" title="v1.37 beta" style="font-size:11px;cursor:pointer;-webkit-user-select:none;user-select:none;color:var(--ink2)">v1.37 beta</span></div>
+    <div class="credits">Разработчик: <b>Vithel</b><br>Рисовщики: <b>Vithel</b> и <b>Mathil</b><br><span id="verclick" onclick="verTap()" title="v1.38 beta" style="font-size:11px;cursor:pointer;-webkit-user-select:none;user-select:none;color:var(--ink2)">v1.38 beta</span></div>
     <div class="credits donate" style="text-align:center"><svg class="ic"><use href="#i-heart" xlink:href="#i-heart"/></svg> Поддержи разработчика<br><span style="font-size:11px">Чтобы увидеть номер, кликни по тексту</span><br><b id="donate-num" onclick="revealDonate()" style="filter:blur(5px);cursor:pointer;-webkit-user-select:none;user-select:none">4279 3806 8503 3450</b><br><span id="donate-name" style="display:none">Шакин В.<br><span style="font-size:11px">Спасибо за доброту! Ты лучший! ❤️</span></span></div>
     <button class="btn wide" onclick="openPrivacy()"><svg class="ic"><use href="#i-lock" xlink:href="#i-lock"/></svg> Политика конфиденциальности</button>
     <div class="sgroup">Опасная зона</div>
@@ -1019,6 +1020,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
     <div class="sgroup">Сообщения от автора</div>
     <div id="author-feed"><div class="hrow">Открой новости с интернетом — подгрузим послания ✉️</div></div>
     <div class="hlist">
+      <div class="hrow"><b>v1.38</b><span>Починены новости и достижения, удалён лабиринт, антимат в никах</span></div>
       <div class="hrow"><b>v1.37</b><span>Рейтинг и ники, коды на почту, 2048 с анимациями, секреты, честная Ольга</span></div>
       <div class="hrow"><b>v1.36</b><span>Лабиринт 11×11 и честная Ольга, мини-игра 2048, группа на весь экран, 10 новых реакций, обратная анимация в квестах</span></div>
       <div class="hrow"><b>v1.35</b><span>Обучение для новичков, квест «Ядерная триада», 1300+ реакций, счётчики в квестах</span></div>
@@ -1050,7 +1052,6 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
     <h2>Мини-игры</h2>
     <button class="mbtn play" onclick="funPlay()">🎈 Падалки — бесплатно</button>
     <button class="mbtn small" id="fun-mini-btn" onclick="miniMenuGo()">🧩 Три в ряд</button>
-    <button class="mbtn small" onclick="openMaze()">🏃 Лабиринт — бесплатно</button>
     <button class="mbtn small" onclick="open2048()">🔢 2048 — бесплатно <span class="newtag">new</span></button>
     <button class="mbtn small" onclick="openMole()">🐹 Поймай — бесплатно</button>
     <button class="mbtn small" onclick="closeOvl('fun')">Закрыть</button>
@@ -1103,22 +1104,6 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
   </div>
 </div>
 
-<div class="ovl" id="maze">
-  <div class="box" style="max-width:540px">
-    <h2>🏃 Лабиринт Арсения</h2>
-    <p>Собери 4 чикушки и дойди до двери! Ольга ходит через раз — планируй маршрут! Шаги: <b id="mazesteps">0</b> · Чикушки: <b id="mazecoins">0/4</b> · Рекорд: <b id="mazebest">0</b></p>
-    <div id="mazegrid"></div>
-    <div style="font-size:11px;font-weight:800;color:var(--ink2);margin-top:6px">Ты 🟧 · Ольга 🟥 · чикушка 🥤 · выход 🚪</div>
-    <div id="mazepad">
-      <span></span><button class="btn" onclick="mazeMove(-1,0)">▲</button><span></span>
-      <button class="btn" onclick="mazeMove(0,-1)">◀</button><button class="btn" onclick="mazeMove(1,0)">▼</button><button class="btn" onclick="mazeMove(0,1)">▶</button>
-    </div>
-    <div style="display:flex;gap:8px;margin-top:10px">
-      <button class="btn" style="flex:1;min-height:42px" onclick="openMaze()">Заново</button>
-      <button class="btn" style="flex:1;min-height:42px" onclick="exitMiniToFun('maze')">Выйти</button>
-    </div>
-  </div>
-</div>
 <div class="ovl" id="quiz">
   <div class="box" style="max-width:380px">
     <h2>🐹 Поймай элемент!</h2>
@@ -1816,7 +1801,7 @@ function mazeMove(dr, dc){
   mazeDraw();
 }
 document.addEventListener('keydown', ev => {
-  if (!document.getElementById('maze').classList.contains('show')) return;
+  const _mz = document.getElementById('maze'); if (!_mz || !_mz.classList.contains('show')) return;
   if (ev.key === 'ArrowUp') mazeMove(-1, 0);
   else if (ev.key === 'ArrowDown') mazeMove(1, 0);
   else if (ev.key === 'ArrowLeft') mazeMove(0, -1);
@@ -1827,11 +1812,11 @@ document.addEventListener('keydown', ev => {
 (function(){
   let sx = 0, sy = 0;
   document.addEventListener('touchstart', ev => {
-    if (!document.getElementById('maze').classList.contains('show')) return;
+    const _mz = document.getElementById('maze'); if (!_mz || !_mz.classList.contains('show')) return;
     const t = ev.changedTouches[0]; sx = t.clientX; sy = t.clientY;
   }, {passive: true});
   document.addEventListener('touchend', ev => {
-    if (!document.getElementById('maze').classList.contains('show')) return;
+    const _mz = document.getElementById('maze'); if (!_mz || !_mz.classList.contains('show')) return;
     const t = ev.changedTouches[0];
     const dx = t.clientX - sx, dy = t.clientY - sy;
     if (Math.abs(dx) < 24 && Math.abs(dy) < 24) return;
@@ -2167,7 +2152,7 @@ function miniAdj(a, b){
   const r1 = Math.floor(a / MSZ), c1 = a % MSZ, r2 = Math.floor(b / MSZ), c2 = b % MSZ;
   return Math.abs(r1 - r2) + Math.abs(c1 - c2) === 1;
 }
-function miniDraw(pop, drop){
+function miniDraw(pop){
   const g = document.getElementById('minigrid');
   if (!g) return;
   if (!g.dataset.db){ g.dataset.db = '1'; g.addEventListener('pointerdown', miniDragDown); g.addEventListener('pointermove', miniDragMove); g.addEventListener('pointerup', miniDragUp); }
@@ -2177,8 +2162,7 @@ function miniDraw(pop, drop){
   const frag = document.createDocumentFragment();
   miniBoard.forEach((nm, i) => {
     const d = document.createElement('div');
-    d.className = 'mcell' + (i === miniSel ? ' sel' : '') + (pop && pop.indexOf(i) >= 0 ? ' pop' : '') + (drop ? ' drop' : '');
-    if (drop) d.style.animationDelay = (Math.floor(i / MSZ) * 45) + 'ms';
+    d.className = 'mcell' + (i === miniSel ? ' sel' : '') + (pop && pop.indexOf(i) >= 0 ? ' pop' : '');
     const img = document.createElement('img');
     img.src = encodeURI(imgP(nm)); img.alt = nm; img.draggable = false;
     img.onerror = () => { img.remove(); };
@@ -2248,8 +2232,8 @@ function miniResolve(){
       while (col.length < MSZ) col.push(miniKinds[Math.floor(Math.random() * miniKinds.length)]);
       for (let r = MSZ - 1, k = 0; r >= 0; r--, k++) miniBoard[r * MSZ + c] = col[k];
     }
-    miniDraw(null, true);
-    setTimeout(miniResolve, 160);
+    miniDraw();
+    setTimeout(miniResolve, 120);
   }, 260);
 }
 function openMini(){
@@ -2825,6 +2809,157 @@ function qWin(q){
     + (gained ? ('\n+' + gained + ' элементов в основную игру') : ''));
   setTimeout(() => { exitQuest(); openQuests(); }, 1800);
 }
+function toggleSearch(){ searchOn = !searchOn; save(); syncPrefsUI(); syncSearch(); renderGrid(); snd('btn'); toast(searchOn ? 'Поиск включён' : 'Поиск выключен'); }
+let qgMode = 0, qgCur = null;
+const QG_BAN = ['навальный', 'тимерхун', 'ольга серёгавна', 'ольга чекушевна', 'грустная ольга немногочекушевна', 'тимермалик', 'еленка', 'башкирка', 'учитель', 'англичанка'];
+
+function qgPool(){ return ELEMENTS.filter(e => !e.q && QG_BAN.indexOf(norm(e.n)) < 0 && !qgBad(e.n)); }
+
+function qgSample(arr, n){
+  const pool = arr.slice(); const out = [];
+  while (out.length < n && pool.length) out.push(pool.splice(Math.floor(Math.random() * pool.length), 1)[0]);
+  return out;
+}
+
+function qgShuffle(a){ for (let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); const t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+
+function qgImg(n, cover){ return cover ? '<span class="qg-picwrap"><img class="qg-big" src="' + encodeURI(imgP(n)) + '" alt="" onerror="this.remove()"><span class="qg-cover"></span></span>' : '<img class="qg-big" src="' + encodeURI(imgP(n)) + '" alt="" onerror="this.remove()">'; }
+const QG_BAD = ['NSWF+', 'Это жопа Полная', 'Хоррор', 'Очень Страшно', 'Фильм про убийцу', 'Картун Кэт (Тимофей)', 'Монстр', 'Вейп', 'инцидент с вейпом', 'Найденная одноразка', 'Чикушка', 'золотая чикушка', 'Пьянство', 'Баночка', 'Оружие', 'пистолет', 'AK-47', 'Инцидент с ножиком', 'атака', 'самооборона'];
+
+function qgBad(n){ return QG_BAD.indexOf(n) >= 0; }
+
+function qgEsc(s){ return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+function openQuizGen(){
+  snd('dialog');
+  document.getElementById('quizgen-var').textContent = 1 + Math.floor(Math.random() * 20);
+  qgNew();
+  document.getElementById('quizgen').classList.add('show');
+}
+
+function qgType(m){ snd('btn'); qgMode = m; qgNew(); }
+const QG_THEMES = [
+  {id: 'all', label: '🎲 Всё подряд', seeds: null},
+  {id: 'kl6', label: '6 класс', seeds: ['Данил', 'Вадим', 'Чебулькина', 'Витя', 'Ваня', 'Рувим']},
+  {id: 'ars', label: 'Арсений', seeds: ['Арсений']},
+  {id: 'ezhp', label: 'ЭЖП', seeds: ['Это жопа Полная']},
+  {id: 'dan', label: 'Данил', seeds: ['Данил']},
+  {id: 'vad', label: 'Вадим', seeds: ['Вадим']},
+  {id: 'cheb', label: 'Чебулькина', seeds: ['Чебулькина']},
+  {id: 'vit', label: 'Витя', seeds: ['Витя']},
+  {id: 'ser', label: 'Серёга', seeds: ['Серёга']},
+  {id: 'ruv', label: 'Рувим', seeds: ['Рувим']},
+  {id: 'vika', label: 'Вика В', seeds: ['вика в.']}
+];
+
+function achCount(){ return ACH.filter(a => achGot[a.id]).length; }
+
+function checkAch(){
+  const hits = [];
+  for (const a of ACH){
+    if (!achGot[a.id]){ try{ if (a.c()){ achGot[a.id] = 1; hits.push(a.t); } }catch(e){} }
+  }
+  if (hits.length){ save(); snd('quest'); toast('🏆 Достижение: ' + hits.slice(0, 2).join(', ') + (hits.length > 2 ? ' и ещё ' + (hits.length - 2) : '')); }
+}
+
+function renderAch(){
+  document.getElementById('ach-count').textContent = achCount() + '/' + ACH.length;
+  const box = document.getElementById('achlist');
+  box.innerHTML = '';
+  ['Коллекция', 'Лаборатория', 'Квесты', 'Богатство', 'Игры', 'Секреты'].forEach(cat => {
+    const list = ACH.filter(a => (a.cat || 'Коллекция') === cat);
+    if (!list.length) return;
+    const got = list.filter(a => achGot[a.id]).length;
+    const h = document.createElement('div');
+    h.className = 'sgroup';
+    h.textContent = cat + ' · ' + got + '/' + list.length;
+    box.appendChild(h);
+    list.forEach(a => {
+      const has = !!achGot[a.id];
+      const d = document.createElement('div');
+      d.className = 'qcard' + (has ? ' done' : '');
+      if (a.secret && !has) d.innerHTML = '<h3>🔒 Секретное достижение</h3><div class="qd">Подсказка: ' + a.hint + '</div>';
+      else d.innerHTML = '<h3>' + (has ? a.icon : '🔒') + ' ' + (has ? a.t : '???') + (has ? ' ✓' : '') + '</h3>'
+        + '<div class="qd">' + (has ? a.d : '???') + '</div>';
+      box.appendChild(d);
+    });
+  });
+}
+function openAch(){ snd('dialog'); renderAch(); document.getElementById('ach').classList.add('show'); }
+
+function openNews(){ snd('dialog'); document.getElementById('news').classList.add('show'); try{ renderFeed(); }catch(e){} }
+
+/* ---------- чит-меню (NEW, код VMCT) ---------- */
+
+function openCheat(){
+  if (!cheatOn) return;
+  snd('dialog');
+  document.getElementById('cheat-keys-n').value = 5;
+  document.getElementById('cheat-energy-n').value = 500;
+  try{ cheatGSyncUI(); }catch(e){}
+  document.getElementById('cheat').classList.add('show');
+}
+
+function cheatKeys(){
+  const n = Math.max(1, Math.min(999, parseInt(document.getElementById('cheat-keys-n').value, 10) || 0));
+  keys += n; save(); renderAll(); snd('new_a');
+  toast('Выдано ключей: ' + n);
+}
+
+function cheatEnergy(){
+  const n = Math.max(1, Math.min(99999, parseInt(document.getElementById('cheat-energy-n').value, 10) || 0));
+  energy += n; save(); renderAll(); snd('new_a');
+  toast('Выдано энергии: ' + n);
+}
+
+function cheatAll(){
+  let n = 0;
+  ELEMENTS.forEach(e => { if (unlock(e.n)) n++; });
+  undoStack = []; save(); renderAll(); snd('new_a');
+  toast(n ? ('Открыто элементов: ' + n) : 'У тебя и так всё открыто!');
+}
+
+function cheatQuests(){
+  let n = 0;
+  QUESTS.forEach(q => {
+    q.need.forEach(x => { const c = CANON[norm(x)]; if (c && unlock(c)) n++; });
+    questDone[q.id] = 1;
+  });
+  save(); renderAll(); snd('quest');
+  toast('Все квесты пройдены!' + (n ? (' +' + n + ' элементов') : ''));
+}
+
+function cheatCooldowns(){
+  lastClaim = 0; lastRoulette = 0;
+  save(); snd('btn');
+  toast('Кулдауны сброшены: ключи и рулетка снова доступны!');
+}
+
+function cheatEl(){
+  const v = document.getElementById('cheat-el-n').value || '';
+  const c = CANON[norm(v)];
+  if (!c || !EL_MAP[c]){ snd('wrong'); toast('Такого элемента нет'); return; }
+  if (EL_MAP[c].q){ snd('wrong'); toast('Квестовый элемент так не выдать'); return; }
+  if (discovered.has(c)){ snd('wrong'); toast(c + ' уже открыт'); return; }
+  unlock(c); newSet.add(c); save(); renderAll(); snd('new_a');
+  toast('Выдан элемент: ' + c);
+}
+
+function cheatQuestNow(){
+  const q = (typeof Q === 'function') ? Q() : null;
+  if (!q){ snd('wrong'); toast('Открой квест, чтобы пройти его читом'); return; }
+  qNeed().forEach(n => { qSet.add(n); if (qOrder.indexOf(n) < 0) qOrder.push(n); });
+  save(); renderAll(); qRender(); snd('quest');
+  toast('Квест собран читом!');
+  setTimeout(() => qWin(q), 800);
+}
+
+function cheatAch(){
+  ACH.forEach(a => { achGot[a.id] = 1; });
+  save(); snd('quest');
+  toast('Все достижения открыты!');
+}
+
 function renderQuests(){
   const box = document.getElementById('qlist');
   box.innerHTML = '';
@@ -3135,7 +3270,6 @@ const ACH = [
   {id: 'shop1', cat: 'Богатство', icon: '🛒', t: 'Завхоз доволен', d: 'Купить рамки или пунктир. Шопоголик', c: () => ownedBlue || ownedDash},
   {id: 'music1', cat: 'Богатство', icon: '🎵', t: 'Меломан', d: 'Купить свою музыку. Теперь с саундтреком', c: () => ownedMusic},
   {id: 'spin1', cat: 'Игры', icon: '🎰', t: 'Казино «Столовка»', d: 'Крутануть рулетку. Счастливчик', c: () => spins >= 1},
-  {id: 'maze40', cat: 'Игры', icon: '🏃', t: 'Скороход', d: 'Пройти лабиринт за 40 шагов или быстрее', c: () => mazeBest > 0 && mazeBest <= 40},
   {id: 't2048', cat: 'Игры', icon: '🔢', t: 'Стратег', d: 'Набрать 1000 очков в 2048', c: () => { try{ return (parseInt(localStorage.getItem('ag_2048') || '0', 10) || 0) >= 1000; }catch(e){ return false; } }},
   {id: 'cheat1', cat: 'Секреты', icon: '🔧', t: 'Мы тебя видели', d: 'Разблокировать чит-меню. Хакер', c: () => cheatOn},
   {id: 's_night', cat: 'Секреты', secret: 1, icon: '🦉', t: 'Сова', hint: 'Не спится? Загляни в игру после полуночи (0–5 утра)', c: () => { const h = new Date().getHours(); return h < 5; }},
@@ -4177,7 +4311,7 @@ function fbSendScore(){
     FB.db.collection('players').doc(FB.user.uid).set({name: fbPlayerName(), el: discovered.size, reactions: reactions, quests: Object.keys(questDone).length, ach: achCount(), ts: firebase.firestore.FieldValue.serverTimestamp()}, {merge: true}).then(() => { try{ localStorage.setItem('ag_lastscore', JSON.stringify({t: Date.now(), el: discovered.size, r: reactions})); }catch(e){} snd('new_a'); fbSendBtn('done'); toast('Результат отправлен в рейтинг!'); loadRating(); }).catch(() => { fbSendBtn('idle'); toast('Не вышло отправить'); });
   });
 }
-const NICK_BAD = ['хуй','хуе','хуё','пизд','пезд','ебан','ебл','еби','ебу','бля','сука','сучк','мраз','пидор','пидр','гандон','уеб','уёб','хуесос','долбо','мудак','мудил','говн','сран','залуп','fuck','shit','dick','pussy','bitch','nigga','nigger','whore','cunt','asshole','fag','dumbass'];
+const NICK_BAD = ['хуй','хуе','хуё','пизд','пезд','ебан','ебл','еби','ебу','бля','сука','сучк','мраз','пидор','пидр','гандон','уеб','уёб','хуесос','долбо','мудак','мудил','говн','сран','залуп','пенис','penis','писька','сиська','сиськи','вагина','vagin','трах','хер','fuck','shit','dick','pussy','bitch','nigga','nigger','whore','cunt','asshole','fag','dumbass'];
 function nickClean(s){
   s = String(s || '').toLowerCase();
   const leet = {a:'а',b:'б',c:'с',d:'д',e:'е',f:'ф',g:'г',h:'н',i:'и',j:'й',k:'к',l:'л',m:'м',n:'н',o:'о',p:'р',q:'к',r:'р',s:'с',t:'т',u:'у',v:'в',w:'ш',x:'х',y:'у',z:'з','0':'о','1':'и','3':'з','4':'а','5':'с','6':'б','7':'т','8':'в','9':'д','@':'а','$':'с'};
