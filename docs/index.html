@@ -905,7 +905,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
       Файл: <b id="save-hint-name">arseniy-god-save.json</b>. На ПК — «Сохранить как». На телефоне надёжнее «Поделиться» или «Копировать код»: скачивание в WebView иногда молча пропадает.
     </details>
     <div class="sgroup">О игре</div>
-    <div class="credits">Разработчик: <b>Vithel</b><br>Рисовщики: <b>Vithel</b> и <b>Mathil</b><br><span id="verclick" onclick="verTap()" title="v1.39 beta" style="font-size:11px;cursor:pointer;-webkit-user-select:none;user-select:none;color:var(--ink2)">v1.39 beta</span></div>
+    <div class="credits">Разработчик: <b>Vithel</b><br>Рисовщики: <b>Vithel</b> и <b>Mathil</b><br><span id="verclick" onclick="verTap()" title="v1.40 beta" style="font-size:11px;cursor:pointer;-webkit-user-select:none;user-select:none;color:var(--ink2)">v1.40 beta</span></div>
     <div class="credits donate" style="text-align:center"><svg class="ic"><use href="#i-heart" xlink:href="#i-heart"/></svg> Поддержи разработчика<br><span style="font-size:11px">Чтобы увидеть номер, кликни по тексту</span><br><b id="donate-num" onclick="revealDonate()" style="filter:blur(5px);cursor:pointer;-webkit-user-select:none;user-select:none">4279 3806 8503 3450</b><br><span id="donate-name" style="display:none">Шакин В.<br><span style="font-size:11px">Спасибо за доброту! Ты лучший! ❤️</span></span></div>
     <button class="btn wide" onclick="openPrivacy()"><svg class="ic"><use href="#i-lock" xlink:href="#i-lock"/></svg> Политика конфиденциальности</button>
     <div class="sgroup">Опасная зона</div>
@@ -1030,6 +1030,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
     <div class="sgroup">Сообщения от автора</div>
     <div id="author-feed"><div class="hrow">Открой новости с интернетом — подгрузим послания ✉️</div></div>
     <div class="hlist">
+      <div class="hrow"><b>v1.40</b><span>Детектив «Мафия», фикс дуэли: коды ошибок</span></div>
       <div class="hrow"><b>v1.39</b><span>Дуэль с другом, симулятор Арсения, казик, угадай элемент, уборка и чутьё</span></div>
       <div class="hrow"><b>v1.38</b><span>Починены новости и достижения, удалён лабиринт, антимат в никах</span></div>
       <div class="hrow"><b>v1.37</b><span>Рейтинг и ники, коды на почту, 2048 с анимациями, секреты, честная Ольга</span></div>
@@ -1065,6 +1066,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
     <button class="mbtn small" id="fun-mini-btn" onclick="miniMenuGo()">🧩 Три в ряд</button>
     <button class="mbtn small" onclick="open2048()">🔢 2048 — бесплатно <span class="newtag">new</span></button>
     <button class="mbtn small" onclick="openMole()">🐹 Поймай — бесплатно</button>
+    <button class="mbtn small" onclick="openMafia()">🕵️ Мафия — бесплатно</button>
     <button class="mbtn small" onclick="openSim()">🤖 Симулятор Арсения</button>
     <button class="mbtn small" onclick="openQuiz2()">✏️ Угадай элемент</button>
     <button class="mbtn small" onclick="closeOvl('fun')">Закрыть</button>
@@ -1279,6 +1281,31 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
       <div id="dmsg" style="font-size:12px;font-weight:800;color:var(--ink2);margin-top:6px">Выбирай элементы!</div>
     </div>
     <button class="bigbtn" style="margin-top:10px" onclick="duelExit()">Закрыть</button>
+  </div>
+</div>
+
+<div class="ovl" id="mafia">
+  <div class="box" style="max-width:430px">
+    <button class="xbtn" onclick="closeOvl('mafia')" aria-label="Закрыть"><svg class="ic"><use href="#i-x" xlink:href="#i-x"/></svg></button>
+    <h2>🕵️ Мафия Сергиополя</h2>
+    <p>День <b id="mafia-day">1</b> · Очки допроса: <b id="mafia-pts">0</b></p>
+    <div id="mafia-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px"></div>
+    <div class="qd" style="margin:8px 0">Подозреваемый: <b id="mafia-sel">—</b></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+      <button class="btn" onclick="mafiaAsk('where')">Где был? −1</button>
+      <button class="btn" onclick="mafiaAsk('who')">Кого подозреваешь? −1</button>
+      <button class="btn" onclick="mafiaAsk('saw')">Что видел? −1</button>
+      <button class="btn" onclick="mafiaAsk('search')">Обыск −2</button>
+    </div>
+    <div class="btnrow">
+      <button class="btn hint" style="flex:1" onclick="mafiaJail()">Посадить!</button>
+      <button class="btn" style="flex:1" onclick="mafiaSkip()">Дожить до утра</button>
+    </div>
+    <div id="mafia-log" class="hlist" style="max-height:150px;overflow-y:auto;margin-top:8px"></div>
+    <div style="display:flex;gap:8px;margin-top:10px">
+      <button class="btn" style="flex:1;min-height:42px" onclick="mafiaNew()">Заново</button>
+      <button class="btn" style="flex:1;min-height:42px" onclick="closeOvl('mafia')">Выйти</button>
+    </div>
   </div>
 </div>
 
@@ -4353,7 +4380,7 @@ document.addEventListener('visibilitychange', () => {
   if (!music) return;
   if (document.hidden) music.pause(); else if (musicOn && !introPlaying) music.play().catch(()=>{});
 });
-['newbanner', 'settings', 'quests', 'history', 'shop', 'cheat', 'ach', 'wiper', 'fun', 'animtest', 'spin', 'nohints', 'fxwarn', 'news', 'privacy', 'nokeys', 'account', 'rating', 'casino', 'sim', 'quiz2', 'duel'].forEach(id => {
+['newbanner', 'settings', 'quests', 'history', 'shop', 'cheat', 'ach', 'wiper', 'fun', 'animtest', 'spin', 'nohints', 'fxwarn', 'news', 'privacy', 'nokeys', 'account', 'rating', 'casino', 'sim', 'quiz2', 'duel', 'mafia'].forEach(id => {
   document.getElementById(id).addEventListener('click', ev => {
     if (ev.target.id !== id) return;
     if (id === 'newbanner') closeBanner();
@@ -4452,8 +4479,8 @@ function duelCreate(){
         if (s.exists && tries++ < 3){ code = duelCode(); mk(); return; }
         FB.db.collection('lobbies').doc(code).set({hostUid: FB.user.uid, hostName: fbPlayerName(), guestUid: '', guestName: '', secs: duelDurMin * 60, status: 'wait', deadline: 0, hScore: 0, gScore: 0, created: firebase.firestore.FieldValue.serverTimestamp()}).then(() => {
           duelEnter(code, 'h'); snd('new_a'); toast('Лобби ' + code + ' создано! Скажи код другу.');
-        }).catch(() => toast('Не вышло создать'));
-      }).catch(() => toast('Не вышло создать'));
+        }).catch(e => toast('Не вышло создать' + (e && e.code ? ': ' + e.code : '')));
+      }).catch(e => toast('Не вышло создать' + (e && e.code ? ': ' + e.code : '')));
     };
     mk();
   });
@@ -4470,8 +4497,8 @@ function duelJoin(){
       const d = s.data() || {};
       if (d.status !== 'wait'){ snd('wrong'); toast('Бой уже идёт или окончен'); return; }
       if (d.guestUid && d.guestUid !== FB.user.uid){ snd('wrong'); toast('Лобби занято'); return; }
-      ref.update({guestUid: FB.user.uid, guestName: fbPlayerName()}).then(() => duelEnter(code, 'g')).catch(() => toast('Не вышло войти'));
-    }).catch(() => toast('Не вышло войти'));
+      ref.update({guestUid: FB.user.uid, guestName: fbPlayerName()}).then(() => duelEnter(code, 'g')).catch(e => toast('Не вышло войти' + (e && e.code ? ': ' + e.code : '')));
+    }).catch(e => toast('Не вышло войти' + (e && e.code ? ': ' + e.code : '')));
   });
 }
 function duelEnter(code, role){
@@ -4510,7 +4537,7 @@ function duelRender(){
 }
 function duelStart(){
   if (!duel || duel.role !== 'h') return;
-  FB.db.collection('lobbies').doc(duel.code).update({status: 'go', deadline: Date.now() + duel.secs * 1000}).catch(() => toast('Не вышло стартовать'));
+  FB.db.collection('lobbies').doc(duel.code).update({status: 'go', deadline: Date.now() + duel.secs * 1000}).catch(e => toast('Не вышло стартовать' + (e && e.code ? ': ' + e.code : '')));
 }
 function duelLeave(silent){
   if (duel){
@@ -4632,6 +4659,116 @@ function duelFinish(){
   duelShow('room');
   document.getElementById('duel-state').textContent = win ? 'победа! 🏆' : (draw ? 'ничья' : 'поражение');
   duelRender();
+}
+const MAFIA_POOL = ['Данил', 'Тимофей', 'Vithel', 'Матхил', 'Саша', 'Бурик', 'Серёга', 'Костя', 'Ильмир', 'Вадим', 'Ваня', 'Витя', 'Дима', 'Артём', 'Анджелика'];
+let mafia = null;
+function openMafia(){ snd('qstart'); if (!mafia || mafia.over) mafiaNew(); else mafiaDraw(); document.getElementById('mafia').classList.add('show'); }
+function mafiaNew(){
+  const pool = [...MAFIA_POOL];
+  const crew = [];
+  while (crew.length < 6 && pool.length) crew.push(pool.splice(Math.floor(Math.random() * pool.length), 1)[0]);
+  const boss = Math.floor(Math.random() * crew.length);
+  mafia = {day: 1, pts: 6 + Math.floor(Math.random() * 4), sel: null, over: false, log: [], crew: crew.map((n, i) => ({n: n, mafia: i === boss, alive: true}))};
+  mafiaLog('Среди этих шестерых — мафия. Допроси их: каждый вопрос −1 очко, обыск −2.');
+  mafiaDraw();
+}
+function mafiaLog(s){
+  mafia.log.push('День ' + mafia.day + ': ' + s);
+  if (mafia.log.length > 40) mafia.log.shift();
+  const L = document.getElementById('mafia-log');
+  if (L){ L.innerHTML = mafia.log.map(x => '<div class="hrow"><span>' + x + '</span></div>').join(''); L.scrollTop = L.scrollHeight; }
+}
+function mafiaNeedSel(){
+  if (!mafia || mafia.over) return null;
+  const c = mafia.crew.find(x => x.n === mafia.sel && x.alive);
+  if (!c){ snd('wrong'); toast('Сначала выбери живого подозреваемого'); return null; }
+  return c;
+}
+function mafiaDraw(){
+  if (!mafia) return;
+  document.getElementById('mafia-day').textContent = mafia.day;
+  document.getElementById('mafia-pts').textContent = mafia.pts;
+  document.getElementById('mafia-sel').textContent = mafia.sel || '—';
+  const g = document.getElementById('mafia-grid');
+  g.innerHTML = '';
+  const frag = document.createDocumentFragment();
+  mafia.crew.forEach(c => {
+    const d = document.createElement('div');
+    d.className = 'ec' + (!c.alive ? ' tried' : '') + ((mafia.sel === c.n && c.alive) ? ' sel' : '');
+    d.onclick = () => { if (!c.alive || (mafia && mafia.over)) return; mafia.sel = c.n; snd('click'); mafiaDraw(); };
+    const img = document.createElement('img');
+    img.src = encodeURI(imgP(c.n)); img.alt = c.n; img.draggable = false;
+    img.onerror = () => { img.style.display = 'none'; };
+    const sp = document.createElement('span'); sp.className = 'en'; sp.textContent = c.alive ? c.n : c.n + ' ☠️';
+    d.appendChild(img); d.appendChild(sp);
+    frag.appendChild(d);
+  });
+  g.appendChild(frag);
+}
+function mafiaAsk(kind){
+  const c = mafiaNeedSel();
+  if (!c) return;
+  const cost = kind === 'search' ? 2 : 1;
+  if (mafia.pts < cost){ snd('wrong'); toast('Очков не хватает — доживи до утра'); return; }
+  mafia.pts -= cost;
+  const others = mafia.crew.filter(x => x.alive && x.n !== c.n && !x.mafia);
+  const boss = mafia.crew.find(x => x.mafia);
+  const rnd = a => a[Math.floor(Math.random() * a.length)];
+  let say = '';
+  if (kind === 'where'){
+    say = c.mafia
+      ? ('Всю ночь был с ' + (others.length ? rnd(others).n : 'другом') + '. Спроси у него!')
+      : (Math.random() < 0.5 ? 'Был дома, спал.' : ('Был дома. А ' + boss.n + ' всю ночь где-то шнырял, кстати.'));
+  } else if (kind === 'who'){
+    say = c.mafia
+      ? ('Это точно ' + (others.length ? rnd(others).n : 'кто-то из вас') + '! Я сам видел!')
+      : (Math.random() < 0.65 ? ('Думаю, это ' + boss.n + '. У него глаза бегают.') : ('Не знаю... может, ' + (others.length ? rnd(others).n : 'никто') + '?'));
+  } else if (kind === 'saw'){
+    say = c.mafia
+      ? ('Видел, как ' + (others.length ? rnd(others).n : 'кто-то') + ' ночью выходил из столовки!')
+      : (Math.random() < 0.6 ? ('Видел, как ' + boss.n + ' ночью выходил из столовки!') : 'Ничего не видел, спал как убитый.');
+  } else {
+    say = c.mafia ? '🔫 У него тёмное дело! Это точно он!' : 'Чисто. Только крошки от чикушки в карманах.';
+  }
+  snd('hint');
+  mafiaLog(c.n + ': «' + say + '»');
+  mafiaDraw();
+}
+function mafiaSkip(){
+  if (!mafia || mafia.over) return;
+  mafia.day++;
+  mafia.pts = 6 + Math.floor(Math.random() * 4);
+  snd('btn');
+  const victims = mafia.crew.filter(x => x.alive && !x.mafia);
+  if (victims.length && Math.random() < 0.4){
+    const v = victims[Math.floor(Math.random() * victims.length)];
+    v.alive = false;
+    if (mafia.sel === v.n) mafia.sel = null;
+    mafiaLog('😱 Ночью убили ' + v.n + '! Мафия не дремлет. Очки восстановлены.');
+    if (!mafia.crew.some(x => x.alive && !x.mafia)){ mafiaWin(); return; }
+  } else mafiaLog('Ночь прошла спокойно. Очки восстановлены.');
+  mafiaDraw();
+}
+function mafiaJail(){
+  if (!mafia || mafia.over) return;
+  const c = mafiaNeedSel();
+  if (!c) return;
+  mafia.over = true;
+  if (c.mafia){ mafiaWin(); return; }
+  c.alive = false;
+  energy = Math.max(0, energy - 20);
+  save(); renderAll(); snd('no');
+  mafiaLog('❌ Ошибка! ' + c.n + ' невиновен. Ты проиграл. −20 ⚡');
+  toast('Промах! Это был не он. −20 ⚡');
+  mafiaDraw();
+}
+function mafiaWin(){
+  mafia.over = true;
+  energy += 50; energyEarned += 50;
+  save(); renderAll(); snd('quest');
+  mafiaLog('🎉 Мафия поймана! +50 ⚡');
+  toast('🎉 Победа над мафией! +50 ⚡');
+  mafiaDraw();
 }
 function openRating(){ snd('dialog'); document.getElementById('rating').classList.add('show'); try{ loadRating(); }catch(e){} }
 function fbPlayerName(){
