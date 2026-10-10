@@ -1159,6 +1159,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
       <button class="btn hint" style="flex:1" onclick="fbSendScore()">Отправить результат</button>
       <button class="btn" style="flex:1" onclick="loadRating()">Обновить</button>
     </div>
+    <button class="btn" style="width:100%;margin-top:8px;min-height:40px" onclick="accCopyRules()">📋 Правила для базы (разработчику)</button>
     <button class="bigbtn" style="margin-top:14px" onclick="closeOvl('rating')">Закрыть</button>
   </div>
 </div>
@@ -4244,10 +4245,20 @@ function loadRating(){
   });
 }
 function fbSendScore(){
+  let last = null;
+  try{ last = JSON.parse(localStorage.getItem('ag_lastscore') || 'null'); }catch(e){}
+  const now = Date.now();
+  if (last && now - last.t < 5 * 60 * 1000){
+    const s = Math.ceil((5 * 60 * 1000 - (now - last.t)) / 1000);
+    snd('wrong');
+    toast('Не так часто! Подожди ' + Math.floor(s / 60) + ':' + ('0' + (s % 60)).slice(-2));
+    return;
+  }
+  if (last && discovered.size <= last.el && reactions <= last.r){ snd('wrong'); toast('Результат не улучшился — отправлять нечего'); return; }
   ensureFB(ok => {
     if (!ok) return;
     if (!FB.user){ toast('Сначала войди в аккаунт'); return; }
-    FB.db.collection('players').doc(FB.user.uid).set({name: fbPlayerName(), el: discovered.size, reactions: reactions, quests: Object.keys(questDone).length, ach: achCount(), ts: firebase.firestore.FieldValue.serverTimestamp()}, {merge: true}).then(() => { snd('new_a'); toast('Результат отправлен в рейтинг!'); loadRating(); }).catch(() => toast('Не вышло отправить'));
+    FB.db.collection('players').doc(FB.user.uid).set({name: fbPlayerName(), el: discovered.size, reactions: reactions, quests: Object.keys(questDone).length, ach: achCount(), ts: firebase.firestore.FieldValue.serverTimestamp()}, {merge: true}).then(() => { try{ localStorage.setItem('ag_lastscore', JSON.stringify({t: Date.now(), el: discovered.size, r: reactions})); }catch(e){} snd('new_a'); toast('Результат отправлен в рейтинг!'); loadRating(); }).catch(() => toast('Не вышло отправить'));
   });
 }
 function openAccount(){ snd('dialog'); try{ renderAccount(); }catch(e){} document.getElementById('account').classList.add('show'); }
