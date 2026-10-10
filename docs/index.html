@@ -351,6 +351,9 @@ button,input,textarea{font-family:inherit}
 @keyframes foepulse{50%{box-shadow:0 0 0 3px var(--bad),0 0 14px rgba(184,64,47,.7)}}
 .mz.coin img{animation:coinbob 1.4s ease-in-out infinite}
 @keyframes coinbob{50%{transform:translateY(-3px) rotate(10deg)}}
+.mz{min-width:0;min-height:0;overflow:hidden}
+.mz img{min-width:0;min-height:0}
+#mazegrid{width:100%;box-sizing:border-box}
 #mazepad{display:grid;grid-template-columns:repeat(3,64px);gap:8px;justify-content:center;margin-top:12px}
 #mazepad .btn{min-height:50px;font-size:18px}
 #t2048-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;touch-action:none}
@@ -644,6 +647,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
     <button class="mbtn small" onclick="openFun()"><span class="mi"><svg class="ic"><use href="#i-gamepad" xlink:href="#i-gamepad"/></svg></span>Мини-игры</button>
     <button class="mbtn small" onclick="openNews()"><span class="mi"><svg class="ic"><use href="#i-news" xlink:href="#i-news"/></svg></span>Новости</button>
     <button class="mbtn small" onclick="openSettings()"><span class="mi"><svg class="ic"><use href="#i-sliders" xlink:href="#i-sliders"/></svg></span>Настройки</button>
+    <button class="mbtn small" onclick="openRating()"><span class="mi">🏆</span>Рейтинг</button>
     <button class="mbtn small" onclick="openAccount()"><span class="mi"><svg class="ic"><use href="#i-user" xlink:href="#i-user"/></svg></span>Аккаунт</button>
   </div>
   <button class="mbtn small" style="display:none" onclick="runIntro(true)">Сюжет</button>
@@ -1071,7 +1075,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
     <h2>🏃 Лабиринт Арсения</h2>
     <p>Собери 4 чикушки и дойди до двери! Ольга ходит через раз — планируй маршрут! Шаги: <b id="mazesteps">0</b> · Чикушки: <b id="mazecoins">0/4</b> · Рекорд: <b id="mazebest">0</b></p>
     <div id="mazegrid"></div>
-    <div style="font-size:11px;font-weight:800;color:var(--ink2);margin-top:6px">🟧 — ты · 🟥 — Ольга · 🥤 — чикушка · 🚪 — выход</div>
+    <div style="font-size:11px;font-weight:800;color:var(--ink2);margin-top:6px">Ты 🟧 · Ольга 🟥 · чикушка 🥤 · выход 🚪</div>
     <div id="mazepad">
       <span></span><button class="btn" onclick="mazeMove(-1,0)">▲</button><span></span>
       <button class="btn" onclick="mazeMove(0,-1)">◀</button><button class="btn" onclick="mazeMove(1,0)">▼</button><button class="btn" onclick="mazeMove(0,1)">▶</button>
@@ -1142,6 +1146,20 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
     <div id="acc-stats" class="hlist"></div>
 
     <button class="bigbtn" style="margin-top:14px" onclick="closeOvl('account')">Закрыть</button>
+  </div>
+</div>
+
+<div class="ovl" id="rating">
+  <div class="box">
+    <button class="xbtn" onclick="closeOvl('rating')" aria-label="Закрыть"><svg class="ic"><use href="#i-x" xlink:href="#i-x"/></svg></button>
+    <h2>Рейтинг игроков</h2>
+    <p>Топ-25 по числу элементов. Нажми «Отправить результат», чтобы попасть в таблицу.</p>
+    <div class="hlist" id="rating-list"></div>
+    <div class="btnrow">
+      <button class="btn hint" style="flex:1" onclick="fbSendScore()">Отправить результат</button>
+      <button class="btn" style="flex:1" onclick="loadRating()">Обновить</button>
+    </div>
+    <button class="bigbtn" style="margin-top:14px" onclick="closeOvl('rating')">Закрыть</button>
   </div>
 </div>
 
@@ -2040,7 +2058,7 @@ function funCfg(){
   items.forEach(d => {
     d.classList.toggle('flip', fl);
     d.style.opacity = op;
-    d.style.animationDuration = (sp * (+d.dataset.k || 1)) + 's';
+    d.style.animationDuration = ((34 - sp) * (+d.dataset.k || 1)) + 's';
     d.style.setProperty('--rr', rr + 'deg');
   });
 }
@@ -2049,7 +2067,7 @@ function funSpawn(box, pool, sp, op, fl, rr, rnd){
   const d = document.createElement('div');
   d.className = 'fitem' + (fl ? ' flip' : '');
   d.dataset.k = 0.7 + Math.random() * 0.6;
-  const dur = sp * (+d.dataset.k);
+  const dur = (34 - sp) * (+d.dataset.k);
   d.style.left = (Math.random() * 92) + 'vw';
   d.style.opacity = op;
   d.style.animationDuration = dur + 's';
@@ -4120,7 +4138,7 @@ document.addEventListener('visibilitychange', () => {
   if (!music) return;
   if (document.hidden) music.pause(); else if (musicOn && !introPlaying) music.play().catch(()=>{});
 });
-['newbanner', 'settings', 'quests', 'history', 'shop', 'cheat', 'ach', 'wiper', 'fun', 'animtest', 'spin', 'nohints', 'fxwarn', 'news', 'privacy', 'nokeys', 'account'].forEach(id => {
+['newbanner', 'settings', 'quests', 'history', 'shop', 'cheat', 'ach', 'wiper', 'fun', 'animtest', 'spin', 'nohints', 'fxwarn', 'news', 'privacy', 'nokeys', 'account', 'rating'].forEach(id => {
   document.getElementById(id).addEventListener('click', ev => {
     if (ev.target.id !== id) return;
     if (id === 'newbanner') closeBanner();
@@ -4155,7 +4173,7 @@ const EMAILJS_TEMPLATE = "template_smshlr9";
 const EMAILJS_PUBLIC = "1jR_mcUspUypk4jsW";
 let accPending = null;
 let FB = {ok: false, auth: null, db: null, user: null, loading: false};
-const FB_RULES = "rules_version = '2';\nservice cloud.firestore {\n  match /databases/{db}/documents {\n    match /author_posts/{post} {\n      allow read: if true;\n      allow create, delete: if request.auth != null && request.auth.uid == 'ВСТАВЬ_ADMIN_UID';\n      allow update: if request.auth != null;\n      match /comments/{c} {\n        allow read: if true;\n        allow create: if request.auth != null;\n      }\n    }\n  }\n}";
+const FB_RULES = "rules_version = '2';\nservice cloud.firestore {\n  match /databases/{db}/documents {\n    match /author_posts/{post} {\n      allow read: if true;\n      allow create, delete: if request.auth != null && request.auth.uid == 'ВСТАВЬ_ADMIN_UID';\n      allow update: if request.auth != null;\n      match /comments/{c} {\n        allow read: if true;\n        allow create: if request.auth != null;\n      }\n    }\n    match /players/{uid} {\n      allow read: if true;\n      allow write: if request.auth != null && request.auth.uid == uid;\n    }\n  }\n}";
 function loadScript(src, cb, err){
   const s = document.createElement('script');
   s.src = src;
@@ -4197,6 +4215,40 @@ function fbNeedVerified(){
   if (!FB.user){ toast('Сначала войди в аккаунт'); return false; }
   if (!fbMailOk()){ toast('Подтверди почту кодом из письма'); return false; }
   return true;
+}
+function openRating(){ snd('dialog'); document.getElementById('rating').classList.add('show'); try{ loadRating(); }catch(e){} }
+function fbPlayerName(){
+  const u = FB.user;
+  if (!u) return '?';
+  return ((u.displayName || (u.email || '?').split('@')[0]) + '').slice(0, 24);
+}
+function loadRating(){
+  const box = document.getElementById('rating-list');
+  if (!box) return;
+  if (!FIREBASE_CONFIG){ box.innerHTML = '<div class="hrow">📴 Рейтинг выключен (нет онлайна).</div>'; return; }
+  ensureFB(ok => {
+    if (!ok){ box.innerHTML = '<div class="hrow">📴 Нет связи. Открой с интернетом.</div>'; return; }
+    box.innerHTML = '<div class="hrow">Загрузка...</div>';
+    FB.db.collection('players').orderBy('el', 'desc').limit(25).get().then(snap => {
+      if (snap.empty){ box.innerHTML = '<div class="hrow">Пока пусто — стань первым! 🏆</div>'; return; }
+      const medals = ['🥇', '🥈', '🥉'];
+      let i = 0, html = '';
+      snap.forEach(doc => {
+        const d = doc.data() || {};
+        const me = (FB.user && doc.id === FB.user.uid) ? ' style="border-color:var(--gold)"' : '';
+        html += '<div class="hrow"' + me + '><span>' + (medals[i] || ((i + 1) + '.')) + ' ' + String(d.name || '?').replace(/</g, '&lt;') + '</span><b>' + (d.el || 0) + ' ⚗️ · ' + (d.reactions || 0) + ' 🧪</b></div>';
+        i++;
+      });
+      box.innerHTML = html;
+    }).catch(() => { box.innerHTML = '<div class="hrow">Не загрузилось. Проверь правила Firestore.</div>'; });
+  });
+}
+function fbSendScore(){
+  ensureFB(ok => {
+    if (!ok) return;
+    if (!FB.user){ toast('Сначала войди в аккаунт'); return; }
+    FB.db.collection('players').doc(FB.user.uid).set({name: fbPlayerName(), el: discovered.size, reactions: reactions, quests: Object.keys(questDone).length, ach: achCount(), ts: firebase.firestore.FieldValue.serverTimestamp()}, {merge: true}).then(() => { snd('new_a'); toast('Результат отправлен в рейтинг!'); loadRating(); }).catch(() => toast('Не вышло отправить'));
+  });
 }
 function openAccount(){ snd('dialog'); try{ renderAccount(); }catch(e){} document.getElementById('account').classList.add('show'); }
 function accFmtDate(ms){ try{ return new Date(ms).toLocaleDateString('ru-RU'); }catch(e){ return '—'; } }
