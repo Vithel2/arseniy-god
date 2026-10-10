@@ -371,11 +371,38 @@ img{-webkit-touch-callout:none;-webkit-user-drag:none;user-select:none;-webkit-u
 @keyframes tpop{0%{transform:scale(.55)}55%{transform:scale(1.2)}100%{transform:scale(1)}}
 .mcell.drop img{animation:mdrop .32s ease}
 @keyframes mdrop{from{opacity:0;transform:translateY(-26px) scale(.9)}to{opacity:1;transform:none}}
+#ezgrid{display:grid;grid-template-columns:repeat(9,1fr);gap:3px;touch-action:none;max-width:420px;margin:0 auto;background:rgba(43,35,24,.25);padding:8px;border-radius:18px;box-shadow:inset 0 3px 10px rgba(30,22,12,.5)}
+.ez{aspect-ratio:1;background:rgba(236,226,203,.8);border-radius:6px;display:flex;align-items:center;justify-content:center;min-width:0;min-height:0;overflow:hidden;position:relative}
+.ez img{width:90%;height:90%;object-fit:contain;min-width:0;pointer-events:none}
+.ez.me{background:rgba(232,162,26,.35);box-shadow:0 0 0 2px var(--amber-edge)}
+.ez.knife{box-shadow:0 0 0 2px var(--bad)}
+.ez.roll{box-shadow:0 0 0 2px var(--blue)}
+.ez .tag{position:absolute;right:1px;bottom:0;font-size:11px}
+#ezpad{display:grid;grid-template-columns:repeat(3,58px);gap:8px;justify-content:center;margin-top:12px}
+#ezpad .btn{min-height:50px;font-size:18px}
 @media (max-width:760px){#rating .xbtn{display:none}}
 .btn.busy{animation:btnpulse 1s ease-in-out infinite;opacity:.85}
 @keyframes btnpulse{50%{opacity:.55}}
 .ec.sense img{box-shadow:0 0 0 3px var(--gold),0 0 16px rgba(217,145,0,.85);animation:sensepulse 1.2s ease-in-out infinite}
 @keyframes sensepulse{50%{box-shadow:0 0 0 4px var(--gold),0 0 22px rgba(217,145,0,.9)}}
+body[data-theme="mint"]{--paper:#d9e9d4;--surf:#e9f3e4;--surf-hi:#f7fcf5;--surf-lo:#c4d6b8;--ink:#22301f;--ink2:#5a6b52;--gold:#2f9e6e;--gold-d:#0e5c3a;--amber-1:#7fd6a8;--amber-2:#3fb97f;--amber-edge:#1f7a4d;--amber-deep:#155c39}
+body[data-theme="sky"]{--paper:#d7e6f2;--surf:#e7f0f9;--surf-hi:#f6fbff;--surf-lo:#bccfdd;--ink:#1f2c3d;--ink2:#54667c;--gold:#2f7fd6;--gold-d:#0c4a8a;--amber-1:#7cc0f2;--amber-2:#3f9fe0;--amber-edge:#1c6aa8;--amber-deep:#134e7d}
+body[data-theme="berry"]{--paper:#eed9e2;--surf:#f7e8ee;--surf-hi:#fdf5f8;--surf-lo:#d9b9c7;--ink:#3a1f2c;--ink2:#7c5465;--gold:#c2437f;--gold-d:#7d1c48;--amber-1:#f097b8;--amber-2:#dd5f92;--amber-edge:#a12c5c;--amber-deep:#771f44}
+.theme-sw{width:40px;height:40px;border-radius:50%;border:3px solid var(--line2);cursor:pointer;padding:0;flex:none}
+.theme-sw.on{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold)}
+#start-logo-txt{display:none;font-size:46px;font-weight:900;letter-spacing:-.02em;color:var(--ink);text-align:center;line-height:1;margin:8px 0 2px}
+#start-logo-txt span{color:var(--gold)}
+body[data-theme]:not([data-theme=""]) #start-art{display:none}
+body[data-theme]:not([data-theme=""]) #start-logo-txt{display:block}
+body[data-theme]:not([data-theme=""]) #bg{background-image:none}
+body[data-theme]:not([data-theme=""]) #qgame{background-image:none}
+body[data-theme]:not([data-theme=""]) #hdr{background:var(--panel)}
+body[data-theme]:not([data-theme=""]) .bar{background:var(--panel)}
+body[data-theme]:not([data-theme=""]) .phead{background:var(--panel)}
+body[data-theme]:not([data-theme=""]) #qhdr{background:var(--panel)}
+body[data-theme]:not([data-theme=""]) .btn.q{background:linear-gradient(180deg,var(--amber-1),var(--amber-2));color:#3a2400}
+body[data-theme]:not([data-theme=""]) #qgoal{background:rgba(128,128,128,.18);border-color:var(--line2)}
+body[data-theme]:not([data-theme=""]) .qs.goal{background:rgba(128,128,128,.25);color:var(--ink)}
 #rotate-tip{display:none}
 @media (orientation:landscape) and (max-height:520px){
   #rotate-tip{display:flex;position:fixed;inset:0;z-index:5000;align-items:center;justify-content:center;background:var(--paper);font-size:22px;font-weight:900;text-align:center;line-height:1.5;padding:20px}
@@ -674,6 +701,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 
 <div id="start">
   <img id="start-art" src="Backgrounds/Nachalnyy_fon_s_logotipom_bez_knopok.jpg" alt="Арсений God">
+  <div id="start-logo-txt">Арсений <span>God</span></div>
   <div class="sub">алхимия Сергиополя</div>
   <button class="mbtn play" onclick="playGame()"><svg class="ic"><use href="#i-play" xlink:href="#i-play"/></svg>Играть</button>
   <div class="mgrid">
@@ -685,6 +713,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
     <button class="mbtn small" onclick="openSettings()"><span class="mi"><svg class="ic"><use href="#i-sliders" xlink:href="#i-sliders"/></svg></span>Настройки</button>
     <button class="mbtn small" onclick="openRating()"><span class="mi">🏆</span>Рейтинг</button>
     <button class="mbtn small" onclick="openDuel()"><span class="mi">⚔️</span>Дуэль</button>
+    <button class="mbtn small" onclick="openFriends()"><span class="mi">👥</span>Друзья</button>
     <button class="mbtn small" onclick="openAccount()"><span class="mi"><svg class="ic"><use href="#i-user" xlink:href="#i-user"/></svg></span>Аккаунт</button>
   </div>
   <button class="mbtn small" style="display:none" onclick="runIntro(true)">Сюжет</button>
@@ -878,6 +907,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
     <h2>Настройки</h2>
     <div class="sgroup">Игра</div>
     <div class="srow"><span>Поиск элементов</span><button class="sw" id="sw-search" onclick="toggleSearch()"></button></div>
+    <div class="srow"><span>Тема оформления</span><span id="theme-row"><button class="theme-sw" data-th="" title="Песок" style="background:linear-gradient(135deg,#f7f1e1,#c98f00)" onclick="setTheme('')"></button> <button class="theme-sw" data-th="mint" title="Мята" style="background:linear-gradient(135deg,#e9f3e4,#2f9e6e)" onclick="setTheme('mint')"></button> <button class="theme-sw" data-th="sky" title="Небо" style="background:linear-gradient(135deg,#e7f0f9,#2f7fd6)" onclick="setTheme('sky')"></button> <button class="theme-sw" data-th="berry" title="Малина" style="background:linear-gradient(135deg,#f7e8ee,#c2437f)" onclick="setTheme('berry')"></button></span></div>
     <div class="srow"><span>Плавные анимации <small class="rec">рекомендуется</small></span><button class="sw" id="sw-fx" onclick="toggleFx()"></button></div>
     <div class="srow"><span>FPS-счётчик</span><span class="srow-r"><b id="fps-val">–</b> <button class="sw" id="sw-fps" onclick="toggleFps()"></button></span></div>
     <button class="btn wide" onclick="runTutor(true)"><svg class="ic"><use href="#i-book" xlink:href="#i-book"/></svg> Обучение: как играть</button>
@@ -905,7 +935,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
       Файл: <b id="save-hint-name">arseniy-god-save.json</b>. На ПК — «Сохранить как». На телефоне надёжнее «Поделиться» или «Копировать код»: скачивание в WebView иногда молча пропадает.
     </details>
     <div class="sgroup">О игре</div>
-    <div class="credits">Разработчик: <b>Vithel</b><br>Рисовщики: <b>Vithel</b> и <b>Mathil</b><br><span id="verclick" onclick="verTap()" title="v1.40 beta" style="font-size:11px;cursor:pointer;-webkit-user-select:none;user-select:none;color:var(--ink2)">v1.40 beta</span></div>
+    <div class="credits">Разработчик: <b>Vithel</b><br>Рисовщики: <b>Vithel</b> и <b>Mathil</b><br><span id="verclick" onclick="verTap()" title="v1.43 beta" style="font-size:11px;cursor:pointer;-webkit-user-select:none;user-select:none;color:var(--ink2)">v1.43 beta</span></div>
     <div class="credits donate" style="text-align:center"><svg class="ic"><use href="#i-heart" xlink:href="#i-heart"/></svg> Поддержи разработчика<br><span style="font-size:11px">Чтобы увидеть номер, кликни по тексту</span><br><b id="donate-num" onclick="revealDonate()" style="filter:blur(5px);cursor:pointer;-webkit-user-select:none;user-select:none">4279 3806 8503 3450</b><br><span id="donate-name" style="display:none">Шакин В.<br><span style="font-size:11px">Спасибо за доброту! Ты лучший! ❤️</span></span></div>
     <button class="btn wide" onclick="openPrivacy()"><svg class="ic"><use href="#i-lock" xlink:href="#i-lock"/></svg> Политика конфиденциальности</button>
     <div class="sgroup">Опасная зона</div>
@@ -937,9 +967,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
     <div class="shop-item"><span class="si"><svg class="ic"><use href="#i-frame-dash" xlink:href="#i-frame-dash"/></svg></span><div><div class="t">Пунктир</div><div class="d">Элементам, которым не хватает открытых пар, — пунктир. Скидка навсегда!</div></div><button class="btn" id="shop-buy-dash" onclick="buyDash()">Купить</button></div>
     <div class="shop-item"><span class="si"><svg class="ic"><use href="#i-music" xlink:href="#i-music"/></svg></span><div><div class="t">Своя музыка</div><div class="d">Выбор игрового трека. 50 ⚡</div></div><button class="btn" id="shop-buy-music" onclick="buyMusic()">Купить</button></div>
     <div class="shop-item"><span class="si"><svg class="ic"><use href="#i-bulb" xlink:href="#i-bulb"/></svg></span><div><div class="t">Подсказка</div><div class="d">Одна штука. 5 ⚡</div></div><button class="btn" id="shop-buy-hint" onclick="buyHint()">Купить</button></div>
-    <div class="shop-item"><span class="si" style="font-size:24px">🎲</span><div><div class="t">Слепой бокс: мусор</div><div class="d" id="shop-tier1-d">Случайный простой элемент</div></div><button class="btn" id="shop-tier1" onclick="buyBlind(1)">25 ⚡</button></div>
-    <div class="shop-item"><span class="si" style="font-size:24px">🎲</span><div><div class="t">Слепой бокс: средний</div><div class="d" id="shop-tier2-d">Случайный средний элемент</div></div><button class="btn" id="shop-tier2" onclick="buyBlind(2)">100 ⚡</button></div>
-    <div class="shop-item"><span class="si" style="font-size:24px">🎲</span><div><div class="t">Слепой бокс: крутой</div><div class="d" id="shop-tier3-d">Случайный крутой элемент</div></div><button class="btn" id="shop-tier3" onclick="buyBlind(3)">300 ⚡</button></div>
+    <div class="shop-item"><span class="si" style="font-size:24px">🎲</span><div><div class="t">Слепые боксы</div><div class="d" id="shop-tier-d">Мусор ×1 · средний ×2 · крутой ×3</div></div><button class="btn" id="shop-tier1" onclick="buyBlind(1)">10 ⚡</button><button class="btn" id="shop-tier2" onclick="buyBlind(2)">50 ⚡</button><button class="btn" id="shop-tier3" onclick="buyBlind(3)">150 ⚡</button></div>
     <div class="shop-item"><span class="si" style="font-size:24px">🧹</span><div><div class="t">Уборка полок</div><div class="d" id="shop-clean-d">Прячет навсегда пустые элементы</div></div><button class="btn" onclick="buyClean()">400 ⚡</button><button class="btn" onclick="unhideAll()">Вернуть все</button></div>
     <div class="shop-item"><span class="si" style="font-size:24px">👃</span><div><div class="t">Чутьё алхимика</div><div class="d">Подсвечивает пары к выбранному элементу</div></div><button class="btn" id="shop-sense" onclick="buySense()">1000 ⚡</button></div>
     <div class="shop-item"><span class="si" style="font-size:24px">🎰</span><div><div class="t">Казик</div><div class="d">Ставь энергию. Шанс удвоить — 45%</div></div><button class="btn hint" onclick="openCasino()">Играть</button></div>
@@ -1027,9 +1055,10 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
     <button class="xbtn" onclick="closeOvl('news')" aria-label="Закрыть"><svg class="ic"><use href="#i-x" xlink:href="#i-x"/></svg></button>
     <h2>Новости</h2>
     <p>Что нового в игре:</p>
-    <div class="sgroup">Сообщения от автора</div>
-    <div id="author-feed"><div class="hrow">Открой новости с интернетом — подгрузим послания ✉️</div></div>
     <div class="hlist">
+      <div class="hrow"><b>v1.43</b><span>Еленка ловит Саш, раннер от шампуня, мафия от Рамиля</span></div>
+      <div class="hrow"><b>v1.42</b><span>Друзья, подарки и профили, темы, боксы дешевле</span></div>
+      <div class="hrow"><b>v1.41</b><span>Друзья и чат, дуэль по приглашению, мафия на 9 игроков</span></div>
       <div class="hrow"><b>v1.40</b><span>Детектив «Мафия», фикс дуэли: коды ошибок</span></div>
       <div class="hrow"><b>v1.39</b><span>Дуэль с другом, симулятор Арсения, казик, угадай элемент, уборка и чутьё</span></div>
       <div class="hrow"><b>v1.38</b><span>Починены новости и достижения, удалён лабиринт, антимат в никах</span></div>
@@ -1066,6 +1095,8 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
     <button class="mbtn small" id="fun-mini-btn" onclick="miniMenuGo()">🧩 Три в ряд</button>
     <button class="mbtn small" onclick="open2048()">🔢 2048 — бесплатно <span class="newtag">new</span></button>
     <button class="mbtn small" onclick="openMole()">🐹 Поймай — бесплатно</button>
+    <button class="mbtn small" onclick="openElena()">🏃 Еленка ловит Саш</button>
+    <button class="mbtn small" onclick="runStartMenu()">🧴 Сбеги от шампуня</button>
     <button class="mbtn small" onclick="openMafia()">🕵️ Мафия — бесплатно</button>
     <button class="mbtn small" onclick="openSim()">🤖 Симулятор Арсения</button>
     <button class="mbtn small" onclick="openQuiz2()">✏️ Угадай элемент</button>
@@ -1176,6 +1207,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
       <button class="btn wide" onclick="accLogout()">Выйти из аккаунта</button>
     </div>
     <div class="srow"><span>Ник для рейтинга</span><span><input id="acc-nick" class="num" style="width:130px" maxlength="16" placeholder="Алхимик"> <button class="btn hint" onclick="accSaveNick()">ОК</button></span></div>
+    <div class="srow"><span>Скрывать мой профиль</span><button class="sw" id="sw-priv" onclick="togglePriv()"></button></div>
     <div class="sgroup">Статистика</div>
     <div id="acc-stats" class="hlist"></div>
 
@@ -1234,7 +1266,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
       <b style="font-size:22px">+</b>
       <img id="q2-b" style="width:84px;height:84px;object-fit:contain;border-radius:14px;background:rgba(255,253,246,.8)" alt="">
     </div>
-    <div class="qd" id="q2-res" style="margin-bottom:8px">Из чего сделано? Напиши название 👇</div>
+    <div class="qd" id="q2-res" style="margin-bottom:8px">Что получится? Напиши название 👇</div>
     <input id="q2-in" class="num" style="width:100%;margin-bottom:8px" maxlength="40" placeholder="название элемента" onkeydown="if(event.key==='Enter')q2Ans()">
     <div style="display:flex;gap:8px">
       <button class="btn hint" style="flex:1;min-height:44px" onclick="q2Ans()">Ответить</button>
@@ -1295,7 +1327,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
       <button class="btn" onclick="mafiaAsk('where')">Где был? −1</button>
       <button class="btn" onclick="mafiaAsk('who')">Кого подозреваешь? −1</button>
       <button class="btn" onclick="mafiaAsk('saw')">Что видел? −1</button>
-      <button class="btn" onclick="mafiaAsk('search')">Обыск −2</button>
+      <button class="btn" onclick="mafiaAsk('search')">Обыск −5</button>
     </div>
     <div class="btnrow">
       <button class="btn hint" style="flex:1" onclick="mafiaJail()">Посадить!</button>
@@ -1306,6 +1338,85 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
       <button class="btn" style="flex:1;min-height:42px" onclick="mafiaNew()">Заново</button>
       <button class="btn" style="flex:1;min-height:42px" onclick="closeOvl('mafia')">Выйти</button>
     </div>
+  </div>
+</div>
+
+<div class="ovl" id="friends">
+  <div class="box">
+    <button class="xbtn" onclick="closeOvl('friends')" aria-label="Закрыть"><svg class="ic"><use href="#i-x" xlink:href="#i-x"/></svg></button>
+    <h2>Друзья</h2>
+    <div class="sgroup">Сообщения от автора</div>
+    <div id="author-feed"><div class="hrow">Открой с интернетом — подгрузим послания ✉️</div></div>
+    <div class="sgroup">Мой код</div>
+    <p>Твой код: <b id="fr-myid">—</b> <button class="btn sm" onclick="frCopy()">Копировать</button></p>
+    <div class="srow"><span>Код друга</span><input id="fr-add" class="num" style="width:120px" placeholder="ABC123"></div>
+    <button class="btn wide" onclick="frAdd()">Добавить друга</button>
+    <div class="hlist" id="fr-inv"></div>
+    <div class="sgroup">Мои друзья</div>
+    <div class="hlist" id="fr-list"></div>
+    <div id="fr-prof" style="display:none"></div>
+    <div class="sgroup">Подарок другу</div>
+    <div class="srow"><span>Кому</span><select id="fr-gift-to" class="num" style="width:150px"></select></div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px">
+      <button class="btn sm" onclick="frGiftEnergy(10)">10 ⚡</button>
+      <button class="btn sm" onclick="frGiftEnergy(25)">25 ⚡</button>
+      <button class="btn sm" onclick="frGiftEnergy(50)">50 ⚡</button>
+    </div>
+    <div style="display:flex;gap:6px">
+      <select id="fr-gift-el" class="num" style="flex:1;width:auto"></select>
+      <button class="btn sm hint" onclick="frGiftEl()">🎁 Дарить</button>
+    </div>
+    <div class="sgroup">Мне подарили</div>
+    <div class="hlist" id="fr-gifts"></div>
+    <div id="fr-chat" style="display:none">
+      <div class="sgroup">Чат: <span id="fr-chat-name">?</span></div>
+      <div class="hlist" id="fr-msgs" style="max-height:180px;overflow-y:auto"></div>
+      <div style="display:flex;gap:6px;margin-top:6px">
+        <input id="fr-chat-in" class="num" style="flex:1;width:auto" maxlength="300" placeholder="Сообщение...">
+        <button class="btn sm hint" onclick="frSend()">➤</button>
+      </div>
+    </div>
+    <button class="bigbtn" style="margin-top:14px" onclick="closeOvl('friends')">Закрыть</button>
+  </div>
+</div>
+
+<div class="ovl" id="elena">
+  <div class="box" style="max-width:430px">
+    <button class="xbtn" onclick="closeOvl('elena')" aria-label="Закрыть"><svg class="ic"><use href="#i-x" xlink:href="#i-x"/></svg></button>
+    <h2>🏃 Еленка ловит Саш</h2>
+    <p>Время: <b id="ez-time">60</b> · Поймано: <b id="ez-score">0</b> · Рекорд: <b id="ez-best">0</b><br>🔪 с ножиком +3 ⚡ · 🛼 на роликах +2 ⚡</p>
+    <div id="ezgrid"></div>
+    <div id="ezpad">
+      <span></span><button class="btn" onclick="ezMove(-1,0)">▲</button><span></span>
+      <button class="btn" onclick="ezMove(0,-1)">◀</button><button class="btn" onclick="ezMove(1,0)">▼</button><button class="btn" onclick="ezMove(0,1)">▶</button>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:10px">
+      <button class="btn" style="flex:1;min-height:42px" onclick="openElena()">Заново</button>
+      <button class="btn" style="flex:1;min-height:42px" onclick="closeOvl('elena')">Выйти</button>
+    </div>
+  </div>
+</div>
+<div class="ovl" id="run">
+  <div class="box" style="max-width:430px">
+    <button class="xbtn" onclick="runExit()" aria-label="Закрыть"><svg class="ic"><use href="#i-x" xlink:href="#i-x"/></svg></button>
+    <h2>🧴 Сбеги от шампуня</h2>
+    <div id="run-menu">
+      <p>Выбери бегуна и беги вправо! Прыгай через ящики, рывок жрёт выносливость, 🔋 её возвращает. Сзади догоняет шампунь — и он ускоряется!</p>
+      <div style="display:flex;gap:8px">
+        <button class="btn hint" style="flex:1;min-height:46px" onclick="runStart('Саша')">Саша</button>
+        <button class="btn hint" style="flex:1;min-height:46px" onclick="runStart('Бурик')">Бурик</button>
+      </div>
+      <p>Рекорд: <b id="run-best">0</b> сек</p>
+    </div>
+    <div id="run-game" style="display:none">
+      <p>⏱ <b id="run-time">0</b> сек · Выносливость: <b id="run-stam">100</b></p>
+      <canvas id="runcv" width="360" height="200" style="width:100%;border-radius:14px"></canvas>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
+        <button class="btn" style="min-height:52px" onclick="runJump()">⬆ Прыжок</button>
+        <button class="btn" style="min-height:52px" onclick="runDash()">💨 Рывок</button>
+      </div>
+    </div>
+    <button class="bigbtn" style="margin-top:10px" onclick="runExit()">Выйти</button>
   </div>
 </div>
 
@@ -1453,7 +1564,7 @@ let lastCol = null;
 function unlock(name){
   if (EL_MAP[name] && EL_MAP[name].q) return false;
   if (discovered.has(name)) return false;
-  discovered.add(name); order.push(name); liveDirty = true; return true;
+  discovered.add(name); order.push(name); liveDirty = true; try{ checkRank(); }catch(e){} return true;
 }
 
 /* ---------- звук ---------- */
@@ -1749,7 +1860,14 @@ function syncPrefsUI(){
   document.getElementById('vol-music').value = Math.round(musicVol * 100);
   document.getElementById('vol-sfx').value = Math.round(sfxVol * 100);
   document.body.classList.toggle('nofx', !fxOn);
+  try{ const th = localStorage.getItem('ag_theme') || ''; document.body.dataset.theme = th; document.querySelectorAll('.theme-sw').forEach(b => b.classList.toggle('on', (b.dataset.th || '') === th)); }catch(e){}
   document.getElementById('fps-pill').style.display = fpsOn ? '' : 'none';
+}
+function setTheme(th){
+  try{ localStorage.setItem('ag_theme', th || ''); }catch(e){}
+  document.body.dataset.theme = th || '';
+  document.querySelectorAll('.theme-sw').forEach(b => b.classList.toggle('on', (b.dataset.th || '') === (th || '')));
+  snd('btn');
 }
 function toggleMusic(){ musicOn = !musicOn; savePrefs(); syncPrefsUI(); snd('btn'); if (musicOn){ musicStarted = false; startMusic(); } else stopMusic(); }
 function toggleSfx(){ sfxOn = !sfxOn; savePrefs(); syncPrefsUI(); if (sfxOn) snd('btn'); }
@@ -1798,6 +1916,9 @@ function closeOvl(id, now){
   if (id === 'fun'){ funRun = false; clearInterval(funTimer); document.getElementById('funbox').innerHTML = ''; }
   if (id === 'shop') shopMusicExit();
   if (id === 'quiz'){ clearTimeout(moleHideT); molePos = -1; }
+  if (id === 'elena' && ez && ez.iv){ try{ clearInterval(ez.iv); }catch(e){} }
+  if (id === 'run' && rn && rn.iv){ try{ clearInterval(rn.iv); }catch(e){} rn = null; }
+  if (id === 'friends'){ if (frUnsubInv){ try{ frUnsubInv(); }catch(e){} frUnsubInv = null; } if (frUnsubChat){ try{ frUnsubChat(); }catch(e){} frUnsubChat = null; } frChatUid = null; }
   if (id === 'duel') duelLeave();
   if (id === 'animtest'){ clearInterval(animIv); clearInterval(animIv2); animT = null; document.getElementById('fuse').classList.remove('show'); }
   if ((id === 'fun' || id === 'mini' || id === 'maze' || id === 'quiz' || id === 't2048' || id === 'quests') && musicOn && !document.getElementById('start').classList.contains('hide') && trackIdx !== 5) menuMusicEnter();
@@ -3019,7 +3140,7 @@ function renderAch(){
 }
 function openAch(){ snd('dialog'); renderAch(); document.getElementById('ach').classList.add('show'); }
 
-function openNews(){ snd('dialog'); document.getElementById('news').classList.add('show'); try{ renderFeed(); }catch(e){} }
+function openNews(){ snd('dialog'); document.getElementById('news').classList.add('show'); }
 
 /* ---------- чит-меню (NEW, код VMCT) ---------- */
 
@@ -3176,13 +3297,15 @@ function renderShop(){
   const hh = document.getElementById('shop-buy-hint');
   hh.disabled = energy < 5;
   const bl = [blindLeft(1).length, blindLeft(2).length, blindLeft(3).length];
-  const bp_ = [25, 100, 300];
+  const bp_ = [10, 50, 150];
   for (let ti = 1; ti <= 3; ti++){
     const dd = document.getElementById('shop-tier' + ti + '-d');
     if (dd) dd.textContent = bl[ti - 1] ? ('Осталось: ' + bl[ti - 1]) : 'Всё раскуплено';
     const bb2 = document.getElementById('shop-tier' + ti);
     if (bb2){ bb2.disabled = !bl[ti - 1] || energy < bp_[ti - 1]; bb2.textContent = bp_[ti - 1] + ' ⚡'; }
   }
+  const td = document.getElementById('shop-tier-d');
+  if (td) td.textContent = 'Осталось: ' + bl[0] + ' / ' + bl[1] + ' / ' + bl[2];
   const cd = document.getElementById('shop-clean-d');
   if (cd) cd.textContent = 'Прячет навсегда пустые · уже спрятано: ' + hideSet.size;
   const sm = document.getElementById('shop-sense');
@@ -3358,20 +3481,34 @@ function elTier(n){
   for (const x of RLIST){ if (x[0] === n || x[1] === n || x[2] === n) deg++; }
   return deg <= 2 ? 1 : (deg <= 7 ? 2 : 3);
 }
-const BLIND_PRICE = {1: 25, 2: 100, 3: 300};
+const BLIND_PRICE = {1: 10, 2: 50, 3: 150};
 function blindLeft(tr){ return ELEMENTS.filter(e => !e.q && !discovered.has(e.n) && elTier(e.n) === tr).map(e => e.n); }
+function elDeg(n){
+  let deg = 0;
+  for (const x of RLIST){ if (x[0] === n || x[1] === n || x[2] === n) deg++; }
+  return deg;
+}
 function buyBlind(tr){
   const left = blindLeft(tr);
   if (!left.length){ snd('wrong'); toast('В этой категории всё раскуплено!'); return; }
-  const pr = BLIND_PRICE[tr] || 25;
+  const cnt = tr === 3 ? 3 : (tr === 2 ? 2 : 1);
+  const pr = BLIND_PRICE[tr] || 10;
   if (energy < pr){ snd('wrong'); toast('Не хватает энергии! Нужно: ' + pr + ' ⚡'); return; }
-  const nm = left[Math.floor(Math.random() * left.length)];
   energy -= pr;
-  unlock(nm); newSet.add(nm);
+  const pool = [...left], got = [];
+  for (let k = 0; k < cnt && pool.length; k++){
+    let tot = 0;
+    for (const n of pool) tot += 1 + elDeg(n);
+    let r = Math.random() * tot, pick = pool[0];
+    for (const n of pool){ r -= 1 + elDeg(n); if (r <= 0){ pick = n; break; } }
+    pool.splice(pool.indexOf(pick), 1);
+    if (unlock(pick)) newSet.add(pick);
+    got.push(pick);
+  }
   save(); renderShop(); renderAll(); snd('new_a');
-  toast('📦 Выпало: ' + nm + '!');
+  toast('📦 Выпало: ' + got.join(', ') + '!');
   closeOvl('shop');
-  setTimeout(() => showBanner(nm), 350);
+  setTimeout(() => { if (got.length > 1) showBanners(got.slice(0, 2)); else showBanner(got[0]); }, 350);
 }
 function buyClean(){
   computeLive();
@@ -4380,7 +4517,7 @@ document.addEventListener('visibilitychange', () => {
   if (!music) return;
   if (document.hidden) music.pause(); else if (musicOn && !introPlaying) music.play().catch(()=>{});
 });
-['newbanner', 'settings', 'quests', 'history', 'shop', 'cheat', 'ach', 'wiper', 'fun', 'animtest', 'spin', 'nohints', 'fxwarn', 'news', 'privacy', 'nokeys', 'account', 'rating', 'casino', 'sim', 'quiz2', 'duel', 'mafia'].forEach(id => {
+['newbanner', 'settings', 'quests', 'history', 'shop', 'cheat', 'ach', 'wiper', 'fun', 'animtest', 'spin', 'nohints', 'fxwarn', 'news', 'privacy', 'nokeys', 'account', 'rating', 'casino', 'sim', 'quiz2', 'duel', 'mafia', 'friends', 'elena', 'run'].forEach(id => {
   document.getElementById(id).addEventListener('click', ev => {
     if (ev.target.id !== id) return;
     if (id === 'newbanner') closeBanner();
@@ -4416,7 +4553,7 @@ const EMAILJS_TEMPLATE = "template_smshlr9";
 const EMAILJS_PUBLIC = "1jR_mcUspUypk4jsW";
 let accPending = null;
 let FB = {ok: false, auth: null, db: null, user: null, loading: false};
-const FB_RULES = "rules_version = '2';\nservice cloud.firestore {\n  match /databases/{db}/documents {\n    match /author_posts/{post} {\n      allow read: if true;\n      allow create, delete: if request.auth != null && request.auth.uid == 'ВСТАВЬ_ADMIN_UID';\n      allow update: if request.auth != null;\n      match /comments/{c} {\n        allow read: if true;\n        allow create: if request.auth != null;\n      }\n    }\n    match /players/{uid} {\n      allow read: if true;\n      allow write: if request.auth != null && request.auth.uid == uid;\n    }\n    match /lobbies/{code} {\n      allow read: if true;\n      allow create: if request.auth != null;\n      allow update: if request.auth != null && request.resource.data.hostUid == resource.data.hostUid && request.resource.data.secs == resource.data.secs && (request.resource.data.guestUid == resource.data.guestUid || (resource.data.guestUid == '' && request.resource.data.guestUid == request.auth.uid)) && (request.resource.data.guestName == resource.data.guestName || (resource.data.guestUid == '' && request.auth.uid == request.resource.data.guestUid)) && (request.resource.data.deadline == resource.data.deadline || request.auth.uid == resource.data.hostUid) && (request.resource.data.status == resource.data.status || request.auth.uid == resource.data.hostUid) && (request.resource.data.hScore == resource.data.hScore || request.auth.uid == resource.data.hostUid) && (request.resource.data.gScore == resource.data.gScore || request.auth.uid == resource.data.guestUid);\n      allow delete: if request.auth != null && request.auth.uid == resource.data.hostUid;\n    }\n  }\n}";
+const FB_RULES = "rules_version = '2';\nservice cloud.firestore {\n  match /databases/{db}/documents {\n    match /author_posts/{post} {\n      allow read: if true;\n      allow create, delete: if request.auth != null && request.auth.uid == 'ВСТАВЬ_ADMIN_UID';\n      allow update: if request.auth != null;\n      match /comments/{c} {\n        allow read: if true;\n        allow create: if request.auth != null;\n      }\n    }\n    match /players/{uid} {\n      allow read: if true;\n      allow write: if request.auth != null && request.auth.uid == uid;\n    }\n    match /lobbies/{code} {\n      allow read: if true;\n      allow create: if request.auth != null;\n      allow update: if request.auth != null && request.resource.data.hostUid == resource.data.hostUid && request.resource.data.secs == resource.data.secs && (request.resource.data.guestUid == resource.data.guestUid || (resource.data.guestUid == '' && request.resource.data.guestUid == request.auth.uid)) && (request.resource.data.guestName == resource.data.guestName || (resource.data.guestUid == '' && request.auth.uid == request.resource.data.guestUid)) && (request.resource.data.deadline == resource.data.deadline || request.auth.uid == resource.data.hostUid) && (request.resource.data.status == resource.data.status || request.auth.uid == resource.data.hostUid) && (request.resource.data.hScore == resource.data.hScore || request.auth.uid == resource.data.hostUid) && (request.resource.data.gScore == resource.data.gScore || request.auth.uid == resource.data.guestUid);\n      allow delete: if request.auth != null && request.auth.uid == resource.data.hostUid;\n    }\n    match /gifts/{uid}/items/{it} {\n      allow read, delete: if request.auth != null && request.auth.uid == uid;\n      allow create: if request.auth != null;\n    }\n    match /friends/{uid}/list/{f} {\n      allow read, write: if request.auth != null && request.auth.uid == uid;\n    }\n    match /invites/{uid}/items/{it} {\n      allow read, delete: if request.auth != null && request.auth.uid == uid;\n      allow create: if request.auth != null;\n    }\n    match /chats/{pair} {\n      allow create: if request.auth != null && request.auth.uid in request.resource.data.members;\n      allow read, update: if request.auth != null && request.auth.uid in resource.data.members;\n      match /msgs/{m} {\n        allow read: if request.auth != null;\n        allow create: if request.auth != null;\n      }\n    }\n  }\n}";
 function loadScript(src, cb, err){
   const s = document.createElement('script');
   s.src = src;
@@ -4441,7 +4578,8 @@ function ensureFB(cb, silent){
           FB.auth.onAuthStateChanged(u => {
             FB.user = u;
             try{ renderAccount(); }catch(e){}
-            try{ if (document.getElementById('news').classList.contains('show')) renderFeed(); }catch(e){}
+            try{ if (FB.user) ensurePid(); }catch(e){}
+            try{ if (document.getElementById('friends').classList.contains('show')){ renderFeed(); frLoad(); } }catch(e){}
           });
           FB.ok = true; FB.loading = false;
           cb(true);
@@ -4467,7 +4605,226 @@ function duelCode(){
   for (let i = 0; i < 6; i++) s += A[Math.floor(Math.random() * A.length)];
   return s;
 }
-function openDuel(){ snd('dialog'); duelShow('lobby'); document.getElementById('duel').classList.add('show'); }
+let frUnsubInv = null, frUnsubChat = null, frChatUid = null;
+let accPriv = false;
+try{ accPriv = localStorage.getItem('ag_priv') === '1'; }catch(e){}
+function syncPrivUI(){ const b = document.getElementById('sw-priv'); if (b) b.classList.toggle('on', !!accPriv); }
+function togglePriv(){
+  if (!FB.user){ toast('Сначала войди в аккаунт'); return; }
+  accPriv = !accPriv;
+  try{ localStorage.setItem('ag_priv', accPriv ? '1' : '0'); }catch(e){}
+  ensureFB(ok => { if (ok && FB.user) FB.db.collection('players').doc(FB.user.uid).set({priv: accPriv ? 1 : 0}, {merge: true}).catch(() => {}); });
+  syncPrivUI(); snd('btn');
+}
+function openFriends(){ snd('dialog'); document.getElementById('friends').classList.add('show'); try{ renderFeed(); }catch(e){} try{ frLoad(); }catch(e){} }
+function ensurePid(cb){
+  if (!FB.user){ if (cb) cb(null); return; }
+  const ref = FB.db.collection('players').doc(FB.user.uid);
+  ref.get().then(s => {
+    const d = (s.data && s.data()) || {};
+    if (d.pid){ if (cb) cb(d.pid); return; }
+    const mk = () => {
+      const A = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+      let pid = '';
+      for (let i = 0; i < 6; i++) pid += A[Math.floor(Math.random() * A.length)];
+      FB.db.collection('players').where('pid', '==', pid).limit(1).get().then(q => {
+        if (!q.empty){ mk(); return; }
+        ref.set({pid: pid}, {merge: true}).then(() => { if (cb) cb(pid); }).catch(() => { if (cb) cb(null); });
+      }).catch(() => { if (cb) cb(null); });
+    };
+    mk();
+  }).catch(() => { if (cb) cb(null); });
+}
+function frLoad(){
+  if (!FB.user){
+    document.getElementById('fr-myid').textContent = 'войди в аккаунт';
+    document.getElementById('fr-list').innerHTML = '<div class="hrow">Войди, чтобы добавить друзей</div>';
+    document.getElementById('fr-inv').innerHTML = '';
+    return;
+  }
+  ensureFB(ok => {
+    if (!ok || !FB.user) return;
+    ensurePid(pid => {
+      document.getElementById('fr-myid').textContent = pid || '—';
+      frList(); frGiftFill(); frGifts(); frInvites();
+    });
+  });
+}
+function frCopy(){
+  const pid = document.getElementById('fr-myid').textContent;
+  try{
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(pid).then(() => toast('Код скопирован: ' + pid));
+    else toast('Твой код: ' + pid);
+  }catch(e){ toast('Твой код: ' + pid); }
+}
+function frAdd(){
+  if (!FB.user){ toast('Сначала войди в аккаунт'); return; }
+  const code = String((document.getElementById('fr-add').value || '')).trim().toUpperCase();
+  if (!code){ snd('wrong'); return; }
+  ensureFB(ok => {
+    if (!ok || !FB.user) return;
+    FB.db.collection('players').where('pid', '==', code).limit(1).get().then(q => {
+      if (q.empty){ snd('wrong'); toast('Такого кода нет'); return; }
+      const doc = q.docs[0];
+      if (doc.id === FB.user.uid){ snd('wrong'); toast('Это ты сам :)'); return; }
+      const d = doc.data() || {};
+      FB.db.collection('friends').doc(FB.user.uid).collection('list').doc(doc.id).set({name: d.name || '???', pid: code}).then(() => {
+        snd('new_a'); toast('Друг добавлен!');
+        document.getElementById('fr-add').value = '';
+        frList();
+      }).catch(() => toast('Не вышло'));
+    }).catch(() => toast('Не вышло'));
+  });
+}
+function frList(){
+  const box = document.getElementById('fr-list');
+  FB.db.collection('friends').doc(FB.user.uid).collection('list').get().then(snap => {
+    if (snap.empty){ box.innerHTML = '<div class="hrow">Пока нет друзей — добавь по коду выше</div>'; return; }
+    let html = '';
+    snap.forEach(doc => {
+      const d = doc.data() || {};
+      const nm = String(d.name || '?').replace(/'/g, '');
+      html += '<div class="hrow"><span>👤 ' + String(d.name || '?').replace(/</g, '&lt;') + ' <small>' + (d.pid || '') + '</small></span><span><button class="btn sm" onclick="frChat(\'' + doc.id + '\',\'' + nm + '\')">💬</button> <button class="btn sm" onclick="frProfile(\' + doc.id + \')">👤</button> <button class="btn sm hint" onclick="frInvite(\'' + doc.id + '\')">⚔️</button></span></div>';
+    });
+    box.innerHTML = html;
+  }).catch(() => { box.innerHTML = '<div class="hrow">Не загрузилось</div>'; });
+}
+function frChat(uid, name){
+  frChatUid = uid;
+  document.getElementById('fr-chat').style.display = '';
+  document.getElementById('fr-chat-name').textContent = name;
+  if (frUnsubChat){ try{ frUnsubChat(); }catch(e){} }
+  const pair = [FB.user.uid, uid].sort().join('_');
+  frUnsubChat = FB.db.collection('chats').doc(pair).collection('msgs').orderBy('ts', 'asc').limit(30).onSnapshot(snap => {
+    let html = '';
+    snap.forEach(m => {
+      const d = m.data() || {};
+      const mine = d.from === FB.user.uid;
+      html += '<div class="hrow"><span><b>' + (mine ? 'Ты' : String(d.name || '?').replace(/</g, '&lt;')) + ':</b> ' + String(d.text || '').replace(/</g, '&lt;') + '</span></div>';
+    });
+    document.getElementById('fr-msgs').innerHTML = html || '<div class="hrow">Напиши первым! 👋</div>';
+  });
+}
+function frSend(){
+  const inp = document.getElementById('fr-chat-in');
+  const txt = String((inp && inp.value) || '').trim().slice(0, 300);
+  if (!txt || !frChatUid || !FB.user) return;
+  const pair = [FB.user.uid, frChatUid].sort().join('_');
+  FB.db.collection('chats').doc(pair).set({members: [FB.user.uid, frChatUid]}, {merge: true}).then(() => {
+    FB.db.collection('chats').doc(pair).collection('msgs').add({from: FB.user.uid, name: fbPlayerName(), text: txt, ts: firebase.firestore.FieldValue.serverTimestamp()}).then(() => { inp.value = ''; }).catch(() => toast('Не отправилось'));
+  }).catch(() => toast('Не отправилось'));
+}
+function frInvite(friendUid){
+  if (!FB.user){ toast('Сначала войди в аккаунт'); return; }
+  ensureFB(ok => {
+    if (!ok || !FB.user) return;
+    let code = duelCode(), tries = 0;
+    const mk = () => {
+      FB.db.collection('lobbies').doc(code).get().then(s => {
+        if (s.exists && tries++ < 3){ code = duelCode(); mk(); return; }
+        FB.db.collection('lobbies').doc(code).set({hostUid: FB.user.uid, hostName: fbPlayerName(), guestUid: '', guestName: '', secs: 180, status: 'wait', deadline: 0, hScore: 0, gScore: 0, created: firebase.firestore.FieldValue.serverTimestamp()}).then(() => {
+          FB.db.collection('invites').doc(friendUid).collection('items').add({fromUid: FB.user.uid, fromName: fbPlayerName(), lobby: code, ts: firebase.firestore.FieldValue.serverTimestamp()}).then(() => { snd('new_a'); toast('Приглашение отправлено! Код: ' + code); }).catch(() => toast('Лобби создано, а приглашение не ушло'));
+        }).catch(e => toast('Не вышло' + (e && e.code ? ': ' + e.code : '')));
+      }).catch(() => toast('Не вышло'));
+    };
+    mk();
+  });
+}
+function frInvites(){
+  const box = document.getElementById('fr-inv');
+  if (!FB.user){ box.innerHTML = ''; return; }
+  if (frUnsubInv){ try{ frUnsubInv(); }catch(e){} }
+  frUnsubInv = FB.db.collection('invites').doc(FB.user.uid).collection('items').orderBy('ts', 'desc').limit(10).onSnapshot(snap => {
+    if (snap.empty){ box.innerHTML = ''; return; }
+    let html = '<div class="sgroup">Приглашения</div>';
+    snap.forEach(doc => {
+      const d = doc.data() || {};
+      html += '<div class="hrow"><span>⚔️ ' + String(d.fromName || '?').replace(/</g, '&lt;') + ' зовёт в лобби <b>' + (d.lobby || '') + '</b></span><span><button class="btn sm hint" onclick="frAccept(\'' + (d.lobby || '') + '\',\'' + doc.id + '\')">В бой!</button></span></div>';
+    });
+    box.innerHTML = html;
+  });
+}
+function frProfile(uid){
+  const box = document.getElementById('fr-prof');
+  box.style.display = '';
+  box.innerHTML = '<div class="hrow">Загрузка...</div>';
+  FB.db.collection('players').doc(uid).get().then(s => {
+    const d = (s.data && s.data()) || {};
+    if (d.priv){ box.innerHTML = '<div class="hrow">🙈 Игрок скрыл профиль</div>'; return; }
+    box.innerHTML = '<div class="hrow"><span>👤 ' + String(d.name || '?').replace(/</g, '&lt;') + '</span><b>' + rankIcon(d.el || 0) + ' ' + rankName(d.el || 0) + '</b></div>'
+      + '<div class="hrow"><span>⚗️ Элементов</span><b>' + (d.el || 0) + '</b></div>'
+      + '<div class="hrow"><span>🧪 Реакций</span><b>' + (d.reactions || 0) + '</b></div>'
+      + '<div class="hrow"><span>🏆 Кубки</span><b>' + (d.cups || 0) + '</b></div>';
+  }).catch(() => { box.innerHTML = '<div class="hrow">Не загрузилось</div>'; });
+}
+function frGiftFill(){
+  if (!FB.user) return;
+  FB.db.collection('friends').doc(FB.user.uid).collection('list').get().then(snap => {
+    const sel = document.getElementById('fr-gift-to');
+    const esel = document.getElementById('fr-gift-el');
+    if (sel) sel.innerHTML = '';
+    snap.forEach(doc => {
+      const d = doc.data() || {};
+      if (sel){ const o = document.createElement('option'); o.value = doc.id; o.textContent = (d.name || '?') + ' (' + (d.pid || '') + ')'; sel.appendChild(o); }
+    });
+    if (esel && !esel.options.length){
+      order.forEach(n => { const o = document.createElement('option'); o.value = n; o.textContent = n; esel.appendChild(o); });
+    }
+  }).catch(() => {});
+}
+function frGiftEnergy(n){
+  const sel = document.getElementById('fr-gift-to');
+  const to = sel && sel.value;
+  if (!FB.user){ toast('Сначала войди в аккаунт'); return; }
+  if (!to){ snd('wrong'); toast('Сначала добавь друга выше'); return; }
+  if (energy < n){ snd('wrong'); toast('Нужно ' + n + ' ⚡'); return; }
+  energy -= n; save(); renderAll();
+  FB.db.collection('gifts').doc(to).collection('items').add({kind: 'energy', amount: n, fromUid: FB.user.uid, fromName: fbPlayerName(), ts: firebase.firestore.FieldValue.serverTimestamp()}).then(() => { snd('new_a'); toast('Подарок отправлен! 🎁'); }).catch(() => { energy += n; save(); renderAll(); toast('Не отправилось — вернул энергию'); });
+}
+function frGiftEl(){
+  const sel = document.getElementById('fr-gift-to');
+  const esel = document.getElementById('fr-gift-el');
+  const to = sel && sel.value, nm = esel && esel.value;
+  if (!FB.user){ toast('Сначала войди в аккаунт'); return; }
+  if (!to || !nm){ snd('wrong'); return; }
+  if (!discovered.has(nm)){ snd('wrong'); toast('У тебя нет такого элемента'); return; }
+  FB.db.collection('gifts').doc(to).collection('items').add({kind: 'el', el: nm, fromUid: FB.user.uid, fromName: fbPlayerName(), ts: firebase.firestore.FieldValue.serverTimestamp()}).then(() => { snd('new_a'); toast('Элемент отправлен! 🎁'); }).catch(() => toast('Не отправилось'));
+}
+function frGifts(){
+  const box = document.getElementById('fr-gifts');
+  if (!box || !FB.user){ if (box) box.innerHTML = ''; return; }
+  FB.db.collection('gifts').doc(FB.user.uid).collection('items').orderBy('ts', 'desc').limit(10).get().then(snap => {
+    if (snap.empty){ box.innerHTML = '<div class="hrow">Пока пусто</div>'; return; }
+    let html = '';
+    snap.forEach(doc => {
+      const d = doc.data() || {};
+      const what = d.kind === 'energy' ? ('⚡' + d.amount) : ('⚗️ ' + d.el);
+      html += '<div class="hrow"><span>🎁 ' + String(d.fromName || '?').replace(/</g, '&lt;') + ': <b>' + what + '</b></span><button class="btn sm hint" onclick="frTake(\'' + doc.id + '\')">Забрать</button></div>';
+    });
+    box.innerHTML = html;
+  }).catch(() => { box.innerHTML = '<div class="hrow">Не загрузилось</div>'; });
+}
+function frTake(id){
+  FB.db.collection('gifts').doc(FB.user.uid).collection('items').doc(id).get().then(s => {
+    const d = (s.data && s.data()) || {};
+    if (d.kind === 'energy' && d.amount > 0){ energy += d.amount; energyEarned += d.amount; }
+    else if (d.kind === 'el' && d.el){
+      if (unlock(d.el)){ newSet.add(d.el); toast('📦 Новый элемент: ' + d.el + '!'); setTimeout(() => showBanner(d.el), 400); }
+      else toast('Такой уже есть 🙂');
+    }
+    save(); renderAll();
+    FB.db.collection('gifts').doc(FB.user.uid).collection('items').doc(id).delete().catch(() => {});
+    frGifts();
+  }).catch(() => toast('Не вышло забрать'));
+}
+function frAccept(lobby, invId){
+  try{ FB.db.collection('invites').doc(FB.user.uid).collection('items').doc(invId).delete(); }catch(e){}
+  closeOvl('friends');
+  document.getElementById('duel-code-in').value = lobby;
+  openDuel();
+  setTimeout(() => duelJoin(), 400);
+}
+function openDuel(){ snd('dialog'); const o = document.getElementById('duel'); if (!o){ toast('Обнови игру — файл старый'); return; } duelShow('lobby'); o.classList.add('show'); }
 function duelShow(w){ ['lobby', 'room', 'fight'].forEach(x => { const e = document.getElementById('duel-' + x); if (e) e.style.display = x === w ? '' : 'none'; }); }
 function duelCreate(){
   if (!FB.user){ toast('Сначала войди в аккаунт'); return; }
@@ -4660,16 +5017,28 @@ function duelFinish(){
   document.getElementById('duel-state').textContent = win ? 'победа! 🏆' : (draw ? 'ничья' : 'поражение');
   duelRender();
 }
-const MAFIA_POOL = ['Данил', 'Тимофей', 'Vithel', 'Матхил', 'Саша', 'Бурик', 'Серёга', 'Костя', 'Ильмир', 'Вадим', 'Ваня', 'Витя', 'Дима', 'Артём', 'Анджелика'];
+const MAFIA_POOL = ['Арсений', 'Данил', 'Матвей', 'Виталик', 'Саша', 'Анжелика', 'Лаврушка', 'Вика', 'Вадим', 'Тимерхун'];
+const MAFIA_IMG = {'Матвей': 'Матвей с яблоками', 'Виталик': 'Vithel', 'Анжелика': 'Анджелика', 'Вика': 'вика в.'};
+function mafImg(n){ return MAFIA_IMG[n] || n; }
+const MAFIA_GEN = {'Арсений': 'Арсения', 'Данил': 'Данила', 'Матвей': 'Матвея', 'Виталик': 'Виталика', 'Саша': 'Саши', 'Анжелика': 'Анжелики', 'Лаврушка': 'Лаврушки', 'Вика': 'Вики', 'Вадим': 'Вадима', 'Тимерхун': 'Тимерхуна'};
+function mafG(n){ return MAFIA_GEN[n] || n; }
+function mafF(n){ return n === 'Анжелика' || n === 'Вика'; }
+function mafHer(n){ return mafF(n) ? 'неё' : 'него'; }
 let mafia = null;
 function openMafia(){ snd('qstart'); if (!mafia || mafia.over) mafiaNew(); else mafiaDraw(); document.getElementById('mafia').classList.add('show'); }
 function mafiaNew(){
   const pool = [...MAFIA_POOL];
   const crew = [];
-  while (crew.length < 6 && pool.length) crew.push(pool.splice(Math.floor(Math.random() * pool.length), 1)[0]);
-  const boss = Math.floor(Math.random() * crew.length);
-  mafia = {day: 1, pts: 6 + Math.floor(Math.random() * 4), sel: null, over: false, log: [], crew: crew.map((n, i) => ({n: n, mafia: i === boss, alive: true}))};
-  mafiaLog('Среди этих шестерых — мафия. Допроси их: каждый вопрос −1 очко, обыск −2.');
+  while (crew.length < 9 && pool.length) crew.push(pool.splice(Math.floor(Math.random() * pool.length), 1)[0]);
+  const idx = crew.map((_, i) => i);
+  for (let i = idx.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); const tmp = idx[i]; idx[i] = idx[j]; idx[j] = tmp; }
+  let mafStreak = 0;
+  try{ mafStreak = parseInt(localStorage.getItem('ag_mafstreak') || '0', 10) || 0; }catch(e){}
+  const playerMafia = mafStreak >= 2 ? true : Math.random() < 0.5;
+  try{ localStorage.setItem('ag_mafstreak', String(playerMafia ? 0 : mafStreak + 1)); }catch(e){}
+  const bosses = playerMafia ? [idx[0]] : [idx[0], idx[1]];
+  mafia = {day: 1, pts: 6 + Math.floor(Math.random() * 4), sel: null, over: false, log: [], playerMafia: playerMafia, crew: crew.map((n, i) => ({n: n, mafia: bosses.indexOf(i) >= 0, alive: true, jailed: false}))};
+  mafiaLog('Ты — Рамиль. ' + (playerMafia ? 'Твоя роль: МАФИЯ 😈 Среди них твой подельник. Сдай его — и выйдешь сухим!' : 'Твоя роль: мирный. Среди девятерых — ДВЕ мафии. Найди обеих!'));
   mafiaDraw();
 }
 function mafiaLog(s){
@@ -4680,7 +5049,7 @@ function mafiaLog(s){
 }
 function mafiaNeedSel(){
   if (!mafia || mafia.over) return null;
-  const c = mafia.crew.find(x => x.n === mafia.sel && x.alive);
+  const c = mafia.crew.find(x => x.n === mafia.sel && x.alive && !x.jailed);
   if (!c){ snd('wrong'); toast('Сначала выбери живого подозреваемого'); return null; }
   return c;
 }
@@ -4693,13 +5062,14 @@ function mafiaDraw(){
   g.innerHTML = '';
   const frag = document.createDocumentFragment();
   mafia.crew.forEach(c => {
+    const live = c.alive && !c.jailed;
     const d = document.createElement('div');
-    d.className = 'ec' + (!c.alive ? ' tried' : '') + ((mafia.sel === c.n && c.alive) ? ' sel' : '');
-    d.onclick = () => { if (!c.alive || (mafia && mafia.over)) return; mafia.sel = c.n; snd('click'); mafiaDraw(); };
+    d.className = 'ec' + (!live ? ' tried' : '') + ((mafia.sel === c.n && live) ? ' sel' : '');
+    d.onclick = () => { if (!live || (mafia && mafia.over)) return; mafia.sel = c.n; snd('click'); mafiaDraw(); };
     const img = document.createElement('img');
-    img.src = encodeURI(imgP(c.n)); img.alt = c.n; img.draggable = false;
+    img.src = encodeURI(imgP(mafImg(c.n))); img.alt = c.n; img.draggable = false;
     img.onerror = () => { img.style.display = 'none'; };
-    const sp = document.createElement('span'); sp.className = 'en'; sp.textContent = c.alive ? c.n : c.n + ' ☠️';
+    const sp = document.createElement('span'); sp.className = 'en'; sp.textContent = c.n + (c.jailed ? ' 🔒' : (!c.alive ? ' ☠️' : ''));
     d.appendChild(img); d.appendChild(sp);
     frag.appendChild(d);
   });
@@ -4708,27 +5078,27 @@ function mafiaDraw(){
 function mafiaAsk(kind){
   const c = mafiaNeedSel();
   if (!c) return;
-  const cost = kind === 'search' ? 2 : 1;
+  const cost = kind === 'search' ? 5 : 1;
   if (mafia.pts < cost){ snd('wrong'); toast('Очков не хватает — доживи до утра'); return; }
   mafia.pts -= cost;
-  const others = mafia.crew.filter(x => x.alive && x.n !== c.n && !x.mafia);
-  const boss = mafia.crew.find(x => x.mafia);
+  const freeB = mafia.crew.filter(x => x.mafia && !x.jailed);
+  const foes = mafia.crew.filter(x => x.alive && !x.jailed && x.n !== c.n && !x.mafia);
   const rnd = a => a[Math.floor(Math.random() * a.length)];
+  const B = freeB.length ? rnd(freeB).n : null;
+  const W = foes.length ? rnd(foes).n : null;
   let say = '';
   if (kind === 'where'){
-    say = c.mafia
-      ? ('Всю ночь был с ' + (others.length ? rnd(others).n : 'другом') + '. Спроси у него!')
-      : (Math.random() < 0.5 ? 'Был дома, спал.' : ('Был дома. А ' + boss.n + ' всю ночь где-то шнырял, кстати.'));
+    if (c.mafia) say = W ? ('Всю ночь был у ' + mafG(W) + '. Спроси у ' + mafHer(W) + '!') : 'Всю ночь был дома.';
+    else say = (B && Math.random() < 0.5) ? ((mafF(c.n) ? 'Была дома. А ' : 'Был дома. А ') + B + ' всю ночь где-то шнырял, кстати.') : (mafF(c.n) ? 'Была дома, спала.' : 'Был дома, спал.');
   } else if (kind === 'who'){
-    say = c.mafia
-      ? ('Это точно ' + (others.length ? rnd(others).n : 'кто-то из вас') + '! Я сам видел!')
-      : (Math.random() < 0.65 ? ('Думаю, это ' + boss.n + '. У него глаза бегают.') : ('Не знаю... может, ' + (others.length ? rnd(others).n : 'никто') + '?'));
+    if (c.mafia) say = W ? ('Это точно ' + W + '! Я сам видел!') : 'Это точно кто-то из вас!';
+    else say = (B && Math.random() < 0.65) ? ('Думаю, это ' + B + (mafF(B) ? '. У неё глаза бегают.' : '. У него глаза бегают.')) : ('Не знаю... может, ' + (W || 'никто') + '?');
   } else if (kind === 'saw'){
-    say = c.mafia
-      ? ('Видел, как ' + (others.length ? rnd(others).n : 'кто-то') + ' ночью выходил из столовки!')
-      : (Math.random() < 0.6 ? ('Видел, как ' + boss.n + ' ночью выходил из столовки!') : 'Ничего не видел, спал как убитый.');
+    if (c.mafia) say = W ? ('Видел, как ' + W + ' ночью выходил из столовки!') : 'Ничего не видел!';
+    else say = (B && Math.random() < 0.6) ? ('Видел, как ' + B + ' ночью выходил из столовки!') : (mafF(c.n) ? 'Ничего не видела, спала как убитая.' : 'Ничего не видел, спал как убитый.');
   } else {
-    say = c.mafia ? '🔫 У него тёмное дело! Это точно он!' : 'Чисто. Только крошки от чикушки в карманах.';
+    if (c.mafia) say = Math.random() < 0.6 ? (mafF(c.n) ? '🔫 У неё тёмное дело! Это точно она!' : '🔫 У него тёмное дело! Это точно он!') : 'Пока чисто... обыщи ещё раз.';
+    else say = 'Чисто. Только крошки от чикушки в карманах.';
   }
   snd('hint');
   mafiaLog(c.n + ': «' + say + '»');
@@ -4739,13 +5109,12 @@ function mafiaSkip(){
   mafia.day++;
   mafia.pts = 6 + Math.floor(Math.random() * 4);
   snd('btn');
-  const victims = mafia.crew.filter(x => x.alive && !x.mafia);
+  const victims = mafia.crew.filter(x => x.alive && !x.jailed && !x.mafia);
   if (victims.length && Math.random() < 0.4){
     const v = victims[Math.floor(Math.random() * victims.length)];
     v.alive = false;
     if (mafia.sel === v.n) mafia.sel = null;
     mafiaLog('😱 Ночью убили ' + v.n + '! Мафия не дремлет. Очки восстановлены.');
-    if (!mafia.crew.some(x => x.alive && !x.mafia)){ mafiaWin(); return; }
   } else mafiaLog('Ночь прошла спокойно. Очки восстановлены.');
   mafiaDraw();
 }
@@ -4753,12 +5122,22 @@ function mafiaJail(){
   if (!mafia || mafia.over) return;
   const c = mafiaNeedSel();
   if (!c) return;
+  if (c.mafia){
+    c.jailed = true; c.alive = false;
+    if (mafia.sel === c.n) mafia.sel = null;
+    const left = mafia.crew.filter(x => x.mafia && !x.jailed).length;
+    if (!left){ mafiaWin(); return; }
+    snd('new_a');
+    mafiaLog('🔒 ' + c.n + ' — мафия! ' + (mafF(c.n) ? 'Посажена.' : 'Посажен.') + ' Остался ещё один!');
+    toast('Один есть! Ищи второго!');
+    mafiaDraw();
+    return;
+  }
   mafia.over = true;
-  if (c.mafia){ mafiaWin(); return; }
   c.alive = false;
   energy = Math.max(0, energy - 20);
   save(); renderAll(); snd('no');
-  mafiaLog('❌ Ошибка! ' + c.n + ' невиновен. Ты проиграл. −20 ⚡');
+  mafiaLog('❌ Ошибка! ' + c.n + (mafF(c.n) ? ' невиновна.' : ' невиновен.') + ' Ты проиграл. −20 ⚡');
   toast('Промах! Это был не он. −20 ⚡');
   mafiaDraw();
 }
@@ -4770,6 +5149,203 @@ function mafiaWin(){
   toast('🎉 Победа над мафией! +50 ⚡');
   mafiaDraw();
 }
+let ez = null;
+function openElena(){
+  snd('qstart');
+  ensureNoMenuTrack(); miniMusic();
+  ez = {p: [4, 4], s: [], score: 0, t: 60, iv: null, tick: 0, best: 0};
+  try{ ez.best = parseInt(localStorage.getItem('ag_elena') || '0', 10) || 0; }catch(e){}
+  for (let i = 0; i < 4; i++) ezSpawn(i % 2 === 0 ? 'knife' : 'roll');
+  ezDraw();
+  document.getElementById('elena').classList.add('show');
+  ez.iv = setInterval(ezTick, 450);
+}
+function ezSpawn(kind){
+  let r = 4, c = 4, guard = 0;
+  do { r = Math.floor(Math.random() * 9); c = Math.floor(Math.random() * 9); guard++; }
+  while (guard < 60 && ((r === ez.p[0] && c === ez.p[1]) || ez.s.some(s => s.r === r && s.c === c)));
+  ez.s.push({r: r, c: c, k: kind});
+}
+function ezTick(){
+  if (!ez) return;
+  ez.tick++;
+  const dirs = [[-1, 0], [1, 0], [0, -1], [0, 1], [0, 0]];
+  ez.s.forEach(s => {
+    if (s.k === 'roll' && ez.tick % 2) return;
+    const d = dirs[Math.floor(Math.random() * dirs.length)];
+    s.r = Math.min(8, Math.max(0, s.r + d[0]));
+    s.c = Math.min(8, Math.max(0, s.c + d[1]));
+  });
+  for (let i = ez.s.length - 1; i >= 0; i--){
+    const s = ez.s[i];
+    if (s.r === ez.p[0] && s.c === ez.p[1]){
+      ez.s.splice(i, 1);
+      ez.score++;
+      const bonus = s.k === 'knife' ? 3 : 2;
+      energy += bonus; energyEarned += bonus;
+      document.getElementById('ecnt').textContent = energy;
+      snd('new_a');
+      toast((s.k === 'knife' ? '🔪 Саша с ножиком пойман! +' : '🛼 Саша на роликах пойман! +') + bonus + ' ⚡');
+      ezSpawn(s.k);
+    }
+  }
+  if (ez.tick % 2 === 0){
+    ez.t--;
+    if (ez.t <= 0){ ezEnd(); return; }
+  }
+  ezDraw();
+}
+function ezEnd(){
+  if (!ez) return;
+  try{ clearInterval(ez.iv); }catch(e){}
+  if (ez.score > ez.best){ ez.best = ez.score; try{ localStorage.setItem('ag_elena', String(ez.best)); }catch(e){} }
+  save(); renderAll();
+  snd('quest');
+  toast('Время вышло! Поймано: ' + ez.score);
+  ezDraw();
+}
+function ezMove(dr, dc){
+  if (!ez) return;
+  ez.p = [Math.min(8, Math.max(0, ez.p[0] + dr)), Math.min(8, Math.max(0, ez.p[1] + dc))];
+  snd('click');
+  ezDraw();
+}
+function ezDraw(){
+  if (!ez) return;
+  document.getElementById('ez-time').textContent = ez.t;
+  document.getElementById('ez-score').textContent = ez.score;
+  document.getElementById('ez-best').textContent = ez.best;
+  const g = document.getElementById('ezgrid');
+  g.innerHTML = '';
+  const frag = document.createDocumentFragment();
+  for (let r = 0; r < 9; r++) for (let c = 0; c < 9; c++){
+    const d = document.createElement('div');
+    d.className = 'ez';
+    const s = ez.s.find(x => x.r === r && x.c === c);
+    if (ez.p[0] === r && ez.p[1] === c){
+      d.className += ' me';
+      const img = document.createElement('img');
+      img.src = encodeURI(imgP('Еленка')); img.alt = 'Еленка'; img.draggable = false;
+      img.onerror = () => { img.remove(); };
+      d.appendChild(img);
+    } else if (s){
+      d.className += ' ' + s.k;
+      const img = document.createElement('img');
+      img.src = encodeURI(imgP('Саша')); img.alt = 'Саша'; img.draggable = false;
+      img.onerror = () => { img.remove(); };
+      d.appendChild(img);
+      const tag = document.createElement('span'); tag.className = 'tag'; tag.textContent = s.k === 'knife' ? '🔪' : '🛼';
+      d.appendChild(tag);
+    }
+    frag.appendChild(d);
+  }
+  g.appendChild(frag);
+}
+let rn = null;
+function runStartMenu(){ snd('qstart'); const m = document.getElementById('run-menu'), g = document.getElementById('run-game'); if (m) m.style.display = ''; if (g) g.style.display = 'none'; try{ rn = null; }catch(e){} let best = 0; try{ best = parseInt(localStorage.getItem('ag_run') || '0', 10) || 0; }catch(e){} document.getElementById('run-best').textContent = best; document.getElementById('run').classList.add('show'); }
+function runStart(ch){
+  snd('qstart');
+  ensureNoMenuTrack(); miniMusic();
+  closeOvl('fun');
+  rn = {ch: ch, y: 0, vy: 0, x: 70, stam: 100, t: 0, dist: 150, obs: [], picks: [], over: false, iv: null, best: 0, spawnT: 0.5};
+  try{ rn.best = parseInt(localStorage.getItem('ag_run') || '0', 10) || 0; }catch(e){}
+  document.getElementById('run-best').textContent = rn.best;
+  document.getElementById('run-menu').style.display = 'none';
+  document.getElementById('run-game').style.display = '';
+  document.getElementById('run').classList.add('show');
+  rn.iv = setInterval(runTick, 50);
+}
+function runJump(){ if (!rn || rn.over) return; if (rn.y <= 0.5 && rn.stam >= 12){ rn.vy = -11; rn.stam -= 12; snd('click'); } }
+function runDash(){ if (!rn || rn.over) return; if (rn.stam >= 20){ rn.stam -= 20; rn.dist = Math.min(220, rn.dist + 45); snd('combine'); } else { snd('wrong'); toast('Нет выносливости!'); } }
+function runTick(){
+  if (!rn || rn.over) return;
+  rn.t += 0.05;
+  rn.stam = Math.min(100, rn.stam + 0.4);
+  rn.vy += 0.7;
+  rn.y += rn.vy;
+  if (rn.y > 0){ rn.y = 0; rn.vy = 0; }
+  const speed = 4 + rn.t * 0.05;
+  rn.obs.forEach(o => { o.x -= speed; });
+  rn.picks.forEach(o => { o.x -= speed; });
+  rn.obs = rn.obs.filter(o => o.x > -30);
+  rn.picks = rn.picks.filter(o => o.x > -30);
+  rn.spawnT -= 0.05;
+  if (rn.spawnT <= 0){
+    rn.spawnT = 1.1 + Math.random() * 0.9;
+    if (Math.random() < 0.65) rn.obs.push({x: 380, w: 18 + Math.random() * 14, h: 26 + Math.random() * 22});
+    else rn.picks.push({x: 380, y: 60 + Math.random() * 60});
+  }
+  rn.dist -= 0.35 + rn.t * 0.012;
+  const py = 150 - 24 + rn.y;
+  for (const o of rn.obs){
+    if (rn.x + 18 > o.x && rn.x < o.x + o.w && py + 24 > 150 - o.h){
+      rn.dist -= 30;
+      o.x = -999;
+      snd('wrong');
+    }
+  }
+  for (let i = rn.picks.length - 1; i >= 0; i--){
+    const o = rn.picks[i];
+    if (Math.abs(rn.x + 9 - o.x) < 22 && Math.abs((py + 12) - o.y) < 26){
+      rn.stam = Math.min(100, rn.stam + 30);
+      rn.picks.splice(i, 1);
+      snd('hint');
+    }
+  }
+  if (rn.dist <= 14){ runEnd(); return; }
+  document.getElementById('run-time').textContent = Math.floor(rn.t);
+  document.getElementById('run-stam').textContent = Math.floor(rn.stam);
+  runDraw();
+}
+function runDraw(){
+  const cv = document.getElementById('runcv');
+  if (!cv || !rn) return;
+  const c = cv.getContext('2d');
+  const W = 360, H = 200, G = 150;
+  c.clearRect(0, 0, W, H);
+  c.fillStyle = 'rgba(93,79,58,.9)';
+  c.fillRect(0, G + 24, W, H - G - 24);
+  c.font = '30px serif';
+  c.fillText('🧴', rn.x - rn.dist, G + 18);
+  c.fillText(rn.ch === 'Саша' ? '🏃' : '🐕', rn.x, G + rn.y + 18);
+  c.fillStyle = '#5d4f3a';
+  rn.obs.forEach(o => { c.fillRect(o.x, G + 24 - o.h, o.w, o.h); });
+  c.font = '18px serif';
+  rn.picks.forEach(o => { c.fillText('🔋', o.x, o.y); });
+  c.fillStyle = 'rgba(43,35,24,.2)';
+  c.fillRect(10, 10, 120, 10);
+  c.fillStyle = '#12805a';
+  c.fillRect(10, 10, 120 * rn.stam / 100, 10);
+}
+function runEnd(){
+  if (!rn) return;
+  rn.over = true;
+  try{ clearInterval(rn.iv); }catch(e){}
+  const sec = Math.floor(rn.t);
+  const award = 1 + Math.floor(sec / 6);
+  energy += award; energyEarned += award;
+  if (sec > rn.best){ rn.best = sec; try{ localStorage.setItem('ag_run', String(sec)); }catch(e){} }
+  save(); renderAll();
+  snd('no');
+  toast('Шампунь догнал! Выжил: ' + sec + ' сек. +' + award + ' ⚡');
+  document.getElementById('run-menu').style.display = '';
+  document.getElementById('run-game').style.display = 'none';
+  document.getElementById('run-best').textContent = rn.best;
+}
+function runExit(){
+  if (rn && rn.iv){ try{ clearInterval(rn.iv); }catch(e){} }
+  rn = null;
+  const m = document.getElementById('run-menu'), g = document.getElementById('run-game');
+  if (m) m.style.display = '';
+  if (g) g.style.display = 'none';
+  closeOvl('run');
+}
+document.addEventListener('keydown', ev => {
+  const o = document.getElementById('run');
+  if (!o || !o.classList.contains('show')) return;
+  if (ev.key === ' ' || ev.key === 'ArrowUp'){ ev.preventDefault(); runJump(); }
+  else if (ev.key === 'ArrowRight'){ ev.preventDefault(); runDash(); }
+});
 function openRating(){ snd('dialog'); document.getElementById('rating').classList.add('show'); try{ loadRating(); }catch(e){} }
 function fbPlayerName(){
   try{ const nick = localStorage.getItem('ag_nick'); if (nick && nick.trim()) return nick.trim().slice(0, 24); }catch(e){}
@@ -4785,13 +5361,17 @@ function loadRating(){
     if (!ok){ box.innerHTML = '<div class="hrow">📴 Нет связи. Открой с интернетом.</div>'; return; }
     box.innerHTML = '<div class="hrow">Загрузка...</div>';
     FB.db.collection('players').orderBy('el', 'desc').limit(25).get().then(snap => {
+      try{
+        const top0 = snap.docs && snap.docs[0];
+        localStorage.setItem('ag_top1', (FB.user && top0 && top0.id === FB.user.uid) ? '1' : '0');
+      }catch(e){}
       if (snap.empty){ box.innerHTML = '<div class="hrow">Пока пусто — стань первым! 🏆</div>'; return; }
       const medals = ['🥇', '🥈', '🥉'];
       let i = 0, html = '';
       snap.forEach(doc => {
         const d = doc.data() || {};
         const me = (FB.user && doc.id === FB.user.uid) ? ' style="border-color:var(--gold)"' : '';
-        html += '<div class="hrow"' + me + '><span>' + (medals[i] || ((i + 1) + '.')) + ' ' + String(d.name || '?').replace(/</g, '&lt;') + '</span><b>' + (d.el || 0) + ' ⚗️ · ' + (d.reactions || 0) + ' 🧪 · 🏆' + (d.cups || 0) + '</b></div>';
+        html += '<div class="hrow"' + me + '><span>' + (medals[i] || ((i + 1) + '.')) + ' ' + String(d.name || '?').replace(/</g, '&lt;') + ' <small>' + rankIcon(d.el || 0) + ' ' + rankName(d.el || 0) + '</small></span><b>' + (d.el || 0) + ' ⚗️ · ' + (d.reactions || 0) + ' 🧪 · 🏆' + (d.cups || 0) + '</b></div>';
         i++;
       });
       box.innerHTML = html;
@@ -4812,7 +5392,7 @@ function casBet(bet){
     if (d) d.textContent = faces[k++ % faces.length];
     if (k > 8){
       clearInterval(iv);
-      if (win){ energy += bet * 2; energyEarned += bet * 2; if (d) d.textContent = '🎉 +' + bet + ' ⚡'; snd('new_a'); }
+      if (win){ energy += bet * 2; energyEarned += bet * 2; if (d) d.textContent = '🎉 +' + (bet * 2) + ' ⚡'; snd('new_a'); }
       else { if (d) d.textContent = '💸 −' + bet + ' ⚡'; snd('no'); }
       save(); renderAll();
       document.getElementById('cas-bal').textContent = energy;
@@ -4904,7 +5484,7 @@ function q2New(){
   document.getElementById('q2-a').src = encodeURI(imgP(rec[0]));
   document.getElementById('q2-b').src = encodeURI(imgP(rec[1]));
   document.getElementById('q2-in').value = '';
-  document.getElementById('q2-res').textContent = 'Из чего сделано? Напиши название 👇';
+  document.getElementById('q2-res').textContent = 'Что получится? Напиши название 👇';
   setTimeout(() => { const ii = document.getElementById('q2-in'); if (ii) ii.focus(); }, 300);
 }
 function q2Ans(){
@@ -4927,6 +5507,66 @@ function q2Ans(){
   }
   document.getElementById('q2-score').textContent = q2Score;
   document.getElementById('q2-best').textContent = q2Best;
+}
+function rankName(n){
+  if (n >= TOTAL) return 'Божественный Арсений';
+  if (n >= 250) return 'Великий Тимерхун';
+  if (n >= 220) return 'Великий Рамиль';
+  if (n >= 170) return 'Тимофейчик';
+  if (n >= 120) return 'Крутой Арсений';
+  if (n >= 90) return 'Тимерхунчик';
+  if (n >= 80) return 'Тимермалик';
+  if (n >= 60) return 'Бурик';
+  if (n >= 50) return 'крутой Саша';
+  if (n >= 40) return 'мелкий Арсений';
+  if (n >= 30) return 'Лунтик';
+  if (n >= 20) return 'начинающий';
+  return 'гость';
+}
+function rankIcon(n){
+  if (n >= TOTAL) return '⚗️';
+  if (n >= 250) return '🌌';
+  if (n >= 220) return '👑';
+  if (n >= 170) return '🎬';
+  if (n >= 120) return '💪';
+  if (n >= 90) return '👔';
+  if (n >= 80) return '🧙';
+  if (n >= 60) return '🐕';
+  if (n >= 50) return '😎';
+  if (n >= 40) return '🧒';
+  if (n >= 30) return '🌙';
+  if (n >= 20) return '🌱';
+  return '👣';
+}
+function rankTier(n){
+  if (n >= TOTAL) return 12;
+  if (n >= 250) return 11;
+  if (n >= 220) return 10;
+  if (n >= 170) return 9;
+  if (n >= 120) return 8;
+  if (n >= 90) return 7;
+  if (n >= 80) return 6;
+  if (n >= 60) return 5;
+  if (n >= 50) return 4;
+  if (n >= 40) return 3;
+  if (n >= 30) return 2;
+  if (n >= 20) return 1;
+  return 0;
+}
+function checkRank(){
+  const tr = rankTier(discovered.size);
+  let last = -1;
+  try{ last = parseInt(localStorage.getItem('ag_rank') || '-1', 10); }catch(e){}
+  if (tr > last){
+    try{ localStorage.setItem('ag_rank', String(tr)); }catch(e){}
+    if (last >= 0){ snd('quest'); toast('🎖 Новое звание: ' + rankIcon(discovered.size) + ' ' + rankName(discovered.size) + '!');
+      try{ if (navigator.vibrate) navigator.vibrate([30, 50, 30]); }catch(e){} }
+  }
+}
+function isGod(){
+  let top = false;
+  try{ top = localStorage.getItem('ag_top1') === '1'; }catch(e){}
+  return top && discovered.size >= TOTAL && energyEarned >= 2000 && Object.keys(questDone).length >= QUESTS.length && reactions >= 500;
 }
 function fbSendBtn(st){
   const b = document.getElementById('fb-send-btn');
@@ -4953,7 +5593,7 @@ function fbSendScore(){
     FB.db.collection('players').doc(FB.user.uid).set({name: fbPlayerName(), el: discovered.size, reactions: reactions, quests: Object.keys(questDone).length, ach: achCount(), cups: cups, ts: firebase.firestore.FieldValue.serverTimestamp()}, {merge: true}).then(() => { try{ localStorage.setItem('ag_lastscore', JSON.stringify({t: Date.now(), el: discovered.size, r: reactions})); }catch(e){} snd('new_a'); fbSendBtn('done'); toast('Результат отправлен в рейтинг!'); loadRating(); }).catch(() => { fbSendBtn('idle'); toast('Не вышло отправить'); });
   });
 }
-const NICK_BAD = ['хуй','хуе','хуё','пизд','пезд','ебан','ебл','еби','ебу','бля','сука','сучк','мраз','пидор','пидр','гандон','уеб','уёб','хуесос','долбо','мудак','мудил','говн','сран','залуп','пенис','penis','писька','сиська','сиськи','вагина','vagin','трах','хер','писю','пися','fuck','shit','dick','pussy','bitch','nigga','nigger','whore','cunt','asshole','fag','dumbass'];
+const NICK_BAD = ['хуй','хуе','хуё','пизд','пезд','ебан','ебл','еби','ебу','бля','сука','сучк','мраз','пидор','пидр','гандон','уеб','уёб','хуесос','долбо','мудак','мудил','говн','сран','залуп','пенис','penis','писька','сиська','сиськи','вагина','vagin','трах','хер','писю','пися','писюн','fuck','shit','dick','pussy','bitch','nigga','nigger','whore','cunt','asshole','fag','dumbass'];
 function nickClean(s){
   s = String(s || '').toLowerCase();
   const leet = {a:'а',b:'б',c:'с',d:'д',e:'е',f:'ф',g:'г',h:'н',i:'и',j:'й',k:'к',l:'л',m:'м',n:'н',o:'о',p:'р',q:'к',r:'р',s:'с',t:'т',u:'у',v:'в',w:'ш',x:'х',y:'у',z:'з','0':'о','1':'и','3':'з','4':'а','5':'с','6':'б','7':'т','8':'в','9':'д','@':'а','$':'с'};
@@ -4996,6 +5636,7 @@ function renderAccount(){
     au.style.display = accPending ? 'none' : ''; ou.style.display = 'none'; vf.style.display = 'none';
     cd.style.display = accPending ? '' : 'none';
   }
+  try{ syncPrivUI(); }catch(e){}
   const ni = document.getElementById('acc-nick');
   if (ni && document.activeElement !== ni){ try{ ni.value = localStorage.getItem('ag_nick') || ''; }catch(e){} }
   const box = document.getElementById('acc-stats');
@@ -5008,6 +5649,7 @@ function renderAccount(){
     ['🗺️ Квестов пройдено', Object.keys(questDone).length + ' / ' + QUESTS.length],
     ['🏆 Достижений', achCount() + ' / ' + ACH.length],
     ['🥇 Кубки дуэлей', cups],
+    ['🎖 Звание', rankIcon(discovered.size) + ' ' + rankName(discovered.size) + (isGod() ? ' · 🌌 Бог всех Арсениев' : '')],
     ['⏱️ Наиграно всего', accFmtTime(playSec)],
     ['🎮 Рекорды', 'лабиринт ' + (mazeBest || '—') + ' · поймай ' + (quizBest || 0) + ' · 3-в-ряд ' + (miniBest || 0) + ' · 2048 ' + (tb || 0)]
   ];
