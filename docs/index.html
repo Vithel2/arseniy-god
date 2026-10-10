@@ -369,6 +369,11 @@ button,input,textarea{font-family:inherit}
 @keyframes tpop{0%{transform:scale(.55)}55%{transform:scale(1.2)}100%{transform:scale(1)}}
 .btn.busy{animation:btnpulse 1s ease-in-out infinite;opacity:.85}
 @keyframes btnpulse{50%{opacity:.55}}
+#rotate-tip{display:none}
+@media (orientation:landscape) and (max-height:520px){
+  #rotate-tip{display:flex;position:fixed;inset:0;z-index:5000;align-items:center;justify-content:center;background:var(--paper);font-size:22px;font-weight:900;text-align:center;line-height:1.5;padding:20px}
+  #rotate-tip small{font-size:14px;font-weight:700;color:var(--ink2)}
+}
 body.nofx *,body.nofx *::before,body.nofx *::after{animation-duration:.01s !important;transition-duration:.01s !important}
 #fun{background:radial-gradient(circle at 50% 30%,#f6ecd3,#d9c9a6 75%);overflow:hidden}
 #funbox{position:absolute;inset:0;overflow:hidden}
@@ -540,8 +545,8 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
   .stats{gap:5px}
   .btn{padding:7px 10px;font-size:12px}
   #main{flex-direction:column}
-  .grid{grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:6px;padding:9px}
-  .panel .grid{grid-template-columns:repeat(auto-fill,minmax(66px,1fr))}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(60px,1fr));gap:5px;padding:8px}
+  .panel .grid{grid-template-columns:repeat(auto-fill,minmax(56px,1fr))}
   .phead{font-size:13.5px;padding:6px 6px 6px 10px}
   :root{--gsz:64px;--gsz-s:26px}
   .gbadges{grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:9px;padding:11px;grid-auto-rows:max-content}
@@ -552,9 +557,9 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
   .gall{padding:12px 14px 14px;border-radius:20px}
   .gall .grow{font-size:13px}
   .gall .grow b{font-size:22px}
-  .ec{font-size:10px;padding:5px 3px 4px}
-  .ec img{max-width:72px;border-radius:16px}
-  .ec .en{max-width:78px}
+  .ec{font-size:9.5px;padding:4px 2px 3px}
+  .ec img{max-width:54px;border-radius:14px}
+  .ec .en{max-width:64px}
   .bar{gap:7px;padding:10px 10px calc(10px + env(safe-area-inset-bottom))}
   #msg,#qmsg{display:none}
   .slot{width:64px;min-width:64px;height:64px;border-radius:18px}
@@ -646,6 +651,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 <symbol id="i-lock" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
 </defs></svg>
 <div id="bg"></div>
+<div id="rotate-tip"><div>📱<br>Поверни телефон вертикально<br><small>так играть удобнее</small></div></div>
 
 <div id="start">
   <img id="start-art" src="Backgrounds/Nachalnyy_fon_s_logotipom_bez_knopok.jpg" alt="Арсений God">
@@ -907,8 +913,8 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
     </div>
     <div class="shop-item"><span class="si"><svg class="ic"><use href="#i-key" xlink:href="#i-key"/></svg></span><div><div class="t">Автоключи ×5</div><div class="d">Бесплатно каждые 2 часа. Играют за тебя.</div></div><button class="btn hint" id="shop-claim" onclick="claimKeys()">Забрать</button></div>
     <div class="shop-item"><span class="si"><svg class="ic"><use href="#i-gift" xlink:href="#i-gift"/></svg></span><div><div class="t">Рулетка</div><div class="d">Отдельное окно. Раз в день.</div></div><button class="btn hint" onclick="openSpin()">Открыть</button></div>
-    <div class="shop-item"><span class="si"><svg class="ic"><use href="#i-frame" xlink:href="#i-frame"/></svg></span><div><div class="t">Синие рамки</div><div class="d">Элементы без новых комбинаций подсвечиваются синим. Скидка 42ч!</div></div><button class="btn" id="shop-buy-blue" onclick="buyBlue()">Купить</button></div>
-    <div class="shop-item"><span class="si"><svg class="ic"><use href="#i-frame-dash" xlink:href="#i-frame-dash"/></svg></span><div><div class="t">Пунктир</div><div class="d">Элементам, которым не хватает открытых пар, — пунктир. Скидка 24ч!</div></div><button class="btn" id="shop-buy-dash" onclick="buyDash()">Купить</button></div>
+    <div class="shop-item"><span class="si"><svg class="ic"><use href="#i-frame" xlink:href="#i-frame"/></svg></span><div><div class="t">Синие рамки</div><div class="d">Элементы без новых комбинаций подсвечиваются синим. Скидка навсегда!</div></div><button class="btn" id="shop-buy-blue" onclick="buyBlue()">Купить</button></div>
+    <div class="shop-item"><span class="si"><svg class="ic"><use href="#i-frame-dash" xlink:href="#i-frame-dash"/></svg></span><div><div class="t">Пунктир</div><div class="d">Элементам, которым не хватает открытых пар, — пунктир. Скидка навсегда!</div></div><button class="btn" id="shop-buy-dash" onclick="buyDash()">Купить</button></div>
     <div class="shop-item"><span class="si"><svg class="ic"><use href="#i-music" xlink:href="#i-music"/></svg></span><div><div class="t">Своя музыка</div><div class="d">Выбор игрового трека. 50 ⚡</div></div><button class="btn" id="shop-buy-music" onclick="buyMusic()">Купить</button></div>
     <div class="shop-item"><span class="si"><svg class="ic"><use href="#i-bulb" xlink:href="#i-bulb"/></svg></span><div><div class="t">Подсказка</div><div class="d">Одна штука. 5 ⚡</div></div><button class="btn" id="shop-buy-hint" onclick="buyHint()">Купить</button></div>
     <div id="shop-tracks" style="display:none;gap:6px;margin-bottom:8px;flex-wrap:wrap"></div>
@@ -1668,8 +1674,8 @@ function closeOvl(id, now){
 }
 let funRun = false, funTaps = 0, funBest = 0, miniSaleUntil = 0, funTimer = null;
 let blueUntil = 0, dashUntil = 0;
-function bluePrice(){ return Date.now() < blueUntil ? 350 : 500; }
-function dashPrice(){ return Date.now() < dashUntil ? 200 : 250; }
+function bluePrice(){ return 350; }
+function dashPrice(){ return 200; }
 let mazeP = null, mazeO = null, mazeGot = 0, mazeSteps = 0, mazeBest = 0, mazeTakenArr = [], mazeTurn = 0;
 let quizCur = null, quizScore = 0, quizBest = 0;
 const MAZE = [
@@ -2873,10 +2879,10 @@ function renderShop(){
   const bp = bluePrice(), dp = dashPrice();
   const bb = document.getElementById('shop-buy-blue');
   bb.disabled = ownedBlue || energy < bp;
-  bb.innerHTML = ownedBlue ? 'Куплено ✓' : 'Купить ' + bp + ' ⚡' + (bp < 500 ? ' <s>500</s> -30% ' + fmtLeft(blueUntil - Date.now()) : '');
+  bb.innerHTML = ownedBlue ? 'Куплено ✓' : 'Купить 350 ⚡ <s>500</s> -30%';
   const bd = document.getElementById('shop-buy-dash');
   bd.disabled = ownedDash || energy < dp;
-  bd.innerHTML = ownedDash ? 'Куплено ✓' : 'Купить ' + dp + ' ⚡' + (dp < 250 ? ' <s>250</s> -20% ' + fmtLeft(dashUntil - Date.now()) : '');
+  bd.innerHTML = ownedDash ? 'Куплено ✓' : 'Купить 200 ⚡ <s>250</s> -20%';
   const bm = document.getElementById('shop-buy-music');
   bm.disabled = ownedMusic || energy < 50;
   bm.textContent = ownedMusic ? 'Куплено ✓' : 'Купить';
