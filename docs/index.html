@@ -385,15 +385,15 @@ img{-webkit-touch-callout:none;-webkit-user-drag:none;user-select:none;-webkit-u
 @keyframes btnpulse{50%{opacity:.55}}
 .ec.sense img{box-shadow:0 0 0 3px var(--gold),0 0 16px rgba(217,145,0,.85);animation:sensepulse 1.2s ease-in-out infinite}
 @keyframes sensepulse{50%{box-shadow:0 0 0 4px var(--gold),0 0 22px rgba(217,145,0,.9)}}
-body[data-theme="mint"]{--paper:#d9e9d4;--surf:#e9f3e4;--surf-hi:#f7fcf5;--surf-lo:#c4d6b8;--ink:#22301f;--ink2:#5a6b52;--gold:#2f9e6e;--gold-d:#0e5c3a;--amber-1:#7fd6a8;--amber-2:#3fb97f;--amber-edge:#1f7a4d;--amber-deep:#155c39}
-body[data-theme="sky"]{--paper:#d7e6f2;--surf:#e7f0f9;--surf-hi:#f6fbff;--surf-lo:#bccfdd;--ink:#1f2c3d;--ink2:#54667c;--gold:#2f7fd6;--gold-d:#0c4a8a;--amber-1:#7cc0f2;--amber-2:#3f9fe0;--amber-edge:#1c6aa8;--amber-deep:#134e7d}
-body[data-theme="berry"]{--paper:#eed9e2;--surf:#f7e8ee;--surf-hi:#fdf5f8;--surf-lo:#d9b9c7;--ink:#3a1f2c;--ink2:#7c5465;--gold:#c2437f;--gold-d:#7d1c48;--amber-1:#f097b8;--amber-2:#dd5f92;--amber-edge:#a12c5c;--amber-deep:#771f44}
+body[data-theme="mint"]{--paper:#d9e9d4;--surf:#e9f3e4;--surf-hi:#f7fcf5;--surf-lo:#c4d6b8;--ink:#22301f;--ink2:#5a6b52;--gold:#2f9e6e;--gold-d:#0e5c3a;--amber-1:#7fd6a8;--amber-2:#3fb97f;--amber-edge:#1f7a4d;--amber-deep:#155c39;--panel:rgba(233,243,228,.94);--panel2:rgba(233,243,228,.8)}
+body[data-theme="sky"]{--paper:#d7e6f2;--surf:#e7f0f9;--surf-hi:#f6fbff;--surf-lo:#bccfdd;--ink:#1f2c3d;--ink2:#54667c;--gold:#2f7fd6;--gold-d:#0c4a8a;--amber-1:#7cc0f2;--amber-2:#3f9fe0;--amber-edge:#1c6aa8;--amber-deep:#134e7d;--panel:rgba(231,240,249,.94);--panel2:rgba(231,240,249,.8)}
+body[data-theme="berry"]{--paper:#eed9e2;--surf:#f7e8ee;--surf-hi:#fdf5f8;--surf-lo:#d9b9c7;--ink:#3a1f2c;--ink2:#7c5465;--gold:#c2437f;--gold-d:#7d1c48;--amber-1:#f097b8;--amber-2:#dd5f92;--amber-edge:#a12c5c;--amber-deep:#771f44;--panel:rgba(247,232,238,.94);--panel2:rgba(247,232,238,.8)}
 .theme-sw{width:40px;height:40px;border-radius:50%;border:3px solid var(--line2);cursor:pointer;padding:0;flex:none}
 .theme-sw.on{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold)}
 #start-logo-txt{display:none;font-size:46px;font-weight:900;letter-spacing:-.02em;color:var(--ink);text-align:center;line-height:1;margin:8px 0 2px}
 #start-logo-txt span{color:var(--gold)}
 body[data-theme]:not([data-theme=""]) #start-art{display:none}
-body[data-theme]:not([data-theme=""]) #start-logo-txt{display:block}
+body[data-theme]:not([data-theme=""]) #start-logo-txt{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:32dvh}
 body[data-theme]:not([data-theme=""]) #bg{background-image:none}
 body[data-theme]:not([data-theme=""]) #qgame{background-image:none}
 body[data-theme]:not([data-theme=""]) #hdr{background:var(--panel)}
@@ -403,6 +403,58 @@ body[data-theme]:not([data-theme=""]) #qhdr{background:var(--panel)}
 body[data-theme]:not([data-theme=""]) .btn.q{background:linear-gradient(180deg,var(--amber-1),var(--amber-2));color:#3a2400}
 body[data-theme]:not([data-theme=""]) #qgoal{background:rgba(128,128,128,.18);border-color:var(--line2)}
 body[data-theme]:not([data-theme=""]) .qs.goal{background:rgba(128,128,128,.25);color:var(--ink)}
+body[data-theme]:not([data-theme=""]) #app{background:transparent;border-color:transparent;box-shadow:none}
+body[data-theme]:not([data-theme=""]) #start::before{display:none}
+body[data-theme]:not([data-theme=""]) #bg::after{display:none}
+body[data-theme]:not([data-theme=""]) .slot{background:var(--surf)}
+body[data-theme]:not([data-theme=""]) .rslot{background:var(--surf)}
+body[data-theme]:not([data-theme=""]) .qs{background:var(--surf-lo)}
+body[data-theme]:not([data-theme=""]) .qcard{background:var(--surf)}
+body[data-theme]:not([data-theme=""]) .gbadge{background:var(--surf)}
+body[data-theme]:not([data-theme=""]) .gall{background:var(--surf)}
+body[data-theme]:not([data-theme=""]) .shop-item{background:var(--surf)}
+body[data-theme]:not([data-theme=""]) .box{background:var(--surf)}
+body[data-theme]:not([data-theme=""]) .credits{background:var(--surf-lo)}
+body[data-theme]:not([data-theme=""]) .mbtn{background:var(--surf)}
+body[data-theme]:not([data-theme=""]) .mcell{background:var(--surf)}
+body[data-theme]:not([data-theme=""]) .mz{background:var(--surf-lo)}
+body[data-theme]:not([data-theme=""]) .mz.exit{background:var(--surf)}
+body[data-theme]:not([data-theme=""]) .t2048{background:var(--surf-lo)}
+body[data-theme]:not([data-theme=""]) .pill{background:var(--surf-hi)}
+body[data-theme]:not([data-theme=""]) #quizgen-bank{background:var(--surf-lo)}
+body[data-theme]:not([data-theme=""]) #qg-hdr{background:var(--panel)}
+body[data-theme]:not([data-theme=""]) #qg-sideL,body[data-theme]:not([data-theme=""]) #qg-sideR{background:var(--panel2)}
+body[data-theme]:not([data-theme=""]) #qtodo{background:var(--panel2)}
+body[data-theme]:not([data-theme=""]) #fun{background:var(--paper)}
+body[data-theme]:not([data-theme=""]) #funpanel{background:var(--panel)}
+body[data-theme]:not([data-theme=""]) #intro{background:var(--paper)}
+body[data-theme]:not([data-theme=""]) .wl{background:var(--surf-lo)}
+body[data-theme]:not([data-theme=""]) .mi{background:rgba(128,128,128,.18);border-color:var(--line2);color:var(--ink)}
+body[data-theme]:not([data-theme=""]) .si{background:rgba(128,128,128,.18);border-color:var(--line2);color:var(--ink)}
+body[data-theme]:not([data-theme=""]) #qg-cover{background:var(--panel2)}
+body[data-theme]:not([data-theme=""]) .slot{background:var(--surf)}
+body[data-theme]:not([data-theme=""]) .rslot{background:var(--surf)}
+body[data-theme]:not([data-theme=""]) .qs{background:var(--surf-lo)}
+body[data-theme]:not([data-theme=""]) .qcard{background:var(--surf)}
+body[data-theme]:not([data-theme=""]) .gbadge{background:var(--surf)}
+body[data-theme]:not([data-theme=""]) .gall{background:var(--surf)}
+body[data-theme]:not([data-theme=""]) .shop-item{background:var(--surf)}
+body[data-theme]:not([data-theme=""]) .box{background:var(--surf)}
+body[data-theme]:not([data-theme=""]) .credits{background:var(--surf-lo)}
+body[data-theme]:not([data-theme=""]) .mbtn{background:var(--surf)}
+body[data-theme]:not([data-theme=""]) .mcell{background:var(--surf)}
+body[data-theme]:not([data-theme=""]) .mz{background:var(--surf-lo)}
+body[data-theme]:not([data-theme=""]) .mz.exit{background:var(--surf)}
+body[data-theme]:not([data-theme=""]) .t2048{background:var(--surf-lo)}
+body[data-theme]:not([data-theme=""]) .pill{background:var(--surf-hi)}
+body[data-theme]:not([data-theme=""]) #quizgen-bank{background:var(--surf-lo)}
+body[data-theme]:not([data-theme=""]) #qg-hdr{background:var(--panel)}
+body[data-theme]:not([data-theme=""]) #qg-sideL,body[data-theme]:not([data-theme=""]) #qg-sideR{background:var(--panel2)}
+body[data-theme]:not([data-theme=""]) #qtodo{background:var(--panel2)}
+body[data-theme]:not([data-theme=""]) #funpanel{background:var(--panel)}
+body[data-theme]:not([data-theme=""]) #mazegrid{background:rgba(128,128,128,.25)}
+body[data-theme]:not([data-theme=""]) #ezgrid{background:rgba(128,128,128,.25)}
+body[data-theme]:not([data-theme=""]) .qg-cover{background:var(--panel2)}
 #rotate-tip{display:none}
 @media (orientation:landscape) and (max-height:520px){
   #rotate-tip{display:flex;position:fixed;inset:0;z-index:5000;align-items:center;justify-content:center;background:var(--paper);font-size:22px;font-weight:900;text-align:center;line-height:1.5;padding:20px}
@@ -935,7 +987,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
       Файл: <b id="save-hint-name">arseniy-god-save.json</b>. На ПК — «Сохранить как». На телефоне надёжнее «Поделиться» или «Копировать код»: скачивание в WebView иногда молча пропадает.
     </details>
     <div class="sgroup">О игре</div>
-    <div class="credits">Разработчик: <b>Vithel</b><br>Рисовщики: <b>Vithel</b> и <b>Mathil</b><br><span id="verclick" onclick="verTap()" title="v1.43 beta" style="font-size:11px;cursor:pointer;-webkit-user-select:none;user-select:none;color:var(--ink2)">v1.43 beta</span></div>
+    <div class="credits">Разработчик: <b>Vithel</b><br>Рисовщики: <b>Vithel</b> и <b>Mathil</b><br><span id="verclick" onclick="verTap()" title="v1.46 beta" style="font-size:11px;cursor:pointer;-webkit-user-select:none;user-select:none;color:var(--ink2)">v1.46 beta</span></div>
     <div class="credits donate" style="text-align:center"><svg class="ic"><use href="#i-heart" xlink:href="#i-heart"/></svg> Поддержи разработчика<br><span style="font-size:11px">Чтобы увидеть номер, кликни по тексту</span><br><b id="donate-num" onclick="revealDonate()" style="filter:blur(5px);cursor:pointer;-webkit-user-select:none;user-select:none">4279 3806 8503 3450</b><br><span id="donate-name" style="display:none">Шакин В.<br><span style="font-size:11px">Спасибо за доброту! Ты лучший! ❤️</span></span></div>
     <button class="btn wide" onclick="openPrivacy()"><svg class="ic"><use href="#i-lock" xlink:href="#i-lock"/></svg> Политика конфиденциальности</button>
     <div class="sgroup">Опасная зона</div>
@@ -1056,6 +1108,9 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
     <h2>Новости</h2>
     <p>Что нового в игре:</p>
     <div class="hlist">
+      <div class="hrow"><b>v1.46</b><span>Мафия: умное голосование, ИИ-допросы</span></div>
+      <div class="hrow"><b>v1.45</b><span>Мафия: голосование и паритет, темы докрашены</span></div>
+      <div class="hrow"><b>v1.44</b><span>Темы докрашены, мафия-убийца за Рамиля</span></div>
       <div class="hrow"><b>v1.43</b><span>Еленка ловит Саш, раннер от шампуня, мафия от Рамиля</span></div>
       <div class="hrow"><b>v1.42</b><span>Друзья, подарки и профили, темы, боксы дешевле</span></div>
       <div class="hrow"><b>v1.41</b><span>Друзья и чат, дуэль по приглашению, мафия на 9 игроков</span></div>
@@ -1330,7 +1385,8 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
       <button class="btn" onclick="mafiaAsk('search')">Обыск −5</button>
     </div>
     <div class="btnrow">
-      <button class="btn hint" style="flex:1" onclick="mafiaJail()">Посадить!</button>
+      <button class="btn hint" style="flex:1" id="mafia-act-btn" onclick="mafiaAct()">🗳 Голосовать</button>
+      <button class="btn hint" style="flex:1;display:none" id="mafia-kill-btn" onclick="mafiaKill()">🔪 Убить!</button>
       <button class="btn" style="flex:1" onclick="mafiaSkip()">Дожить до утра</button>
     </div>
     <div id="mafia-log" class="hlist" style="max-height:150px;overflow-y:auto;margin-top:8px"></div>
@@ -4558,7 +4614,7 @@ function loadScript(src, cb, err){
   const s = document.createElement('script');
   s.src = src;
   s.onload = () => { try{ cb(); }catch(e){} };
-  s.onerror = () => { FB.loading = false; if (!FB.quiet) toast(err || 'Нет связи с Google-сервисами'); };
+  s.onerror = () => { if (FB.fail) try{ FB.fail(); }catch(e){} FB.loading = false; if (!FB.quiet) toast(err || 'Нет связи с Google-сервисами'); };
   document.head.appendChild(s);
 }
 function ensureFB(cb, silent){
@@ -4566,8 +4622,11 @@ function ensureFB(cb, silent){
   FB.quiet = !!silent;
   if (!FIREBASE_CONFIG){ if (!silent) toast('Онлайн выключен: нет конфига Firebase'); cb(false); return; }
   if (!navigator.onLine){ if (!silent) toast('Нужен интернет для аккаунта'); cb(false); return; }
-  if (FB.loading) return;
+  FB.waiters = FB.waiters || [];
+  if (FB.loading){ FB.waiters.push(cb); return; }
   FB.loading = true;
+  const done = ok => { FB.loading = false; FB.fail = null; const ws = FB.waiters || []; FB.waiters = []; try{ cb(ok); }catch(e){} ws.forEach(f => { try{ f(ok); }catch(e){} }); };
+  FB.fail = () => done(false);
   loadScript('https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js', () => {
     loadScript('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js', () => {
       loadScript('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js', () => {
@@ -4581,9 +4640,9 @@ function ensureFB(cb, silent){
             try{ if (FB.user) ensurePid(); }catch(e){}
             try{ if (document.getElementById('friends').classList.contains('show')){ renderFeed(); frLoad(); } }catch(e){}
           });
-          FB.ok = true; FB.loading = false;
-          cb(true);
-        }catch(e){ FB.loading = false; if (!silent) toast('Firebase не завёлся'); cb(false); }
+          FB.ok = true;
+          done(true);
+        }catch(e){ if (!silent) toast('Firebase не завёлся'); done(false); }
       });
     });
   });
@@ -5037,8 +5096,8 @@ function mafiaNew(){
   const playerMafia = mafStreak >= 2 ? true : Math.random() < 0.5;
   try{ localStorage.setItem('ag_mafstreak', String(playerMafia ? 0 : mafStreak + 1)); }catch(e){}
   const bosses = playerMafia ? [idx[0]] : [idx[0], idx[1]];
-  mafia = {day: 1, pts: 6 + Math.floor(Math.random() * 4), sel: null, over: false, log: [], playerMafia: playerMafia, crew: crew.map((n, i) => ({n: n, mafia: bosses.indexOf(i) >= 0, alive: true, jailed: false}))};
-  mafiaLog('Ты — Рамиль. ' + (playerMafia ? 'Твоя роль: МАФИЯ 😈 Среди них твой подельник. Сдай его — и выйдешь сухим!' : 'Твоя роль: мирный. Среди девятерых — ДВЕ мафии. Найди обеих!'));
+  mafia = {day: 1, pts: 6 + Math.floor(Math.random() * 4), sel: null, over: false, log: [], wit: null, heat: 0, susp: {}, trust: 1, playerMafia: playerMafia, crew: crew.map((n, i) => ({n: n, mafia: bosses.indexOf(i) >= 0, alive: true, jailed: false}))};
+  mafiaLog('Ты — Рамиль. ' + (playerMafia ? 'Твоя роль: МАФИЯ 😈 Подельник затаился. Каждую ночь убивай кнопкой 🔪 — всех! Не попадись.' : 'Твоя роль: мирный. Среди девятерых — ДВЕ мафии. Найди обеих!'));
   mafiaDraw();
 }
 function mafiaLog(s){
@@ -5069,11 +5128,19 @@ function mafiaDraw(){
     const img = document.createElement('img');
     img.src = encodeURI(imgP(mafImg(c.n))); img.alt = c.n; img.draggable = false;
     img.onerror = () => { img.style.display = 'none'; };
-    const sp = document.createElement('span'); sp.className = 'en'; sp.textContent = c.n + (c.jailed ? ' 🔒' : (!c.alive ? ' ☠️' : ''));
+    const sp = document.createElement('span'); sp.className = 'en'; sp.textContent = c.n + (c.jailed ? ' 🔒' : (!c.alive ? ' ☠️' : '')) + ((mafia.wit && mafia.wit.n === c.n && c.alive) ? ' 👀' : '') + ((c.alive && !c.jailed && (mafia.susp[c.n] || 0) >= 5) ? ' 🔥' : ((c.alive && !c.jailed && (mafia.susp[c.n] || 0) >= 3) ? ' ❗' : ''));
     d.appendChild(img); d.appendChild(sp);
     frag.appendChild(d);
   });
   g.appendChild(frag);
+  const jb = document.getElementById('mafia-act-btn');
+  if (jb) jb.textContent = '🗳 Голосовать';
+  const kb = document.getElementById('mafia-kill-btn');
+  if (kb) kb.style.display = (mafia.playerMafia && !mafia.over) ? '' : 'none';
+}
+function mafiaSuspect(n, pts){
+  if (!n) return;
+  mafia.susp[n] = Math.max(0, (mafia.susp[n] || 0) + pts);
 }
 function mafiaAsk(kind){
   const c = mafiaNeedSel();
@@ -5088,57 +5155,220 @@ function mafiaAsk(kind){
   const W = foes.length ? rnd(foes).n : null;
   let say = '';
   if (kind === 'where'){
-    if (c.mafia) say = W ? ('Всю ночь был у ' + mafG(W) + '. Спроси у ' + mafHer(W) + '!') : 'Всю ночь был дома.';
-    else say = (B && Math.random() < 0.5) ? ((mafF(c.n) ? 'Была дома. А ' : 'Был дома. А ') + B + ' всю ночь где-то шнырял, кстати.') : (mafF(c.n) ? 'Была дома, спала.' : 'Был дома, спал.');
+    if (c.mafia){ if (W) mafiaSuspect(W, 2); say = W ? ('Всю ночь был у ' + mafG(W) + '. Спроси у ' + mafHer(W) + '!') : 'Всю ночь был дома.'; }
+    else { const hb = B && Math.random() < 0.5; if (hb) mafiaSuspect(B, 2); say = hb ? ((mafF(c.n) ? 'Была дома. А ' : 'Был дома. А ') + B + ' всю ночь где-то шнырял, кстати.') : (mafF(c.n) ? 'Была дома, спала.' : 'Был дома, спал.'); }
   } else if (kind === 'who'){
-    if (c.mafia) say = W ? ('Это точно ' + W + '! Я сам видел!') : 'Это точно кто-то из вас!';
-    else say = (B && Math.random() < 0.65) ? ('Думаю, это ' + B + (mafF(B) ? '. У неё глаза бегают.' : '. У него глаза бегают.')) : ('Не знаю... может, ' + (W || 'никто') + '?');
+    if (c.mafia){ if (W) mafiaSuspect(W, 2); say = W ? ('Это точно ' + W + '! Я сам видел!') : 'Это точно кто-то из вас!'; }
+    else { const hb2 = B && Math.random() < 0.65; if (hb2) mafiaSuspect(B, 2); else if (W) mafiaSuspect(W, 1); say = hb2 ? ('Думаю, это ' + B + (mafF(B) ? '. У неё глаза бегают.' : '. У него глаза бегают.')) : ('Не знаю... может, ' + (W || 'никто') + '?'); }
   } else if (kind === 'saw'){
-    if (c.mafia) say = W ? ('Видел, как ' + W + ' ночью выходил из столовки!') : 'Ничего не видел!';
-    else say = (B && Math.random() < 0.6) ? ('Видел, как ' + B + ' ночью выходил из столовки!') : (mafF(c.n) ? 'Ничего не видела, спала как убитая.' : 'Ничего не видел, спал как убитый.');
+    if (c.mafia){ if (W) mafiaSuspect(W, 2); say = W ? ('Видел, как ' + W + ' ночью выходил из столовки!') : 'Ничего не видел!'; }
+    else { const hb3 = B && Math.random() < 0.6; if (hb3) mafiaSuspect(B, 2); say = hb3 ? ('Видел, как ' + B + ' ночью выходил из столовки!') : (mafF(c.n) ? 'Ничего не видела, спала как убитая.' : 'Ничего не видел, спал как убитый.'); }
   } else {
-    if (c.mafia) say = Math.random() < 0.6 ? (mafF(c.n) ? '🔫 У неё тёмное дело! Это точно она!' : '🔫 У него тёмное дело! Это точно он!') : 'Пока чисто... обыщи ещё раз.';
-    else say = 'Чисто. Только крошки от чикушки в карманах.';
+    if (c.mafia){ if (Math.random() < 0.6){ mafia.susp[c.n] = (mafia.susp[c.n] || 0) + 5; say = mafF(c.n) ? '🔫 У неё тёмное дело! Это точно она!' : '🔫 У него тёмное дело! Это точно он!'; } else say = 'Пока чисто... обыщи ещё раз.'; }
+    else { mafiaSuspect(c.n, -3); say = 'Чисто. Только крошки от чикушки в карманах.'; }
   }
   snd('hint');
+  aiMafia(c.n, kind === 'where' ? 'Где ты был ночью?' : (kind === 'who' ? 'Кого подозреваешь?' : (kind === 'saw' ? 'Что ты видел ночью?' : 'Обыск! Что скажешь в своё оправдание?')), c.mafia);
   mafiaLog(c.n + ': «' + say + '»');
   mafiaDraw();
 }
 function mafiaSkip(){
   if (!mafia || mafia.over) return;
+  mafiaNight(false);
+}
+function mafiaNight(voted){
+  if (!mafia || mafia.over) return;
   mafia.day++;
   mafia.pts = 6 + Math.floor(Math.random() * 4);
   snd('btn');
+  if (mafia.playerMafia){
+    if (mafia.wit){
+      mafia.wit.days--;
+      if (mafia.wit.days <= 0){
+        mafia.over = true;
+        energy = Math.max(0, energy - 20);
+        save(); renderAll(); snd('no');
+        mafiaLog('👁 Тебя слили! ' + mafia.wit.n + ' всё рассказал. −20 ⚡');
+        toast('Тебя слили! −20 ⚡');
+        mafiaDraw();
+        return;
+      }
+      mafiaLog('👁 ' + mafia.wit.n + ' косится на тебя... (' + mafia.wit.days + ')');
+    } else mafiaLog(voted ? 'Голосование прошло. Ночь тихая.' : 'Ночь прошла спокойно. Убивай кнопкой 🔪.');
+    mafiaDraw();
+    mafiaParity();
+    return;
+  }
   const victims = mafia.crew.filter(x => x.alive && !x.jailed && !x.mafia);
   if (victims.length && Math.random() < 0.4){
     const v = victims[Math.floor(Math.random() * victims.length)];
     v.alive = false;
     if (mafia.sel === v.n) mafia.sel = null;
     mafiaLog('😱 Ночью убили ' + v.n + '! Мафия не дремлет. Очки восстановлены.');
-  } else mafiaLog('Ночь прошла спокойно. Очки восстановлены.');
+  } else mafiaLog(voted ? 'Голосование прошло. Ночь тихая.' : 'Ночь прошла спокойно. Очки восстановлены.');
   mafiaDraw();
+  mafiaParity();
 }
-function mafiaJail(){
+function mafiaParity(){
   if (!mafia || mafia.over) return;
-  const c = mafiaNeedSel();
-  if (!c) return;
-  if (c.mafia){
-    c.jailed = true; c.alive = false;
-    if (mafia.sel === c.n) mafia.sel = null;
-    const left = mafia.crew.filter(x => x.mafia && !x.jailed).length;
-    if (!left){ mafiaWin(); return; }
-    snd('new_a');
-    mafiaLog('🔒 ' + c.n + ' — мафия! ' + (mafF(c.n) ? 'Посажена.' : 'Посажен.') + ' Остался ещё один!');
-    toast('Один есть! Ищи второго!');
+  const maf = mafia.crew.filter(x => x.mafia && !x.jailed).length + (mafia.playerMafia ? 1 : 0);
+  const inn = mafia.crew.filter(x => x.alive && !x.jailed && !x.mafia).length;
+  if (inn === 0){
+    if (mafia.playerMafia){ mafiaWinK(); return; }
+    mafia.over = true;
+    energy = Math.max(0, energy - 20);
+    save(); renderAll(); snd('no');
+    mafiaLog('💀 Все мертвы. Остались одни мафии. Ты проиграл. −20 ⚡');
+    toast('Все мертвы... −20 ⚡');
     mafiaDraw();
     return;
   }
-  mafia.over = true;
+  if (maf >= inn && inn > 0){
+    if (mafia.playerMafia){ mafiaWinK('🎉 Мафии в большинстве! Ты — король ночи! +75 ⚡'); return; }
+    mafia.over = true;
+    energy = Math.max(0, energy - 20);
+    save(); renderAll(); snd('no');
+    mafiaLog('💀 Мафии захватили деревню! Ты проиграл. −20 ⚡');
+    toast('Мафии захватили деревню! −20 ⚡');
+    mafiaDraw();
+  }
+}
+
+function mafiaAct(){
+  if (!mafia || mafia.over) return;
+  mafiaVote();
+}
+function mafiaDebate(){
+  const alive = mafia.crew.filter(x => x.alive && !x.jailed);
+  alive.forEach(v => {
+    let best = null, bs = -1;
+    alive.forEach(c => {
+      if (c.n === v.n) return;
+      const sc = mafia.susp[c.n] || 0;
+      if (sc > bs){ bs = sc; best = c.n; }
+    });
+    if (best && bs >= 3) mafiaLog(v.n + ': «Я — за ' + best + '. Уверен.»');
+    else if (best && bs >= 1) mafiaLog(v.n + ': «Косится на ' + best + '...»');
+    else mafiaLog(v.n + ': «Не знаю, все чистые вроде.»');
+  });
+}
+function mafiaVote(){
+  if (!mafia || mafia.over) return;
+  mafiaDebate();
+  const alive = mafia.crew.filter(x => x.alive && !x.jailed);
+  if (!alive.length) return;
+  const tally = {};
+  alive.forEach(c => { tally[c.n] = 0; });
+  let youV = 0;
+  alive.forEach(v => {
+    let best = null, bs = -1;
+    alive.forEach(c => {
+      if (c.n === v.n) return;
+      const s = mafia.susp[c.n] || 0;
+      const sc = s >= 6 ? s + 10 : s + Math.random() * 2;
+      if (sc > bs){ bs = sc; best = c.n; }
+    });
+    if (mafia.playerMafia && mafia.heat > 0 && best){
+      const hs = mafia.heat + Math.random() * 1.5;
+      if (hs > bs){ best = null; youV++; }
+    }
+    if (best) tally[best]++;
+  });
+  const me = mafia.crew.find(x => x.n === mafia.sel && x.alive && !x.jailed);
+  if (me){ tally[me.n] += mafia.trust; mafiaLog('Ты топишь против ' + me.n + ' (твой вес: ' + mafia.trust + ').'); }
+  else mafiaLog('Ты воздержался.');
+  let top = null, topV = -1, tie = false;
+  for (const k in tally){ if (tally[k] > topV){ topV = tally[k]; top = k; tie = false; } else if (tally[k] === topV){ tie = true; } }
+  mafia.sel = null;
+  if (youV > topV){
+    mafia.over = true;
+    energy = Math.max(0, energy - 20);
+    save(); renderAll(); snd('no');
+    mafiaLog('👁 Деревня указала на тебя! Ты разоблачён. −20 ⚡');
+    toast('Тебя разоблачили! −20 ⚡');
+    mafiaDraw();
+    return;
+  }
+  if (!top || topV <= 0 || tie){
+    mafiaLog('🗳 Голоса разделились — никого не тронули.');
+    mafiaNight(true);
+    return;
+  }
+  const c = mafia.crew.find(x => x.n === top);
+  const backed = me && me.n === c.n;
+  if (c.mafia){
+    c.jailed = true; c.alive = false;
+    snd('new_a');
+    if (backed) mafia.trust = Math.min(3, mafia.trust + 1);
+    const left = mafia.crew.filter(x => x.mafia && !x.jailed).length;
+    if (!left){ mafiaWin(); return; }
+    mafiaLog('🗳 Деревня посадила ' + c.n + ' — это была мафия!' + (backed ? ' Тебе верят больше.' : '') + ' Остался ещё один!');
+    toast('Деревня не ошиблась!');
+  } else {
+    c.alive = false;
+    snd('no');
+    if (backed){ mafia.trust = Math.max(1, mafia.trust - 1); mafiaLog('🗳 Деревня ошиблась: ' + c.n + ' был невиновен. Тебе верят меньше.'); }
+    else mafiaLog('🗳 Деревня ошиблась: ' + c.n + ' был невиновен.');
+  }
+  mafiaNight(true);
+}
+
+function mafiaKill(){
+  const c = mafiaNeedSel();
+  if (!c) return;
+  if (c.mafia){ snd('wrong'); toast('Своих не сдаём!'); return; }
   c.alive = false;
-  energy = Math.max(0, energy - 20);
-  save(); renderAll(); snd('no');
-  mafiaLog('❌ Ошибка! ' + c.n + (mafF(c.n) ? ' невиновна.' : ' невиновен.') + ' Ты проиграл. −20 ⚡');
-  toast('Промах! Это был не он. −20 ⚡');
+  mafia.heat += 3;
+  if (mafia.sel === c.n) mafia.sel = null;
+  if (mafia.wit && mafia.wit.n === c.n){
+    mafia.wit = null;
+    mafiaLog('🤫 Свидетель убран. Никто не пикнет.');
+  } else {
+    const witn = mafia.crew.filter(x => x.alive && !x.jailed && !x.mafia);
+    if (witn.length && Math.random() < 0.45){
+      const w = witn[Math.floor(Math.random() * witn.length)];
+      mafia.wit = {n: w.n, days: 2};
+      mafiaLog('👁 Кажется, ' + w.n + ' что-то видел... Убери его за 2 ночи!');
+    }
+  }
+  snd('no');
+  mafiaLog('🔪 ' + c.n + ' мёртв.');
+  mafia.heat += 2;
+  if (!mafia.crew.some(x => x.alive && !x.mafia)){ mafiaWinK(); return; }
+  mafia.day++;
+  mafia.pts = 6 + Math.floor(Math.random() * 4);
+  if (mafia.wit){
+    mafia.wit.days--;
+    if (mafia.wit.days <= 0){
+      mafia.over = true;
+      energy = Math.max(0, energy - 20);
+      save(); renderAll(); snd('no');
+      mafiaLog('👁 Тебя слили! ' + mafia.wit.n + ' всё рассказал. −20 ⚡');
+      toast('Тебя слили! −20 ⚡');
+      mafiaDraw();
+      return;
+    }
+  }
+  mafiaDraw();
+  mafiaParity();
+}
+const AI_PROXY_URL = "https://arseniy-mafia-ai.nmil68139.workers.dev/";
+function aiMafia(speaker, question, lie){
+  if (!AI_PROXY_URL || !navigator.onLine || !mafia || mafia.over) return;
+  try{
+    const sys = 'Ты — ' + speaker + ', персонаж игры в Мафию. Отвечай по-русски, живо, 1-2 предложения, без лишних пояснений.';
+    const prm = 'Вопрос: ' + question + '. ' + (lie ? 'Ты мафия: соври и переведи стрелки.' : 'Отвечай честно.');
+    fetch(AI_PROXY_URL, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({system: sys, prompt: prm})}).then(r => r.json()).then(j => {
+      if (j && j.text && mafia && !mafia.over) mafiaLog('🤖 ' + speaker + ': «' + String(j.text).slice(0, 220) + '»');
+    }).catch(() => {});
+  }catch(e){}
+}
+function mafiaWinK(msg){
+  mafia.over = true;
+  energy += 75; energyEarned += 75;
+  save(); renderAll(); snd('quest');
+  mafiaLog(msg || '🎉 Все мертвы. Ты — король ночи! +75 ⚡');
+  toast('🎉 Все мертвы! +75 ⚡');
   mafiaDraw();
 }
 function mafiaWin(){
