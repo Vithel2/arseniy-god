@@ -4685,6 +4685,10 @@ function togglePriv(){
 function openFriends(){ snd('dialog'); document.getElementById('friends').classList.add('show'); try{ renderFeed(); }catch(e){} try{ frLoad(); }catch(e){} }
 function ensurePid(cb){
   if (!FB.user){ if (cb) cb(null); return; }
+  let pidDone = false;
+  const pidFin = v => { if (pidDone) return; pidDone = true; if (cb) cb(v); };
+  cb = pidFin;
+  setTimeout(() => pidFin(null), 12000);
   const ref = FB.db.collection('players').doc(FB.user.uid);
   ref.get().then(s => {
     const d = (s.data && s.data()) || {};
@@ -6037,11 +6041,14 @@ function renderFeed(){
   ensureFB(ok => {
     if (!ok){ box.innerHTML = '<div class="hrow">📴 Нет связи. Открой новости с интернетом.</div>'; return; }
     box.innerHTML = '<div class="hrow">Загрузка посланий... ✉️</div>';
+    let feedDone = false;
+    setTimeout(() => { if (!feedDone){ try{ box.innerHTML = adminHtml + '<div class="hrow">Долго грузится... проверь интернет и AdBlock.</div>'; }catch(e){} } }, 12000);
     const isAdmin = fbIsAdmin();
     const adminHtml = isAdmin ? '<div class="qcard"><div class="qd">Ты — автор ✍️ Пиши сюда — увидят все игроки</div>'
       + '<textarea id="feed-new" rows="2" style="width:100%;background:var(--surf-hi);border:1.5px solid var(--line2);border-radius:12px;padding:8px;font-family:inherit;font-size:13px" placeholder="Всем привет!.."></textarea>'
       + '<button class="btn hint wide" style="margin-top:6px" onclick="feedPost()">Опубликовать</button></div>' : '';
     FB.db.collection('author_posts').orderBy('ts', 'desc').limit(20).get().then(snap => {
+      feedDone = true;
       if (snap.empty){ box.innerHTML = adminHtml + '<div class="hrow">Пока тихо. Автор что-нибудь напишет! ✍️</div>'; return; }
       const liked = feedLiked();
       let html = '';
