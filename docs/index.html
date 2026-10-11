@@ -1110,6 +1110,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
     <h2>Новости</h2>
     <p>Что нового в игре:</p>
     <div class="hlist">
+      <div class="hrow"><b>v1.51</b><span>Честная дуэль: повторы работают, слоты снимаются тапом, счёт врага не теряется, победитель один</span></div>
       <div class="hrow"><b>v1.50</b><span>Заявки в друзья: кидаешь по коду, друг принимает — вы взаимно в списке</span></div>
       <div class="hrow"><b>v1.49</b><span>Дуэль лечится: кнопка проверки связи, понятные ошибки, чистка старых лобби, честное время боя</span></div>
       <div class="hrow"><b>v1.48</b><span>23 новые реакции: Миша, Варвара, стихии, семейство и другие</span></div>
@@ -5121,8 +5122,8 @@ function dSlots(){
   if (!duel) return;
   const paint = (id, n, num) => {
     const sl = document.getElementById(id);
-    if (!n){ sl.className = 'slot'; sl.innerHTML = '<span class="ph">+</span><span class="pl">слот ' + num + '</span>'; return; }
-    sl.className = 'slot f'; sl.innerHTML = '';
+    if (!n){ sl.className = 'slot'; sl.onclick = null; sl.innerHTML = '<span class="ph">+</span><span class="pl">слот ' + num + '</span>'; return; }
+    sl.className = 'slot f'; sl.onclick = () => dClearSlot(num); sl.innerHTML = '';
     const img = document.createElement('img'); img.src = encodeURI(imgP(n)); img.onerror = () => { img.style.display = 'none'; };
     const sn = document.createElement('span'); sn.className = 'sn'; sn.textContent = n;
     sl.appendChild(img); sl.appendChild(sn);
@@ -5133,9 +5134,14 @@ function dPick(n){
   if (!duel || duel.state !== 'fight') return;
   snd('click');
   if (!duel.sel1){ duel.sel1 = n; }
-  else if (!duel.sel2 && n !== duel.sel1){ duel.sel2 = n; setTimeout(dCombine, 200); }
+  else if (!duel.sel2){ duel.sel2 = n; setTimeout(dCombine, 200); }
   else { duel.sel1 = n; duel.sel2 = null; }
   dRender();
+}
+function dClearSlot(num){
+  if (!duel || duel.state !== 'fight') return;
+  if (num === 1){ duel.sel1 = null; } else { duel.sel2 = null; }
+  snd('btn'); dRender();
 }
 function dCombine(){
   if (!duel || !duel.sel1 || !duel.sel2) return;
@@ -5180,6 +5186,7 @@ function duelTick(){
     if (!duel) return;
     const left = Math.max(0, Math.ceil((duel.deadline - Date.now()) / 1000));
     document.getElementById('duel-time').textContent = Math.floor(left / 60) + ':' + ('0' + (left % 60)).slice(-2);
+    try{ if (Date.now() - (duel.syncT || 0) > 3000){ duel.syncT = Date.now(); duelSync(); } }catch(e){}
     if (left <= 0) duelFinish();
   }, 500);
 }
@@ -5187,23 +5194,34 @@ function duelFinish(){
   if (!duel || duel.state !== 'fight') return;
   duel.state = 'done';
   if (duel.iv){ try{ clearInterval(duel.iv); }catch(e){} }
-  const win = duel.score > duel.foe, draw = duel.score === duel.foe;
-  if (win){
-    cups = (cups || 0) + 1;
-    energy += 25; energyEarned += 25;
-    snd('quest');
-    toast('🏆 Победа! +1 кубок, +25 ⚡');
-  } else if (draw){ snd('btn'); toast('Ничья! Оба молодцы 🤝'); }
-  else {
-    energy = Math.max(0, energy - 10);
-    snd('no');
-    toast('Поражение... −10 ⚡. Реванш?');
-  }
-  save(); renderAll();
-  try{ if (duel.role === 'h') FB.db.collection('lobbies').doc(duel.code).update({status: 'done'}).catch(() => {}); }catch(e){}
-  duelShow('room');
-  document.getElementById('duel-state').textContent = win ? 'победа! 🏆' : (draw ? 'ничья' : 'поражение');
-  duelRender();
+  try{ duelSync(); }catch(e){}
+  const decide = foe => {
+    if (!duel) return;
+    const win = duel.score > foe, draw = duel.score === foe;
+    if (win){
+      cups = (cups || 0) + 1;
+      energy += 25; energyEarned += 25;
+      snd('quest');
+      toast('🏆 Победа! +1 кубок, +25 ⚡');
+    } else if (draw){ snd('btn'); toast('Ничья! Оба молодцы 🤝'); }
+    else {
+      energy = Math.max(0, energy - 10);
+      snd('no');
+      toast('Поражение... −10 ⚡. Реванш?');
+    }
+    save(); renderAll();
+    try{ if (duel.role === 'h') FB.db.collection('lobbies').doc(duel.code).update({status: 'done'}).catch(() => {}); }catch(e){}
+    duelShow('room');
+    document.getElementById('duel-state').textContent = win ? 'победа! 🏆' : (draw ? 'ничья' : 'поражение');
+    duelRender();
+  };
+  try{
+    FB.db.collection('lobbies').doc(duel.code).get().then(s => {
+      const d = s.data() || {};
+      const fresh = duel.role === 'h' ? (d.gScore || 0) : (d.hScore || 0);
+      decide(Math.max(duel.foe || 0, fresh));
+    }).catch(() => decide(duel.foe || 0));
+  }catch(e){ decide(duel.foe || 0); }
 }
 const MAFIA_POOL = ['Арсений', 'Данил', 'Матвей', 'Виталик', 'Саша', 'Анжелика', 'Лаврушка', 'Вика', 'Вадим', 'Тимерхун'];
 const MAFIA_IMG = {'Матвей': 'Матвей с яблоками', 'Виталик': 'Vithel', 'Анжелика': 'Анджелика', 'Вика': 'вика в.'};
