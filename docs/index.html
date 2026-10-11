@@ -1271,6 +1271,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
     <div id="acc-stats" class="hlist"></div>
     <div class="sgroup">Диагностика сети</div>
     <div class="hlist" id="acc-diag"></div>
+    <button class="btn wide" onclick="frPing()">Проверить связь с базой</button>
 
     <button class="bigbtn" style="margin-top:14px" onclick="closeOvl('account')">Закрыть</button>
   </div>
@@ -4720,6 +4721,20 @@ function frLoad(){
       document.getElementById('fr-myid').textContent = pid || '—';
       frList(); frGiftFill(); frGifts(); frInvites();
     });
+  });
+}
+function frPing(){
+  if (!FB.user){ toast('Сначала войди в аккаунт'); return; }
+  ensureFB(ok => {
+    if (!ok){ toast('SDK не загрузился'); return; }
+    toast('Проверяю связь...');
+    let done = false;
+    setTimeout(() => { if (!done) toast('База не отвечает: блокировка сети или AdBlock'); }, 10000);
+    FB.db.collection('players').doc(FB.user.uid).get().then(s => {
+      done = true;
+      toast('Связь есть! Док: ' + (s.exists ? 'найден' : 'пусто — создам при отправке'));
+      try{ frLoad(); }catch(e){}
+    }).catch(e => { done = true; toast('Ошибка базы: ' + (e && e.code ? e.code : e)); });
   });
 }
 function frCopy(){
