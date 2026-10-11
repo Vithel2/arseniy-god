@@ -1269,6 +1269,8 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
     <div class="srow"><span>Скрывать мой профиль</span><button class="sw" id="sw-priv" onclick="togglePriv()"></button></div>
     <div class="sgroup">Статистика</div>
     <div id="acc-stats" class="hlist"></div>
+    <div class="sgroup">Диагностика сети</div>
+    <div class="hlist" id="acc-diag"></div>
 
     <button class="bigbtn" style="margin-top:14px" onclick="closeOvl('account')">Закрыть</button>
   </div>
@@ -4707,8 +4709,10 @@ function frLoad(){
     return;
   }
   ensureFB(ok => {
-    if (!ok || !FB.user) return;
+    if (!ok){ toast('Нет связи с сервером'); return; }
+    if (!FB.user) return;
     ensurePid(pid => {
+      if (!pid){ toast('Код не получен: нет связи или старые правила'); }
       document.getElementById('fr-myid').textContent = pid || '—';
       frList(); frGiftFill(); frGifts(); frInvites();
     });
@@ -4716,6 +4720,7 @@ function frLoad(){
 }
 function frCopy(){
   const pid = document.getElementById('fr-myid').textContent;
+  if (!pid || pid === '—' || pid === 'войди в аккаунт'){ snd('wrong'); toast('Код ещё не готов — подожди связь'); return; }
   try{
     if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(pid).then(() => toast('Код скопирован: ' + pid));
     else toast('Твой код: ' + pid);
@@ -4895,7 +4900,8 @@ function duelCreate(){
   if (!FB.user){ toast('Сначала войди в аккаунт'); return; }
   toast('Создаю лобби...');
   ensureFB(ok => {
-    if (!ok || !FB.user) return;
+    if (!ok){ toast('Нет связи с сервером'); return; }
+    if (!FB.user){ toast('Сначала войди в аккаунт'); return; }
     let code = duelCode(), tries = 0;
     const mk = () => {
       FB.db.collection('lobbies').doc(code).get().then(s => {
@@ -4913,7 +4919,8 @@ function duelJoin(){
   const code = String((document.getElementById('duel-code-in').value || '')).trim().toUpperCase();
   if (!code){ snd('wrong'); return; }
   ensureFB(ok => {
-    if (!ok || !FB.user) return;
+    if (!ok){ toast('Нет связи с сервером'); return; }
+    if (!FB.user){ toast('Сначала войди в аккаунт'); return; }
     const ref = FB.db.collection('lobbies').doc(code);
     ref.get().then(s => {
       if (!s.exists){ snd('wrong'); toast('Такого лобби нет'); return; }
@@ -5879,6 +5886,16 @@ function renderAccount(){
   try{ syncPrivUI(); }catch(e){}
   const ni = document.getElementById('acc-nick');
   if (ni && document.activeElement !== ni){ try{ ni.value = localStorage.getItem('ag_nick') || ''; }catch(e){} }
+  const dg = document.getElementById('acc-diag');
+  if (dg){
+    const rows = [
+      ['SDK Firebase', (typeof firebase !== 'undefined' && FB.ok) ? 'загружен ✓' : 'НЕ загружен ✗'],
+      ['Вход', FB.user ? FB.user.email : 'нет'],
+      ['Конфиг', FIREBASE_CONFIG ? 'есть ✓' : 'НЕТ ✗'],
+      ['Интернет', navigator.onLine ? 'есть ✓' : 'НЕТ ✗']
+    ];
+    dg.innerHTML = rows.map(r => '<div class="hrow"><span>' + r[0] + '</span><b>' + r[1] + '</b></div>').join('');
+  }
   const box = document.getElementById('acc-stats');
   let tb = 0;
   try{ tb = parseInt(localStorage.getItem('ag_2048') || '0', 10) || 0; }catch(e){}
