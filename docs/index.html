@@ -1110,6 +1110,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
     <h2>Новости</h2>
     <p>Что нового в игре:</p>
     <div class="hlist">
+      <div class="hrow"><b>v1.49</b><span>Дуэль лечится: кнопка проверки связи, понятные ошибки, чистка старых лобби, честное время боя</span></div>
       <div class="hrow"><b>v1.48</b><span>23 новые реакции: Миша, Варвара, стихии, семейство и другие</span></div>
       <div class="hrow"><b>v1.47</b><span>35 новых элементов, мафия продолжается без подельника</span></div>
       <div class="hrow"><b>v1.46</b><span>Мафия: умное голосование, ИИ-допросы</span></div>
@@ -1353,6 +1354,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
       <button class="btn hint wide" onclick="duelCreate()">Создать лобби</button>
       <div class="srow"><span>Код друга</span><input id="duel-code-in" class="num" style="width:120px" placeholder="ABC123"></div>
       <button class="btn wide" onclick="duelJoin()">Войти по коду</button>
+      <button class="btn wide" onclick="duelPing()">Проверить связь</button>
     </div>
     <div id="duel-room" style="display:none">
       <p>Код лобби: <b id="duel-code">—</b> · <span id="duel-state"></span></p>
@@ -1361,6 +1363,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
         <button class="btn hint" style="flex:1" id="duel-start" onclick="duelStart()">Старт!</button>
         <button class="btn" style="flex:1" onclick="duelLeave()">Выйти</button>
       </div>
+      <button class="btn wide" style="margin-top:6px" id="duel-close" onclick="duelClose()">Закрыть лобби</button>
     </div>
     <div id="duel-fight" style="display:none">
       <p>⏱ <b id="duel-time">0:00</b> · Ты: <b id="duel-me">0</b> · Друг: <b id="duel-foe">0</b></p>
@@ -4920,39 +4923,65 @@ function frAccept(lobby, invId){
 }
 function openDuel(){ snd('dialog'); const o = document.getElementById('duel'); if (!o){ toast('Обнови игру — файл старый'); return; } duelShow('lobby'); o.classList.add('show'); }
 function duelShow(w){ ['lobby', 'room', 'fight'].forEach(x => { const e = document.getElementById('duel-' + x); if (e) e.style.display = x === w ? '' : 'none'; }); }
+function fbErr(e, what){
+  const c = (e && e.code) || '';
+  if (c === 'permission-denied') return 'Нет доступа к базе: в Firestore вставь правила (Аккаунт — «Скопировать правила Firestore»)';
+  if (c === 'unavailable' || c === 'deadline-exceeded' || c === 'internal') return 'Нет связи с базой: проверь интернет и AdBlock';
+  if (c === 'unauthenticated') return 'Сначала войди в аккаунт';
+  if (c === 'not-found') return 'Лобби не найдено';
+  if (c === 'lobby-busy') return 'Лобби только что заняли — создай новое';
+  return (what || 'Не вышло') + (c ? ': ' + c : '');
+}
+function duelPing(){
+  ensureFB(ok => {
+    if (!ok){ toast('SDK не загрузился: проверь интернет и AdBlock'); return; }
+    if (!FB.user){ toast('Связь есть, но ты не вошёл — открой Аккаунт'); try{ openAccount(); }catch(e){} return; }
+    toast('Проверяю базу...');
+    FB.db.collection('lobbies').limit(1).get().then(() => {
+      snd('new_a'); toast('База отвечает! Можно создавать лобби.');
+    }).catch(e => { snd('wrong'); toast(fbErr(e, 'База недоступна')); });
+  });
+}
 function duelCreate(){
-  if (!FB.user){ toast('Сначала войди в аккаунт'); return; }
+  if (!FB.user){ toast('Сначала войди в аккаунт'); try{ openAccount(); }catch(e){} return; }
   toast('Создаю лобби...');
   ensureFB(ok => {
     if (!ok){ toast('Нет связи с сервером'); return; }
-    if (!FB.user){ toast('Сначала войди в аккаунт'); return; }
+    if (!FB.user){ toast('Сначала войди в аккаунт'); try{ openAccount(); }catch(e){} return; }
     let code = duelCode(), tries = 0;
     const mk = () => {
       FB.db.collection('lobbies').doc(code).get().then(s => {
         if (s.exists && tries++ < 3){ code = duelCode(); mk(); return; }
+        if (s.exists){ snd('wrong'); toast('Не повезло с кодом — жми ещё раз'); return; }
         FB.db.collection('lobbies').doc(code).set({hostUid: FB.user.uid, hostName: fbPlayerName(), guestUid: '', guestName: '', secs: duelDurMin * 60, status: 'wait', deadline: 0, hScore: 0, gScore: 0, created: firebase.firestore.FieldValue.serverTimestamp()}).then(() => {
+          try{ FB.db.collection('lobbies').where('hostUid', '==', FB.user.uid).get().then(q => { q.forEach(x => { if (x.id !== code){ try{ x.ref.delete(); }catch(e){} } }); }).catch(() => {}); }catch(e){}
           duelEnter(code, 'h'); snd('new_a'); toast('Лобби ' + code + ' создано! Скажи код другу.');
-        }).catch(e => toast('Не вышло создать' + (e && e.code ? ': ' + e.code : '')));
-      }).catch(e => toast('Не вышло создать' + (e && e.code ? ': ' + e.code : '')));
+        }).catch(e => { snd('wrong'); toast(fbErr(e, 'Не вышло создать')); });
+      }).catch(e => { snd('wrong'); toast(fbErr(e, 'Не вышло создать')); });
     };
     mk();
   });
 }
 function duelJoin(){
-  if (!FB.user){ toast('Сначала войди в аккаунт'); return; }
+  if (!FB.user){ toast('Сначала войди в аккаунт'); try{ openAccount(); }catch(e){} return; }
   const code = String((document.getElementById('duel-code-in').value || '')).trim().toUpperCase();
   if (!code){ snd('wrong'); return; }
   ensureFB(ok => {
     if (!ok){ toast('Нет связи с сервером'); return; }
-    if (!FB.user){ toast('Сначала войди в аккаунт'); return; }
+    if (!FB.user){ toast('Сначала войди в аккаунт'); try{ openAccount(); }catch(e){} return; }
     const ref = FB.db.collection('lobbies').doc(code);
     ref.get().then(s => {
       if (!s.exists){ snd('wrong'); toast('Такого лобби нет'); return; }
       const d = s.data() || {};
       if (d.status !== 'wait'){ snd('wrong'); toast('Бой уже идёт или окончен'); return; }
       if (d.guestUid && d.guestUid !== FB.user.uid){ snd('wrong'); toast('Лобби занято'); return; }
-      ref.update({guestUid: FB.user.uid, guestName: fbPlayerName()}).then(() => duelEnter(code, 'g')).catch(e => toast('Не вышло войти' + (e && e.code ? ': ' + e.code : '')));
-    }).catch(e => toast('Не вышло войти' + (e && e.code ? ': ' + e.code : '')));
+      FB.db.runTransaction(tr => tr.get(ref).then(ss => {
+        const dd = ss.data() || {};
+        if (dd.status !== 'wait') throw {code: 'lobby-busy'};
+        if (dd.guestUid && dd.guestUid !== FB.user.uid) throw {code: 'lobby-busy'};
+        tr.update(ref, {guestUid: FB.user.uid, guestName: fbPlayerName()});
+      })).then(() => duelEnter(code, 'g')).catch(e => { snd('wrong'); toast(fbErr(e, 'Не вышло войти')); });
+    }).catch(e => { snd('wrong'); toast(fbErr(e, 'Не вышло войти')); });
   });
 }
 function duelEnter(code, role){
@@ -4972,7 +5001,7 @@ function duelEnter(code, role){
     duel.foe = role === 'h' ? (d.gScore || 0) : (d.hScore || 0);
     duelRender();
     if (d.status === 'go' && duel.state === 'room'){
-      duel.deadline = d.deadline || (Date.now() + duel.secs * 1000);
+      duel.deadline = Date.now() + (duel.secs || 180) * 1000;
       duel.state = 'fight';
       duelShow('fight');
       dRender();
@@ -4988,6 +5017,7 @@ function duelRender(){
   document.getElementById('duel-state').textContent = duel.state === 'room' ? 'ожидание старта' : (duel.state === 'fight' ? 'бой!' : 'конец');
   document.getElementById('duel-players').innerHTML = '<div class="hrow"><span>' + (duel.role === 'h' ? fbPlayerName() + ' (ты, хост)' : duel.foeName) + '</span><b>' + duel.score + '</b></div>'
     + '<div class="hrow"><span>' + (duel.role === 'h' ? duel.foeName : fbPlayerName() + ' (ты)') + '</span><b>' + duel.foe + '</b></div>';
+  try{ document.getElementById('duel-close').style.display = (duel.role === 'h') ? '' : 'none'; }catch(e){}
 }
 function duelStart(){
   if (!duel || duel.role !== 'h') return;
@@ -5003,6 +5033,11 @@ function duelLeave(silent){
     }
   }
   duel = null;
+}
+function duelClose(){
+  if (!duel || duel.role !== 'h') return;
+  try{ FB.db.collection('lobbies').doc(duel.code).delete(); }catch(e){}
+  duelLeave(true); duelShow('lobby'); snd('btn'); toast('Лобби закрыто');
 }
 function duelExit(){ duelLeave(); closeOvl('duel'); }
 function dRender(){
