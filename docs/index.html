@@ -4626,7 +4626,7 @@ const EMAILJS_TEMPLATE = "template_smshlr9";
 const EMAILJS_PUBLIC = "1jR_mcUspUypk4jsW";
 let accPending = null;
 let FB = {ok: false, auth: null, db: null, user: null, loading: false};
-const FB_RULES = "rules_version = '2';\nservice cloud.firestore {\n  match /databases/{db}/documents {\n    match /author_posts/{post} {\n      allow read: if true;\n      allow create, delete: if request.auth != null && request.auth.uid == 'ВСТАВЬ_ADMIN_UID';\n      allow update: if request.auth != null;\n      match /comments/{c} {\n        allow read: if true;\n        allow create: if request.auth != null;\n      }\n    }\n    match /players/{uid} {\n      allow read: if true;\n      allow write: if request.auth != null && request.auth.uid == uid;\n    }\n    match /lobbies/{code} {\n      allow read: if true;\n      allow create: if request.auth != null;\n      allow update: if request.auth != null && request.resource.data.hostUid == resource.data.hostUid && request.resource.data.secs == resource.data.secs && (request.resource.data.guestUid == resource.data.guestUid || (resource.data.guestUid == '' && request.resource.data.guestUid == request.auth.uid)) && (request.resource.data.guestName == resource.data.guestName || (resource.data.guestUid == '' && request.auth.uid == request.resource.data.guestUid)) && (request.resource.data.deadline == resource.data.deadline || request.auth.uid == resource.data.hostUid) && (request.resource.data.status == resource.data.status || request.auth.uid == resource.data.hostUid) && (request.resource.data.hScore == resource.data.hScore || request.auth.uid == resource.data.hostUid) && (request.resource.data.gScore == resource.data.gScore || request.auth.uid == resource.data.guestUid);\n      allow delete: if request.auth != null && request.auth.uid == resource.data.hostUid;\n    }\n    match /gifts/{uid}/items/{it} {\n      allow read, delete: if request.auth != null && request.auth.uid == uid;\n      allow create: if request.auth != null;\n    }\n    match /friends/{uid}/list/{f} {\n      allow read, write: if request.auth != null && request.auth.uid == uid;\n    }\n    match /invites/{uid}/items/{it} {\n      allow read, delete: if request.auth != null && request.auth.uid == uid;\n      allow create: if request.auth != null;\n    }\n    match /chats/{pair} {\n      allow create: if request.auth != null && request.auth.uid in request.resource.data.members;\n      allow read, update: if request.auth != null && request.auth.uid in resource.data.members;\n      match /msgs/{m} {\n        allow read: if request.auth != null;\n        allow create: if request.auth != null;\n      }\n    }\n  }\n}";
+const FB_RULES = "rules_version = '2';\nservice cloud.firestore {\n  match /databases/{database}/documents {\n    function signedIn() { return request.auth != null; }\n    function isHost() { return signedIn() && resource.data.hostUid == request.auth.uid; }\n    function isPlayer() { return signedIn() && (resource.data.hostUid == request.auth.uid || resource.data.guestUid == request.auth.uid); }\n    match /author_posts/{post} {\n      allow read: if true;\n      allow create, delete: if signedIn() && request.auth.uid == 'ВСТАВЬ_ADMIN_UID';\n      allow update: if signedIn();\n      match /comments/{comment} {\n        allow read: if true;\n        allow create: if signedIn() && request.resource.data.text is string && request.resource.data.text.size() <= 1000;\n      }\n    }\n    match /players/{uid} {\n      allow read: if true;\n      allow write: if signedIn() && request.auth.uid == uid;\n    }\n    match /lobbies/{code} {\n      // A lobby code is already a capability; do not expose the whole collection from the client.\n      allow read: if signedIn();\n      allow create: if signedIn()\n        && request.resource.data.hostUid == request.auth.uid\n        && request.resource.data.guestUid == ''\n        && request.resource.data.status == 'wait'\n        && request.resource.data.hScore == 0 && request.resource.data.gScore == 0;\n      // Claim an empty lobby once. Match settings and scores are immutable here.\n      allow update: if signedIn()\n        && resource.data.status == 'wait' && resource.data.guestUid == ''\n        && request.resource.data.hostUid == resource.data.hostUid\n        && request.resource.data.guestUid == request.auth.uid\n        && request.resource.data.secs == resource.data.secs\n        && request.resource.data.status == 'wait'\n        && request.resource.data.deadline == resource.data.deadline\n        && request.resource.data.hScore == resource.data.hScore\n        && request.resource.data.gScore == resource.data.gScore;\n      // Only the host starts a joined lobby.\n      allow update: if isHost()\n        && resource.data.status == 'wait' && resource.data.guestUid != ''\n        && request.resource.data.hostUid == resource.data.hostUid\n        && request.resource.data.guestUid == resource.data.guestUid\n        && request.resource.data.guestName == resource.data.guestName\n        && request.resource.data.secs == resource.data.secs\n        && request.resource.data.status == 'go'\n        && request.resource.data.deadline > request.time.toMillis()\n        && request.resource.data.hScore == resource.data.hScore\n        && request.resource.data.gScore == resource.data.gScore;\n      // A player can only increase their own score; all other match fields stay fixed.\n      allow update: if isPlayer() && resource.data.status == 'go'\n        && request.resource.data.hostUid == resource.data.hostUid\n        && request.resource.data.guestUid == resource.data.guestUid\n        && request.resource.data.guestName == resource.data.guestName\n        && request.resource.data.secs == resource.data.secs\n        && request.resource.data.status == resource.data.status\n        && request.resource.data.deadline == resource.data.deadline\n        && ((request.auth.uid == resource.data.hostUid\n          && request.resource.data.hScore >= resource.data.hScore\n          && request.resource.data.gScore == resource.data.gScore)\n          || (request.auth.uid == resource.data.guestUid\n          && request.resource.data.gScore >= resource.data.gScore\n          && request.resource.data.hScore == resource.data.hScore));\n      // Host marks the match finished after the clients have flushed scores.\n      allow update: if isHost() && resource.data.status == 'go'\n        && request.resource.data.status == 'done'\n        && request.resource.data.hostUid == resource.data.hostUid\n        && request.resource.data.guestUid == resource.data.guestUid\n        && request.resource.data.guestName == resource.data.guestName\n        && request.resource.data.secs == resource.data.secs\n        && request.resource.data.deadline == resource.data.deadline\n        && request.resource.data.hScore == resource.data.hScore\n        && request.resource.data.gScore == resource.data.gScore;\n      allow delete: if isHost();\n    }\n    match /gifts/{uid}/items/{item} {\n      allow read, delete: if signedIn() && request.auth.uid == uid;\n      allow create: if signedIn();\n    }\n    match /friends/{uid}/list/{friend} {\n      allow read, write: if signedIn() && request.auth.uid == uid;\n    }\n    match /invites/{uid}/items/{item} {\n      allow read, delete: if signedIn() && request.auth.uid == uid;\n      allow create: if signedIn();\n    }\n    match /chats/{pair} {\n      allow create: if signedIn() && request.auth.uid in request.resource.data.members;\n      allow read, update: if signedIn() && request.auth.uid in resource.data.members;\n      match /msgs/{message} {\n        allow read: if signedIn();\n        allow create: if signedIn() && request.resource.data.fromUid == request.auth.uid\n          && request.resource.data.text is string && request.resource.data.text.size() <= 1000;\n      }\n    }\n  }\n}\n";
 function loadScript(src, cb, err){
   const s = document.createElement('script');
   s.src = src;
@@ -4690,7 +4690,7 @@ function fbNeedVerified(){
   if (!fbMailOk()){ toast('Подтверди почту кодом из письма'); return false; }
   return true;
 }
-let duel = null, duelDurMin = 3;
+let duel = null, duelDurMin = 3, duelCreateBusy = false, duelJoinBusy = false, duelJoinCancel = false;
 function duelDur(m){ duelDurMin = m; document.getElementById('duel-secs').textContent = m + ' мин'; snd('btn'); }
 function duelCode(){
   const A = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
@@ -5001,73 +5001,59 @@ function duelPing(){
 }
 function duelCreate(){
   if (!FB.user){ toast('Сначала войди в аккаунт'); try{ openAccount(); }catch(e){} return; }
-  toast('Создаю лобби...');
+  if (duelCreateBusy){ toast('Лобби уже создаётся…'); return; }
+  duelCreateBusy = true; toast('Создаю лобби…');
   ensureFB(ok => {
-    if (!ok){ toast('Нет связи с сервером'); return; }
-    if (!FB.user){ toast('Сначала войди в аккаунт'); try{ openAccount(); }catch(e){} return; }
+    if (!ok || !FB.user){ duelCreateBusy = false; if (!ok) toast('Нет связи с сервером'); return; }
     let code = duelCode(), tries = 0;
-    const mk = () => {
-      FB.db.collection('lobbies').doc(code).get().then(s => {
-        if (s.exists && tries++ < 3){ code = duelCode(); mk(); return; }
-        if (s.exists){ snd('wrong'); toast('Не повезло с кодом — жми ещё раз'); return; }
-        FB.db.collection('lobbies').doc(code).set({hostUid: FB.user.uid, hostName: fbPlayerName(), guestUid: '', guestName: '', secs: duelDurMin * 60, status: 'wait', deadline: 0, hScore: 0, gScore: 0, created: firebase.firestore.FieldValue.serverTimestamp()}).then(() => {
-          try{ FB.db.collection('lobbies').where('hostUid', '==', FB.user.uid).get().then(q => { q.forEach(x => { if (x.id !== code){ try{ x.ref.delete(); }catch(e){} } }); }).catch(() => {}); }catch(e){}
-          duelEnter(code, 'h'); snd('new_a'); toast('Лобби ' + code + ' создано! Скажи код другу.');
-        }).catch(e => { snd('wrong'); toast(fbErr(e, 'Не вышло создать')); });
-      }).catch(e => { snd('wrong'); toast(fbErr(e, 'Не вышло создать')); });
-    };
+    const mk = () => FB.db.collection('lobbies').doc(code).get().then(s => {
+      if (s.exists && tries++ < 3){ code = duelCode(); return mk(); }
+      if (s.exists) throw {code:'lobby-busy'};
+      return FB.db.collection('lobbies').doc(code).set({hostUid:FB.user.uid,hostName:fbPlayerName(),guestUid:'',guestName:'',secs:duelDurMin*60,status:'wait',deadline:0,hScore:0,gScore:0,created:firebase.firestore.FieldValue.serverTimestamp()});
+    }).then(() => { duelCreateBusy=false; duelEnter(code,'h'); snd('new_a'); toast('Лобби '+code+' создано! Скажи код другу.'); })
+      .catch(e => { duelCreateBusy=false; snd('wrong'); toast(fbErr(e,'Не вышло создать')); });
     mk();
   });
 }
+function duelJoinBtn(st){ try{ document.getElementById('duel-join-btn').textContent=st==='busy'?'Входим… (отмена)':'Войти по коду'; }catch(e){} }
 function duelJoin(){
+  if (duelJoinBusy){ duelJoinCancel=true; duelJoinBusy=false; duelJoinBtn('join'); toast('Отменено'); return; }
   if (!FB.user){ toast('Сначала войди в аккаунт'); try{ openAccount(); }catch(e){} return; }
-  const code = String((document.getElementById('duel-code-in').value || '')).trim().toUpperCase();
-  if (!code){ snd('wrong'); return; }
+  const code=String((document.getElementById('duel-code-in').value||'')).trim().toUpperCase();
+  if (!/^[A-Z0-9]{6}$/.test(code)){ snd('wrong'); toast('Код должен состоять из 6 символов'); return; }
+  duelJoinBusy=true; duelJoinCancel=false; duelJoinBtn('busy'); toast('Подключаемся к лобби…');
   ensureFB(ok => {
-    if (!ok){ toast('Нет связи с сервером'); return; }
-    if (!FB.user){ toast('Сначала войди в аккаунт'); try{ openAccount(); }catch(e){} return; }
-    const ref = FB.db.collection('lobbies').doc(code);
+    if (duelJoinCancel) return;
+    if (!ok || !FB.user){ duelJoinBusy=false; duelJoinBtn('join'); if (!ok) toast('Нет связи с сервером'); return; }
+    const ref=FB.db.collection('lobbies').doc(code);
     ref.get().then(s => {
-      if (!s.exists){ snd('wrong'); toast('Такого лобби нет'); return; }
-      const d = s.data() || {};
-      if (d.status !== 'wait'){ snd('wrong'); toast('Бой уже идёт или окончен'); return; }
-      if (d.guestUid && d.guestUid !== FB.user.uid){ snd('wrong'); toast('Лобби занято'); return; }
-      FB.db.runTransaction(tr => tr.get(ref).then(ss => {
-        const dd = ss.data() || {};
-        if (dd.status !== 'wait') throw {code: 'lobby-busy'};
-        if (dd.guestUid && dd.guestUid !== FB.user.uid) throw {code: 'lobby-busy'};
-        tr.update(ref, {guestUid: FB.user.uid, guestName: fbPlayerName()});
-      })).then(() => duelEnter(code, 'g')).catch(e => { snd('wrong'); toast(fbErr(e, 'Не вышло войти')); });
-    }).catch(e => { snd('wrong'); toast(fbErr(e, 'Не вышло войти')); });
+      if (duelJoinCancel) return;
+      if (!s.exists) throw {code:'not-found'};
+      const d=s.data()||{};
+      if (d.status!=='wait' || (d.guestUid && d.guestUid!==FB.user.uid)) throw {code:'lobby-busy'};
+      return FB.db.runTransaction(tr => tr.get(ref).then(ss => {
+        const dd=ss.data()||{};
+        if (dd.status!=='wait' || (dd.guestUid && dd.guestUid!==FB.user.uid)) throw {code:'lobby-busy'};
+        if (!dd.guestUid) tr.update(ref,{guestUid:FB.user.uid,guestName:fbPlayerName()});
+      }));
+    }).then(() => { if (duelJoinCancel) return; duelJoinBusy=false; duelJoinBtn('join'); duelEnter(code,'g'); })
+      .catch(e => { if (duelJoinCancel) return; duelJoinBusy=false; duelJoinBtn('join'); snd('wrong'); toast(fbErr(e,'Не вышло войти')); });
   });
 }
-function duelEnter(code, role){
+function duelEnter(code,role){
   duelLeave(true);
-  duel = {code: code, role: role, state: 'room', secs: 180, set: new Set(STARTERS), order: [...STARTERS], sel1: null, sel2: null, score: 0, foe: 0, foeName: '?', deadline: 0, unsub: null, iv: null};
-  document.getElementById('duel-code').textContent = code;
-  document.getElementById('duel-start').style.display = role === 'h' ? '' : 'none';
-  duelShow('room');
-  duelRender();
-  const ref = FB.db.collection('lobbies').doc(code);
-  duel.unsub = ref.onSnapshot(s => {
-    if (!duel || duel.code !== code) return;
-    const d = (s.data && s.data()) || null;
+  duel={code:code,role:role,state:'room',secs:180,set:new Set(STARTERS),order:[...STARTERS],sel1:null,sel2:null,score:0,foe:0,foeName:'?',deadline:0,unsub:null,iv:null,syncT:0,finishBusy:false};
+  document.getElementById('duel-code').textContent=code; document.getElementById('duel-start').style.display=role==='h'?'':'none'; duelShow('room'); duelRender();
+  const ref=FB.db.collection('lobbies').doc(code);
+  duel.unsub=ref.onSnapshot(s => {
+    if (!duel || duel.code!==code) return;
+    const d=(s.data&&s.data())||null;
     if (!d){ toast('Лобби закрыто'); duelLeave(); duelShow('lobby'); return; }
-    if (d.secs) duel.secs = d.secs;
-    duel.foeName = role === 'h' ? (d.guestName || 'ждём друга...') : (d.hostName || '?');
-    duel.foe = role === 'h' ? (d.gScore || 0) : (d.hScore || 0);
-    duelRender();
-    if (d.status === 'go' && duel.state === 'room'){
-      duel.deadline = Date.now() + (duel.secs || 180) * 1000;
-      duel.state = 'fight';
-      duelShow('fight');
-      dRender();
-      duelTick();
-      snd('qstart');
-      toast('Бой начался! Клепай элементы!');
-    }
-    if (d.status === 'done' && duel.state === 'fight') duelFinish();
-  }, () => { if (duel && duel.code === code) toast('Нет связи с лобби (правила Firestore?)'); });
+    if (d.secs) duel.secs=d.secs;
+    duel.foeName=role==='h'?(d.guestName||'ждём друга…'):(d.hostName||'?'); duel.foe=role==='h'?(Number(d.gScore)||0):(Number(d.hScore)||0); duelRender();
+    if (d.status==='go' && duel.state==='room'){ duel.deadline=Number(d.deadline)||(Date.now()+(duel.secs||180)*1000); duel.state='fight'; duelShow('fight'); dRender(); duelTick(); snd('qstart'); toast('Бой начался! Клепай элементы!'); }
+    if (d.status==='done' && duel.state==='fight') duelFinish();
+  }, e => { if (duel && duel.code===code) toast(fbErr(e,'Нет связи с лобби')); });
 }
 function duelRender(){
   if (!duel) return;
@@ -5174,54 +5160,21 @@ function dCombine(){
   dRender();
 }
 function duelSync(){
-  if (!duel || !FB.user) return;
-  const o = {};
-  o[duel.role === 'h' ? 'hScore' : 'gScore'] = duel.score;
-  FB.db.collection('lobbies').doc(duel.code).update(o).catch(() => {});
+  if (!duel || !FB.user || duel.state!=='fight') return Promise.resolve(false);
+  const o={}; o[duel.role==='h'?'hScore':'gScore']=Math.max(0,Math.floor(duel.score));
+  return FB.db.collection('lobbies').doc(duel.code).update(o).then(()=>true).catch(e=>{ if (e&&e.code==='permission-denied') toast('Счёт отклонён правилами Firestore'); return false; });
 }
 function duelTick(){
-  if (!duel) return;
-  if (duel.iv){ try{ clearInterval(duel.iv); }catch(e){} }
-  duel.iv = setInterval(() => {
-    if (!duel) return;
-    const left = Math.max(0, Math.ceil((duel.deadline - Date.now()) / 1000));
-    document.getElementById('duel-time').textContent = Math.floor(left / 60) + ':' + ('0' + (left % 60)).slice(-2);
-    try{ if (Date.now() - (duel.syncT || 0) > 3000){ duel.syncT = Date.now(); duelSync(); } }catch(e){}
-    if (left <= 0) duelFinish();
-  }, 500);
+  if (!duel) return; if (duel.iv){ try{clearInterval(duel.iv);}catch(e){} }
+  duel.iv=setInterval(()=>{ if (!duel) return; const left=Math.max(0,Math.ceil((duel.deadline-Date.now())/1000)); document.getElementById('duel-time').textContent=Math.floor(left/60)+':'+('0'+(left%60)).slice(-2); if (Date.now()-(duel.syncT||0)>2500){duel.syncT=Date.now();duelSync();} if(left<=0) duelFinish(); },500);
 }
 function duelFinish(){
-  if (!duel || duel.state !== 'fight') return;
-  duel.state = 'done';
-  if (duel.iv){ try{ clearInterval(duel.iv); }catch(e){} }
-  try{ duelSync(); }catch(e){}
-  const decide = foe => {
-    if (!duel) return;
-    const win = duel.score > foe, draw = duel.score === foe;
-    if (win){
-      cups = (cups || 0) + 1;
-      energy += 25; energyEarned += 25;
-      snd('quest');
-      toast('🏆 Победа! +1 кубок, +25 ⚡');
-    } else if (draw){ snd('btn'); toast('Ничья! Оба молодцы 🤝'); }
-    else {
-      energy = Math.max(0, energy - 10);
-      snd('no');
-      toast('Поражение... −10 ⚡. Реванш?');
-    }
-    save(); renderAll();
-    try{ if (duel.role === 'h') FB.db.collection('lobbies').doc(duel.code).update({status: 'done'}).catch(() => {}); }catch(e){}
-    duelShow('room');
-    document.getElementById('duel-state').textContent = win ? 'победа! 🏆' : (draw ? 'ничья' : 'поражение');
-    duelRender();
-  };
-  try{
-    FB.db.collection('lobbies').doc(duel.code).get().then(s => {
-      const d = s.data() || {};
-      const fresh = duel.role === 'h' ? (d.gScore || 0) : (d.hScore || 0);
-      decide(Math.max(duel.foe || 0, fresh));
-    }).catch(() => decide(duel.foe || 0));
-  }catch(e){ decide(duel.foe || 0); }
+  if (!duel || duel.state!=='fight' || duel.finishBusy) return; duel.finishBusy=true; duel.state='done'; if(duel.iv){try{clearInterval(duel.iv);}catch(e){}}
+  duelSync().finally(()=>setTimeout(()=>{ if(!duel)return; FB.db.collection('lobbies').doc(duel.code).get().then(s=>{
+    const d=s.data()||{}; duel.foe=duel.role==='h'?(Number(d.gScore)||0):(Number(d.hScore)||0); const win=duel.score>duel.foe, draw=duel.score===duel.foe;
+    if(win){cups=(cups||0)+1;energy+=25;energyEarned+=25;snd('quest');toast('🏆 Победа! +1 кубок, +25 ⚡');} else if(draw){snd('btn');toast('Ничья! Оба молодцы 🤝');} else {energy=Math.max(0,energy-10);snd('no');toast('Поражение… −10 ⚡. Реванш?');}
+    save();renderAll(); if(duel.role==='h') FB.db.collection('lobbies').doc(duel.code).update({status:'done'}).catch(()=>{}); duelShow('room'); document.getElementById('duel-state').textContent=win?'победа! 🏆':(draw?'ничья':'поражение'); duelRender();
+  }).catch(()=>{if(duel)duel.finishBusy=false;toast('Результат пока не подтверждён — проверь связь.');});},350));
 }
 const MAFIA_POOL = ['Арсений', 'Данил', 'Матвей', 'Виталик', 'Саша', 'Анжелика', 'Лаврушка', 'Вика', 'Вадим', 'Тимерхун'];
 const MAFIA_IMG = {'Матвей': 'Матвей с яблоками', 'Виталик': 'Vithel', 'Анжелика': 'Анджелика', 'Вика': 'вика в.'};
@@ -6276,6 +6229,7 @@ loadPrefs(); syncPrefsUI(); load(); layout(); try{ cheatGApply(); }catch(e){} tr
 try{ if (typeof FIREBASE_CONFIG !== 'undefined' && FIREBASE_CONFIG && navigator.onLine) ensureFB(ok => {
     if (ok){ try{ FB.auth.getRedirectResult().then(r => { if (r && r.user){ try{ renderAccount(); }catch(e){} toast('Вошёл через Google!'); } }).catch(()=>{}); }catch(e){} }
   }, true); }catch(e){}
+window.AG_MP_DIAGNOSTICS={code:()=>duelCode(),validCode:c=>/^[A-Z0-9]{6}$/.test(String(c||'')),state:()=>duel?{code:duel.code,role:duel.role,state:duel.state,score:duel.score,foe:duel.foe}:null};
 </script>
 </body>
 </html>
