@@ -4642,6 +4642,7 @@ function ensureFB(cb, silent){
           firebase.initializeApp(FIREBASE_CONFIG);
           FB.auth = firebase.auth();
           FB.db = firebase.firestore();
+          try{ FB.db.settings({experimentalAutoDetectLongPolling: true}); }catch(e){}
           FB.auth.onAuthStateChanged(u => {
             FB.user = u;
             try{ renderAccount(); }catch(e){}
