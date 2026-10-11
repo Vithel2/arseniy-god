@@ -1110,6 +1110,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
     <h2>Новости</h2>
     <p>Что нового в игре:</p>
     <div class="hlist">
+      <div class="hrow"><b>v1.50</b><span>Заявки в друзья: кидаешь по коду, друг принимает — вы взаимно в списке</span></div>
       <div class="hrow"><b>v1.49</b><span>Дуэль лечится: кнопка проверки связи, понятные ошибки, чистка старых лобби, честное время боя</span></div>
       <div class="hrow"><b>v1.48</b><span>23 новые реакции: Миша, Варвара, стихии, семейство и другие</span></div>
       <div class="hrow"><b>v1.47</b><span>35 новых элементов, мафия продолжается без подельника</span></div>
@@ -1416,7 +1417,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
     <div class="sgroup">Мой код</div>
     <p>Твой код: <b id="fr-myid">—</b> <button class="btn sm" onclick="frCopy()">Копировать</button></p>
     <div class="srow"><span>Код друга</span><input id="fr-add" class="num" style="width:120px" placeholder="ABC123"></div>
-    <button class="btn wide" onclick="frAdd()">Добавить друга</button>
+    <button class="btn wide" onclick="frAdd()">Кинуть заявку</button>
     <div class="hlist" id="fr-inv"></div>
     <div class="sgroup">Мои друзья</div>
     <div class="hlist" id="fr-list"></div>
@@ -4632,6 +4633,18 @@ function loadScript(src, cb, err){
   s.onerror = () => { if (FB.fail) try{ FB.fail(); }catch(e){} FB.loading = false; if (!FB.quiet) toast(err || 'Нет связи с Google-сервисами'); };
   document.head.appendChild(s);
 }
+function loadChain(list, ok){
+  let i = 0;
+  const go = () => {
+    if (i >= list.length){ try{ FB.fail(); }catch(e){} return; }
+    const s = document.createElement('script');
+    s.src = list[i++];
+    s.onload = () => { try{ ok(); }catch(e){} };
+    s.onerror = () => { try{ s.remove(); }catch(e){} go(); };
+    document.head.appendChild(s);
+  };
+  go();
+}
 function ensureFB(cb, silent){
   if (FB.ok){ cb(true); return; }
   FB.quiet = !!silent;
@@ -4640,11 +4653,15 @@ function ensureFB(cb, silent){
   FB.waiters = FB.waiters || [];
   if (FB.loading){ FB.waiters.push(cb); return; }
   FB.loading = true;
-  const done = ok => { FB.loading = false; FB.fail = null; const ws = FB.waiters || []; FB.waiters = []; try{ cb(ok); }catch(e){} ws.forEach(f => { try{ f(ok); }catch(e){} }); };
+  let fin = false;
+  const done = ok => { if (fin) return; fin = true; FB.loading = false; FB.fail = null; try{ clearTimeout(FB.tm); }catch(e){} const ws = FB.waiters || []; FB.waiters = []; try{ cb(ok); }catch(e){} ws.forEach(f => { try{ f(ok); }catch(e){} }); };
   FB.fail = () => done(false);
-  loadScript('https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js', () => {
-    loadScript('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js', () => {
-      loadScript('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js', () => {
+  try{ FB.tm = setTimeout(() => { if (!silent) toast('Сервер не отвечает (таймаут 20с): проверь интернет и AdBlock'); done(false); }, 20000); }catch(e){}
+  const FBV = '10.12.0';
+  const U = f => ['https://www.gstatic.com/firebasejs/' + FBV + '/' + f, 'https://cdn.jsdelivr.net/npm/firebase@' + FBV + '/' + f];
+  loadChain(U('firebase-app-compat.js'), () => {
+    loadChain(U('firebase-auth-compat.js'), () => {
+      loadChain(U('firebase-firestore-compat.js'), () => {
         try{
           firebase.initializeApp(FIREBASE_CONFIG);
           FB.auth = firebase.auth();
@@ -4764,11 +4781,19 @@ function frAdd(){
       const doc = q.docs[0];
       if (doc.id === FB.user.uid){ snd('wrong'); toast('Это ты сам :)'); return; }
       const d = doc.data() || {};
-      FB.db.collection('friends').doc(FB.user.uid).collection('list').doc(doc.id).set({name: d.name || '???', pid: code}).then(() => {
-        snd('new_a'); toast('Друг добавлен!');
-        document.getElementById('fr-add').value = '';
-        frList();
-      }).catch(() => toast('Не вышло'));
+      ensurePid(pid => {
+        FB.db.collection('friends').doc(FB.user.uid).collection('list').doc(doc.id).get().then(s => {
+          if (s.exists){ snd('wrong'); toast('Уже в друзьях'); return; }
+          let sent = {};
+          try{ sent = JSON.parse(localStorage.getItem('ag_freq') || '{}'); }catch(e){}
+          if (sent[doc.id] && Date.now() - sent[doc.id] < 3600 * 1000){ snd('wrong'); toast('Заявка уже отправлена — подожди'); return; }
+          FB.db.collection('invites').doc(doc.id).collection('items').add({type: 'friend', fromUid: FB.user.uid, fromName: fbPlayerName(), pid: pid || '', ts: firebase.firestore.FieldValue.serverTimestamp()}).then(() => {
+            try{ sent[doc.id] = Date.now(); localStorage.setItem('ag_freq', JSON.stringify(sent)); }catch(e){}
+            snd('new_a'); toast('Заявка отправлена!');
+            document.getElementById('fr-add').value = '';
+          }).catch(() => toast('Не вышло отправить заявку'));
+        }).catch(() => toast('Не вышло'));
+      });
     }).catch(() => toast('Не вышло'));
   });
 }
@@ -4831,15 +4856,46 @@ function frInvites(){
   const box = document.getElementById('fr-inv');
   if (!FB.user){ box.innerHTML = ''; return; }
   if (frUnsubInv){ try{ frUnsubInv(); }catch(e){} }
-  frUnsubInv = FB.db.collection('invites').doc(FB.user.uid).collection('items').orderBy('ts', 'desc').limit(10).onSnapshot(snap => {
+  frUnsubInv = FB.db.collection('invites').doc(FB.user.uid).collection('items').orderBy('ts', 'desc').limit(20).onSnapshot(snap => {
     if (snap.empty){ box.innerHTML = ''; return; }
-    let html = '<div class="sgroup">Приглашения</div>';
+    let hf = '', hd = '';
     snap.forEach(doc => {
       const d = doc.data() || {};
-      html += '<div class="hrow"><span>⚔️ ' + String(d.fromName || '?').replace(/</g, '&lt;') + ' зовёт в лобби <b>' + (d.lobby || '') + '</b></span><span><button class="btn sm hint" onclick="frAccept(\'' + (d.lobby || '') + '\',\'' + doc.id + '\')">В бой!</button></span></div>';
+      if (d.type === 'friend-ok' && d.fromUid){
+        FB.db.collection('friends').doc(FB.user.uid).collection('list').doc(d.fromUid).set({name: d.fromName || '???', pid: d.pid || ''}).catch(() => {});
+        FB.db.collection('invites').doc(FB.user.uid).collection('items').doc(doc.id).delete().catch(() => {});
+        snd('new_a'); toast('🤝 Новый друг: ' + (d.fromName || '?'));
+        try{ frList(); }catch(e){}
+        return;
+      }
+      if (d.type === 'friend' && d.fromUid){
+        hf += '<div class="hrow"><span>🤝 ' + String(d.fromName || '?').replace(/</g, '&lt;') + ' хочет в друзья</span><span><button class="btn sm hint" onclick="frReqAccept(\'' + doc.id + '\',\'' + d.fromUid + '\')">Принять</button> <button class="btn sm" onclick="frReqDecline(\'' + doc.id + '\')">Скрыть</button></span></div>';
+        return;
+      }
+      if (d.lobby){
+        hd += '<div class="hrow"><span>⚔️ ' + String(d.fromName || '?').replace(/</g, '&lt;') + ' зовёт в лобби <b>' + (d.lobby || '') + '</b></span><span><button class="btn sm hint" onclick="frAccept(\'' + (d.lobby || '') + '\',\'' + doc.id + '\')">В бой!</button></span></div>';
+      }
     });
-    box.innerHTML = html;
+    box.innerHTML = (hf ? '<div class="sgroup">Заявки в друзья</div>' + hf : '') + (hd ? '<div class="sgroup">Приглашения</div>' + hd : '');
   });
+}
+function frReqAccept(invId, fromUid){
+  if (!FB.user) return;
+  ensurePid(pid => {
+    FB.db.collection('players').doc(fromUid).get().then(s => {
+      const dd = s.data() || {};
+      FB.db.collection('friends').doc(FB.user.uid).collection('list').doc(fromUid).set({name: dd.name || '???', pid: dd.pid || ''}).then(() => {
+        FB.db.collection('invites').doc(FB.user.uid).collection('items').doc(invId).delete().catch(() => {});
+        FB.db.collection('invites').doc(fromUid).collection('items').add({type: 'friend-ok', fromUid: FB.user.uid, fromName: fbPlayerName(), pid: pid || '', ts: firebase.firestore.FieldValue.serverTimestamp()}).catch(() => {});
+        snd('new_a'); toast('🤝 Вы теперь друзья!');
+        try{ frList(); frGiftFill(); }catch(e){}
+      }).catch(() => toast('Не вышло принять'));
+    }).catch(() => toast('Не вышло принять'));
+  });
+}
+function frReqDecline(invId){
+  if (!FB.user) return;
+  FB.db.collection('invites').doc(FB.user.uid).collection('items').doc(invId).delete().then(() => { snd('btn'); }).catch(() => {});
 }
 function frProfile(uid){
   const box = document.getElementById('fr-prof');
