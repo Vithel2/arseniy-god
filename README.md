@@ -8,3 +8,8 @@
 4. Artifacts -> ArseniyGod-APK -> внутри ArseniyGod.apk
 
 Интернет игре не нужен: всё внутри APK.
+
+
+## Firestore rules for multiplayer
+
+The current client-side Firestore rules are in `firestore.rules`. Copy them into Firebase Console → Firestore Database → Rules. The client still computes scores locally; rules restrict score writes to monotonic increases by each participant, but this is not anti-cheat. Competitive rewards should be granted by a trusted server/Cloud Function after validating a match.
