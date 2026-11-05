@@ -251,6 +251,8 @@ img{-webkit-touch-callout:none;-webkit-user-drag:none;user-select:none;-webkit-u
 #toast.show{opacity:1;transform:translate(-50%,0)}
 .ovl{display:none;position:fixed;inset:0;background:rgba(35,28,18,.58);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);z-index:2500;align-items:center;justify-content:center;padding:18px}
 .ovl.show{display:flex;animation:appin .2s ease}
+#quests.ovl{-webkit-backdrop-filter:none;backdrop-filter:none}
+#quests.ovl.show{animation:none}
 .ovl .box{overflow-x:hidden}
 .box{position:relative;background:linear-gradient(180deg,var(--surf-hi),var(--surf));border:1.5px solid rgba(43,35,24,.2);border-radius:28px;padding:24px 20px 20px;max-width:420px;width:100%;text-align:center;animation:boxin .38s var(--spring);box-shadow:0 1px 0 rgba(255,255,255,.85) inset,0 40px 70px -24px rgba(25,18,8,.7);max-height:88dvh;overflow-y:auto}
 @keyframes boxin{from{opacity:0;transform:translateY(18px) scale(.95)}to{opacity:1;transform:none}}
@@ -1024,6 +1026,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
     <button class="xbtn" onclick="closeSettings()" aria-label="Закрыть"><svg class="ic"><use href="#i-x" xlink:href="#i-x"/></svg></button>
     <h2>Настройки</h2>
     <div class="sgroup">Игра</div>
+    <div class="srow"><span>Системные уведомления</span><button class="sw" id="sw-notifications" role="switch" aria-label="Системные уведомления" onclick="toggleNotifications()"></button></div>
     <div class="srow"><span>Поиск элементов</span><button class="sw" id="sw-search" onclick="toggleSearch()"></button></div>
     <div class="srow"><span>Тема оформления</span><span id="theme-row"><button class="theme-sw" data-th="" title="Песок" style="background:linear-gradient(135deg,#f7f1e1,#c98f00)" onclick="setTheme('')"></button> <button class="theme-sw" data-th="mint" title="Мята" style="background:linear-gradient(135deg,#e9f3e4,#2f9e6e)" onclick="setTheme('mint')"></button> <button class="theme-sw" data-th="sky" title="Небо" style="background:linear-gradient(135deg,#e7f0f9,#2f7fd6)" onclick="setTheme('sky')"></button> <button class="theme-sw" data-th="berry" title="Малина" style="background:linear-gradient(135deg,#f7e8ee,#c2437f)" onclick="setTheme('berry')"></button></span></div>
     <div class="srow"><span>Плавные анимации <small class="rec">рекомендуется</small></span><button class="sw" id="sw-fx" onclick="toggleFx()"></button></div>
@@ -1870,6 +1873,7 @@ function loadPrefs(){
 }
 function savePrefs(){ try{ localStorage.setItem('ag_prefs', JSON.stringify({sfx:sfxOn, music:musicOn, vol:musicVol, svol:sfxVol, fps:fpsOn, fx:fxOn})); }catch(e){} }
 function syncPrefsUI(){
+  syncNotificationUI();
   document.getElementById('sw-music').classList.toggle('on', musicOn);
   document.getElementById('sw-sfx').classList.toggle('on', sfxOn);
   document.getElementById('sw-fps').classList.toggle('on', fpsOn);
@@ -4315,11 +4319,11 @@ function renderGrid(){
 function makeCard(e, col){
   const d = document.createElement('div');
   let cls = 'ec' + (((sel1 === e.n && (!sel1col || sel1col === col)) || (sel2 === e.n && (!sel2col || sel2col === col))) ? ' sel' : '')
-    + (sel1 && !sel2 && sel1 !== e.n && wasTried(sel1, e.n) ? ' tried' : '');
+    + (((sel1 && !sel2) || (sel2 && !sel1)) && (sel1 || sel2) !== e.n && wasTried(sel1 || sel2, e.n) ? ' tried' : '');
   if (ownedBlue && !liveSet.has(e.n) && !tempSet.has(e.n)) cls += ' dead';
   if (ownedDash && tempSet.has(e.n)) cls += ' tmp';
-  if (ownedSense && sel1 && !sel2){
-    const parr = resList(sel1, e.n);
+  if (ownedSense && ((sel1 && !sel2) || (sel2 && !sel1))){
+    const parr = resList(sel1 || sel2, e.n);
     for (const r of parr){ if (!discovered.has(r) && EL_MAP[r] && !EL_MAP[r].q){ cls += ' sense'; break; } }
   }
   d.className = cls;
@@ -4598,18 +4602,60 @@ function toast(msg){
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => t.classList.remove('show'), 3200);
 }
-// Локальные уведомления Android планируются при уходе из игры.
-function scheduleSystemNotifications(){
-  const local = window.cordova && cordova.plugins && cordova.plugins.notification && cordova.plugins.notification.local;
-  if (!local) return;
-  const now = Date.now(), day = 24 * 60 * 60 * 1000;
-  const reminders = [];
-  if (!canClaim()) reminders.push({id: 8101, title: '🔑 Автоключи готовы!', text: 'Загляни в магазин и забери бесплатные ключи.', trigger: {at: new Date(lastClaim + CLAIM_MS)}});
-  if (!canSpin()) reminders.push({id: 8102, title: '🎰 Рулетка снова доступна!', text: 'Заходи за бесплатным вращением и призами.', trigger: {at: new Date(lastRoulette + SPIN_MS)}});
-  [1, 2, 3, 5, 7].forEach((days, i) => reminders.push({id: 8110 + i, title: 'Арсений God ждёт тебя!', text: days === 1 ? 'Пора заглянуть за наградами и новыми открытиями!' : 'Возвращайся: ключи и рулетка уже ждут!', trigger: {at: new Date(now + days * day)}}));
-  local.cancel([8101, 8102, 8110, 8111, 8112, 8113, 8114], () => local.schedule(reminders));
+// Настройка хранится отдельно от игрового сохранения.
+const notificationIds = [8101, 8102, 8110, 8111, 8112, 8113, 8114, 8115, 8116];
+function notificationPlugin(){ return window.cordova && cordova.plugins && cordova.plugins.notification && cordova.plugins.notification.local; }
+function notificationsEnabled(){ try { return localStorage.getItem('ag_notifications') === 'on'; } catch(e){ return false; } }
+function syncNotificationUI(){
+  const b = document.getElementById('sw-notifications');
+  if (b){ b.classList.toggle('on', notificationsEnabled()); b.setAttribute('aria-checked', String(notificationsEnabled())); }
 }
-document.addEventListener('deviceready', scheduleSystemNotifications, false);
+function toggleNotifications(){
+  const local = notificationPlugin();
+  if (notificationsEnabled()){
+    try{ localStorage.setItem('ag_notifications', 'off'); }catch(e){}
+    if (local) local.cancel(notificationIds);
+    syncNotificationUI(); return;
+  }
+  if (!local){ toast('Уведомления доступны в приложении Android'); return; }
+  local.requestPermission(granted => {
+    try{ localStorage.setItem('ag_notifications', granted ? 'on' : 'off'); }catch(e){}
+    syncNotificationUI();
+    if (granted) scheduleSystemNotifications();
+    else toast('Разреши уведомления в настройках Android');
+  });
+}
+function scheduleSystemNotifications(){
+  const local = notificationPlugin();
+  if (!local || !notificationsEnabled()) return;
+  const now = Date.now(), day = 86400000;
+  const messages = [
+    ['👋 Арсений скучает!', 'Загляни за ключами и новыми открытиями!'],
+    ['🎰 Рулетка заждалась!', 'Вдруг сегодня выпадет что-то крутое?'],
+    ['🔑 Завхоз приготовил ключи', 'Забирай их в магазине и открывай элементы!'],
+    ['⚗️ Лаборатория зовёт', 'Какие сочетания ты ещё не проверил?'],
+    ['📜 Квесты ждут героя', 'Вернись и продолжи своё приключение!'],
+    ['✨ Время новых открытий', 'Арсений приготовил тебе целый мир сочетаний.'],
+    ['🏆 Пора за достижениями!', 'Загляни в игру и пополни коллекцию.']
+  ];
+  const reminders = [];
+  if (!canClaim()) reminders.push({id:8101, title:'🔑 Автоключи готовы!', text:'Загляни в магазин и забери бесплатные ключи.', trigger:{at:new Date(lastClaim + CLAIM_MS)}});
+  if (!canSpin()) reminders.push({id:8102, title:'🎰 Рулетка снова доступна!', text:'Заходи за бесплатным вращением и призами.', trigger:{at:new Date(lastRoulette + SPIN_MS)}});
+  [1, 2, 3, 5, 7, 10, 14].forEach((days, i) => reminders.push({id:8110+i, title:messages[i][0], text:messages[i][1], trigger:{at:new Date(now+days*day)}}));
+  local.cancel(notificationIds, () => { if (notificationsEnabled()) local.schedule(reminders); });
+}
+document.addEventListener('deviceready', () => {
+  const local = notificationPlugin();
+  if (!local) return;
+  let choice = null; try{ choice = localStorage.getItem('ag_notifications'); }catch(e){}
+  if (choice === null){
+    local.requestPermission(granted => {
+      try{ localStorage.setItem('ag_notifications', granted ? 'on' : 'off'); }catch(e){}
+      syncNotificationUI(); if (granted) scheduleSystemNotifications();
+    });
+  } else if (notificationsEnabled()) scheduleSystemNotifications();
+  syncNotificationUI();
+}, false);
 document.addEventListener('pause', scheduleSystemNotifications, false);
 document.addEventListener('resume', scheduleSystemNotifications, false);
 
