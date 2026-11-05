@@ -18,6 +18,23 @@
     <preference name="AndroidInsecureFileModeEnabled" value="true" />
     <preference name="DisallowOverscroll" value="true" />
     <platform name="android">
+        <hook type="after_prepare" src="scripts/launcher-alias.js" />
+        <resource-file src="native/IconSwitcher.java" target="app/src/main/java/com/vithel/arseniygod/IconSwitcher.java" />
+        <resource-file src="res/icon.png" target="app/src/main/res/drawable/icon_default.png" />
+        <resource-file src="res/icon-dark.png" target="app/src/main/res/drawable/icon_dark.png" />
+        <resource-file src="res/icon-green.png" target="app/src/main/res/drawable/icon_green.png" />
+        <resource-file src="res/icon-blue.png" target="app/src/main/res/drawable/icon_blue.png" />
+        <resource-file src="res/icon-pink.png" target="app/src/main/res/drawable/icon_pink.png" />
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="IconSwitcher"><param name="android-package" value="com.vithel.arseniygod.IconSwitcher" /></feature>
+        </config-file>
+        <config-file target="AndroidManifest.xml" parent="/manifest/application">
+            <activity-alias android:name=".Icon_default" android:targetActivity="MainActivity" android:icon="@drawable/icon_default" android:label="@string/app_name" android:exported="true" android:enabled="true"><intent-filter><action android:name="android.intent.action.MAIN" /><category android:name="android.intent.category.LAUNCHER" /></intent-filter></activity-alias>
+            <activity-alias android:name=".Icon_dark" android:targetActivity="MainActivity" android:icon="@drawable/icon_dark" android:label="@string/app_name" android:exported="true" android:enabled="false"><intent-filter><action android:name="android.intent.action.MAIN" /><category android:name="android.intent.category.LAUNCHER" /></intent-filter></activity-alias>
+            <activity-alias android:name=".Icon_green" android:targetActivity="MainActivity" android:icon="@drawable/icon_green" android:label="@string/app_name" android:exported="true" android:enabled="false"><intent-filter><action android:name="android.intent.action.MAIN" /><category android:name="android.intent.category.LAUNCHER" /></intent-filter></activity-alias>
+            <activity-alias android:name=".Icon_blue" android:targetActivity="MainActivity" android:icon="@drawable/icon_blue" android:label="@string/app_name" android:exported="true" android:enabled="false"><intent-filter><action android:name="android.intent.action.MAIN" /><category android:name="android.intent.category.LAUNCHER" /></intent-filter></activity-alias>
+            <activity-alias android:name=".Icon_pink" android:targetActivity="MainActivity" android:icon="@drawable/icon_pink" android:label="@string/app_name" android:exported="true" android:enabled="false"><intent-filter><action android:name="android.intent.action.MAIN" /><category android:name="android.intent.category.LAUNCHER" /></intent-filter></activity-alias>
+        </config-file>
         <resource-file src="res/icon-dark.png" target="app/src/main/res/mipmap-night/icon.png" />
         <config-file target="AndroidManifest.xml" parent="/manifest">
             <uses-permission android:name="android.permission.VIBRATE" />

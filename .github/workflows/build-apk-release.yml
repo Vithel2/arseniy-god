@@ -68,30 +68,29 @@ jobs:
           grep -q 'android.permission.POST_NOTIFICATIONS' platforms/android/app/src/main/AndroidManifest.xml
           grep -q 'src="cordova.js"' platforms/android/app/src/main/assets/www/index.html
 
-      - name: Prepare keystore (secrets or fresh + warning)
+      - name: Check signing configuration
+        id: signing
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
-          set -e
-          if [ -n "${{ secrets.KEYSTORE_BASE64 }}" ]; then
-            printf '%s' "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > release.jks
-            keytool -list -keystore release.jks -storepass "${{ secrets.KEYSTORE_PASSWORD }}" >/dev/null
-            echo "Using keystore from secrets (verified)."
-            echo "STOREPASS=${{ secrets.KEYSTORE_PASSWORD }}" >> $GITHUB_ENV
-            echo "KEYALIAS=${{ secrets.KEY_ALIAS }}" >> $GITHUB_ENV
-            echo "KEYPASS=${{ secrets.KEY_PASSWORD }}" >> $GITHUB_ENV
-          else
-            echo "WARNING: no keystore secrets found - generating a FRESH key."
-            echo "WARNING: this APK will NOT update over the old one, reinstall will be needed."
-            echo "WARNING: save GENERATED-release.jks into secrets after this build!"
-            keytool -genkeypair -keystore release.jks -alias arseniygod -keyalg RSA -keysize 2048 -validity 10000 -storepass android -keypass android -dname "CN=Vithel"
-            keytool -list -keystore release.jks -storepass android >/dev/null
-            echo "STOREPASS=android" >> $GITHUB_ENV
-            echo "KEYALIAS=arseniygod" >> $GITHUB_ENV
-            echo "KEYPASS=android" >> $GITHUB_ENV
-            echo "GENERATED_KEYSTORE=1" >> $GITHUB_ENV
+          set -eu
+          if [ -z "$KEYSTORE_BASE64" ] || [ -z "$KEYSTORE_PASSWORD" ] || [ -z "$KEY_ALIAS" ] || [ -z "$KEY_PASSWORD" ]; then
+            echo "Signing secrets are unavailable; building a debug APK for testing."
+            echo "release=false" >> "$GITHUB_OUTPUT"
+            exit 0
           fi
-          ls -lh release.jks
+          echo "release=true" >> "$GITHUB_OUTPUT"
+          printf '%s' "$KEYSTORE_BASE64" | base64 --decode > release.jks
+          keytool -list -keystore release.jks -storepass "$KEYSTORE_PASSWORD" -alias "$KEY_ALIAS" >/dev/null
+          echo "STOREPASS=$KEYSTORE_PASSWORD" >> "$GITHUB_ENV"
+          echo "KEYALIAS=$KEY_ALIAS" >> "$GITHUB_ENV"
+          echo "KEYPASS=$KEY_PASSWORD" >> "$GITHUB_ENV"
 
       - name: Build signed release APK
+        if: steps.signing.outputs.release == 'true'
         run: >
           cordova build android --release --no-telemetry -- --packageType=apk
           --keystore=release.jks
@@ -99,17 +98,26 @@ jobs:
           --alias=${{ env.KEYALIAS }}
           --password=${{ env.KEYPASS }}
 
-      - name: Collect APK (+ keystore if generated)
+      - name: Build debug APK for testing
+        if: steps.signing.outputs.release != 'true'
+        run: cordova build android --debug --no-telemetry -- --packageType=apk
+
+      - name: Collect APK
         run: |
-          set -e
+          set -eu
           mkdir -p out
-          APK_PATH="$(find platforms/android -type f -name "*release*.apk" | head -n 1)"
-          if [ -z "$APK_PATH" ]; then echo "ERROR: no release APK found"; exit 1; fi
-          cp "$APK_PATH" out/ArseniyGod-release.apk
-          if [ "${{ env.GENERATED_KEYSTORE }}" = "1" ]; then cp release.jks out/GENERATED-release.jks; fi
+          if [ "${{ steps.signing.outputs.release }}" = "true" ]; then
+            APK_PATH="$(find platforms/android -type f -name '*release*.apk' | head -n 1)"
+            APK_NAME="ArseniyGod-release.apk"
+          else
+            APK_PATH="$(find platforms/android -type f -name '*debug*.apk' | head -n 1)"
+            APK_NAME="ArseniyGod-debug-test.apk"
+          fi
+          if [ -z "$APK_PATH" ]; then echo "ERROR: APK not found"; exit 1; fi
+          cp "$APK_PATH" "out/$APK_NAME"
           ls -la out
 
       - uses: actions/upload-artifact@v4
         with:
-          name: ArseniyGod-release-APK
+          name: ArseniyGod-APK
           path: out/
