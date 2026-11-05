@@ -18,6 +18,7 @@
     <preference name="AndroidInsecureFileModeEnabled" value="true" />
     <preference name="DisallowOverscroll" value="true" />
     <platform name="android">
+        <resource-file src="res/icon-dark.png" target="app/src/main/res/mipmap-night/icon.png" />
         <config-file target="AndroidManifest.xml" parent="/manifest">
             <uses-permission android:name="android.permission.VIBRATE" />
         </config-file>
