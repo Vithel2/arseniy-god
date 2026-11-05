@@ -247,7 +247,7 @@ img{-webkit-touch-callout:none;-webkit-user-drag:none;user-select:none;-webkit-u
 #qgrid{flex:1}
 
 /* ---------- подсказки-тосты и модальные окна ---------- */
-#toast{position:fixed;left:50%;bottom:calc(128px + env(safe-area-inset-bottom));transform:translate(-50%,8px);background:rgba(43,35,24,.94);color:#fff4dc;padding:12px 20px;border-radius:18px;font-size:13.5px;font-weight:800;z-index:9999;opacity:0;transition:opacity .3s,transform .3s var(--spring);pointer-events:none;text-align:center;max-width:88vw;white-space:pre-line;box-shadow:0 14px 30px -10px rgba(0,0,0,.6);line-height:1.35}
+#toast{position:fixed;left:50%;bottom:calc(128px + env(safe-area-inset-bottom));transform:translate(-50%,8px);background:rgba(43,35,24,.94);color:#fff4dc;padding:12px 20px;border-radius:18px;font-size:13.5px;font-weight:800;z-index:9999;opacity:0;transition:opacity .3s,transform .3s var(--spring);pointer-events:none;text-align:center;max-width:88vw;white-space:pre-line;box-shadow:0 14px 30px -10px rgba(0,0,0,.6),0 0 0 1px rgba(255,215,135,.45);line-height:1.35}
 #toast.show{opacity:1;transform:translate(-50%,0)}
 .ovl{display:none;position:fixed;inset:0;background:rgba(35,28,18,.58);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);z-index:2500;align-items:center;justify-content:center;padding:18px}
 .ovl.show{display:flex;animation:appin .2s ease}
@@ -2778,7 +2778,7 @@ function importSave(input){
       const d = JSON.parse(rd.result);
       if (!d || !Array.isArray(d.o)) throw 0;
       localStorage.setItem('ag_v5', JSON.stringify(d));
-loadPrefs(); syncPrefsUI(); load(); layout(); renderAll();
+loadPrefs(); syncPrefsUI(); load(); noticeKeysReady = canClaim(); noticeSpinReady = canSpin(); welcomeBack(); layout(); renderAll();
 if (fpsOn) requestAnimationFrame(fpsLoop);
       closeSettings(); snd('new_a');
       toast('Сохранение загружено!');
@@ -3284,11 +3284,14 @@ function fmtLeft(ms){
   const p = n => (n < 10 ? '0' : '') + n;
   return p(h) + ':' + p(m) + ':' + p(ss);
 }
-function openSpin(){ snd('store'); renderShop(); document.getElementById('spin').classList.add('show'); }
+function openSpin(){ snd('store'); renderShop(); document.getElementById('spin').classList.add('show'); startShopTimer(); }
 function openShop(){
   snd('store'); renderShop();
   shopMusicEnter();
   document.getElementById('shop').classList.add('show');
+  startShopTimer();
+}
+function startShopTimer(){
   if (shopTimer) clearInterval(shopTimer);
     shopTimer = setInterval(() => {
       if (document.getElementById('shop').classList.contains('show') || document.getElementById('spin').classList.contains('show')) renderShop();
@@ -3375,7 +3378,7 @@ function setTrack(i){
 }
 function claimKeys(){
   if (!canClaim()){ snd('wrong'); return; }
-  keys += CLAIM_N; lastClaim = Date.now();
+  keys += CLAIM_N; lastClaim = Date.now(); noticeKeysReady = false;
   save(); renderShop(); renderAll(); snd('new_a');
   toast('Получено 5 автоключей!');
 }
@@ -3475,7 +3478,7 @@ function spinRoulette(paid){
   const fin = () => {
     if (over) return; over = true;
     spinning = false;
-    if (!paid) lastRoulette = Date.now();
+    if (!paid){ lastRoulette = Date.now(); noticeSpinReady = false; }
     if (elPrize){
       if (unlock(elPrize)){ newSet.add(elPrize); energy += 5; energyEarned += 5; }
       spins++;
@@ -4588,13 +4591,45 @@ function closeBanner(){
   setTimeout(() => { el.classList.remove('show'); el.classList.remove('fadeout'); }, 200);
 }
 
-let toastTimer;
+let toastTimer, toastQueue = [];
 function toast(msg){
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove('show'), 3200);
+  toastQueue.push(String(msg));
+  if (!toastTimer) showNextToast();
 }
+function showNextToast(){
+  const t = document.getElementById('toast');
+  if (!toastQueue.length){ toastTimer = null; return; }
+  t.textContent = toastQueue.shift(); t.classList.add('show');
+  toastTimer = setTimeout(() => {
+    t.classList.remove('show');
+    toastTimer = setTimeout(showNextToast, 320);
+  }, 3200);
+}
+// Напоминания работают, пока игра открыта, и при возвращении в неё.
+let noticeKeysReady = canClaim(), noticeSpinReady = canSpin();
+function checkReadyNotices(){
+  const keyReady = canClaim(), spinReady = canSpin();
+  if (keyReady && !noticeKeysReady) toast('🔑 Бесплатные автоключи уже ждут в магазине!');
+  if (spinReady && !noticeSpinReady) toast('🎰 Бесплатная рулетка снова доступна!');
+  noticeKeysReady = keyReady; noticeSpinReady = spinReady;
+}
+function rememberVisit(){ try { localStorage.setItem('ag_last_visit', String(Date.now())); } catch(e) {} }
+function welcomeBack(){
+  try {
+    const last = Number(localStorage.getItem('ag_last_visit'));
+    if (last && Date.now() - last >= 24 * 60 * 60 * 1000){
+      const ready = [canClaim() ? 'ключи' : '', canSpin() ? 'рулетка' : ''].filter(Boolean);
+      toast('👋 С возвращением!' + (ready.length ? ' Уже доступны: ' + ready.join(' и ') + '.' : ' Рады тебя видеть!'));
+    }
+  } catch(e) {}
+  rememberVisit();
+}
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) rememberVisit();
+  else { welcomeBack(); checkReadyNotices(); }
+});
+setInterval(() => { if (!document.hidden){ checkReadyNotices(); rememberVisit(); } }, 30000);
+
 function setMsg(m, hot){
   const e = document.getElementById('msg');
   e.textContent = m || 'Выбери два элемента — получишь третий!';
@@ -6756,7 +6791,7 @@ function feedDel(id){
 }
 setInterval(() => { if (!document.hidden){ playSec += 30; try{ simAccrue(); save(); }catch(e){} } }, 30000);
 
-loadPrefs(); syncPrefsUI(); load(); layout(); try{ cheatGApply(); }catch(e){} try{ syncSaveNameUI(); }catch(e){} renderAll();
+loadPrefs(); syncPrefsUI(); load(); noticeKeysReady = canClaim(); noticeSpinReady = canSpin(); welcomeBack(); layout(); try{ cheatGApply(); }catch(e){} try{ syncSaveNameUI(); }catch(e){} renderAll();
 try{ if (typeof FIREBASE_CONFIG !== 'undefined' && FIREBASE_CONFIG && navigator.onLine) ensureFB(ok => {
     if (ok){ try{ FB.auth.getRedirectResult().then(r => { if (r && r.user){ try{ renderAccount(); }catch(e){} toast('Вошёл через Google!'); } }).catch(()=>{}); }catch(e){} }
   }, true); }catch(e){}
