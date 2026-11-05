@@ -2778,7 +2778,7 @@ function importSave(input){
       const d = JSON.parse(rd.result);
       if (!d || !Array.isArray(d.o)) throw 0;
       localStorage.setItem('ag_v5', JSON.stringify(d));
-loadPrefs(); syncPrefsUI(); load(); noticeKeysReady = canClaim(); noticeSpinReady = canSpin(); welcomeBack(); layout(); renderAll();
+loadPrefs(); syncPrefsUI(); load(); layout(); renderAll();
 if (fpsOn) requestAnimationFrame(fpsLoop);
       closeSettings(); snd('new_a');
       toast('Сохранение загружено!');
@@ -3378,7 +3378,7 @@ function setTrack(i){
 }
 function claimKeys(){
   if (!canClaim()){ snd('wrong'); return; }
-  keys += CLAIM_N; lastClaim = Date.now(); noticeKeysReady = false;
+  keys += CLAIM_N; lastClaim = Date.now(); scheduleSystemNotifications();
   save(); renderShop(); renderAll(); snd('new_a');
   toast('Получено 5 автоключей!');
 }
@@ -3478,7 +3478,7 @@ function spinRoulette(paid){
   const fin = () => {
     if (over) return; over = true;
     spinning = false;
-    if (!paid){ lastRoulette = Date.now(); noticeSpinReady = false; }
+    if (!paid){ lastRoulette = Date.now(); scheduleSystemNotifications(); }
     if (elPrize){
       if (unlock(elPrize)){ newSet.add(elPrize); energy += 5; energyEarned += 5; }
       spins++;
@@ -4591,44 +4591,27 @@ function closeBanner(){
   setTimeout(() => { el.classList.remove('show'); el.classList.remove('fadeout'); }, 200);
 }
 
-let toastTimer, toastQueue = [];
+let toastTimer;
 function toast(msg){
-  toastQueue.push(String(msg));
-  if (!toastTimer) showNextToast();
-}
-function showNextToast(){
   const t = document.getElementById('toast');
-  if (!toastQueue.length){ toastTimer = null; return; }
-  t.textContent = toastQueue.shift(); t.classList.add('show');
-  toastTimer = setTimeout(() => {
-    t.classList.remove('show');
-    toastTimer = setTimeout(showNextToast, 320);
-  }, 3200);
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3200);
 }
-// Напоминания работают, пока игра открыта, и при возвращении в неё.
-let noticeKeysReady = canClaim(), noticeSpinReady = canSpin();
-function checkReadyNotices(){
-  const keyReady = canClaim(), spinReady = canSpin();
-  if (keyReady && !noticeKeysReady) toast('🔑 Бесплатные автоключи уже ждут в магазине!');
-  if (spinReady && !noticeSpinReady) toast('🎰 Бесплатная рулетка снова доступна!');
-  noticeKeysReady = keyReady; noticeSpinReady = spinReady;
+// Локальные уведомления Android планируются при уходе из игры.
+function scheduleSystemNotifications(){
+  const local = window.cordova && cordova.plugins && cordova.plugins.notification && cordova.plugins.notification.local;
+  if (!local) return;
+  const now = Date.now(), day = 24 * 60 * 60 * 1000;
+  const reminders = [];
+  if (!canClaim()) reminders.push({id: 8101, title: '🔑 Автоключи готовы!', text: 'Загляни в магазин и забери бесплатные ключи.', trigger: {at: new Date(lastClaim + CLAIM_MS)}});
+  if (!canSpin()) reminders.push({id: 8102, title: '🎰 Рулетка снова доступна!', text: 'Заходи за бесплатным вращением и призами.', trigger: {at: new Date(lastRoulette + SPIN_MS)}});
+  [1, 2, 3, 5, 7].forEach((days, i) => reminders.push({id: 8110 + i, title: 'Арсений God ждёт тебя!', text: days === 1 ? 'Пора заглянуть за наградами и новыми открытиями!' : 'Возвращайся: ключи и рулетка уже ждут!', trigger: {at: new Date(now + days * day)}}));
+  local.cancel([8101, 8102, 8110, 8111, 8112, 8113, 8114], () => local.schedule(reminders));
 }
-function rememberVisit(){ try { localStorage.setItem('ag_last_visit', String(Date.now())); } catch(e) {} }
-function welcomeBack(){
-  try {
-    const last = Number(localStorage.getItem('ag_last_visit'));
-    if (last && Date.now() - last >= 24 * 60 * 60 * 1000){
-      const ready = [canClaim() ? 'ключи' : '', canSpin() ? 'рулетка' : ''].filter(Boolean);
-      toast('👋 С возвращением!' + (ready.length ? ' Уже доступны: ' + ready.join(' и ') + '.' : ' Рады тебя видеть!'));
-    }
-  } catch(e) {}
-  rememberVisit();
-}
-document.addEventListener('visibilitychange', () => {
-  if (document.hidden) rememberVisit();
-  else { welcomeBack(); checkReadyNotices(); }
-});
-setInterval(() => { if (!document.hidden){ checkReadyNotices(); rememberVisit(); } }, 30000);
+document.addEventListener('deviceready', scheduleSystemNotifications, false);
+document.addEventListener('pause', scheduleSystemNotifications, false);
+document.addEventListener('resume', scheduleSystemNotifications, false);
 
 function setMsg(m, hot){
   const e = document.getElementById('msg');
@@ -6791,7 +6774,7 @@ function feedDel(id){
 }
 setInterval(() => { if (!document.hidden){ playSec += 30; try{ simAccrue(); save(); }catch(e){} } }, 30000);
 
-loadPrefs(); syncPrefsUI(); load(); noticeKeysReady = canClaim(); noticeSpinReady = canSpin(); welcomeBack(); layout(); try{ cheatGApply(); }catch(e){} try{ syncSaveNameUI(); }catch(e){} renderAll();
+loadPrefs(); syncPrefsUI(); load(); layout(); try{ cheatGApply(); }catch(e){} try{ syncSaveNameUI(); }catch(e){} renderAll();
 try{ if (typeof FIREBASE_CONFIG !== 'undefined' && FIREBASE_CONFIG && navigator.onLine) ensureFB(ok => {
     if (ok){ try{ FB.auth.getRedirectResult().then(r => { if (r && r.user){ try{ renderAccount(); }catch(e){} toast('Вошёл через Google!'); } }).catch(()=>{}); }catch(e){} }
   }, true); }catch(e){}

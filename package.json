@@ -6,11 +6,15 @@
   "author": "Vithel",
   "license": "MIT",
   "devDependencies": {
-    "cordova-android": "^13.0.0"
+    "cordova-android": "^13.0.0",
+    "cordova-plugin-local-notification": "1.2.3"
   },
   "cordova": {
     "platforms": [
       "android"
-    ]
+    ],
+    "plugins": {
+      "cordova-plugin-local-notification": {}
+    }
   }
 }
