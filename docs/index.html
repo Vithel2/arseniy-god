@@ -4612,6 +4612,17 @@ function syncNotificationUI(){
   const b = document.getElementById('sw-notifications');
   if (b){ b.classList.toggle('on', notificationsEnabled()); b.setAttribute('aria-checked', String(notificationsEnabled())); }
 }
+function enableNotifications(afterEnabled){
+  const local = notificationPlugin();
+  if (!local){ toast('Модуль уведомлений не загрузился. Проверь версию приложения.'); return; }
+  const finish = granted => {
+    if (!granted){ toast('Разреши уведомления для игры в настройках телефона'); return; }
+    try{ localStorage.setItem('ag_notifications', 'on'); }catch(e){}
+    syncNotificationUI(); scheduleSystemNotifications();
+    if (afterEnabled) afterEnabled();
+  };
+  local.hasPermission(granted => { if (granted) finish(true); else local.requestPermission(finish); });
+}
 function toggleNotifications(){
   const local = notificationPlugin();
   if (notificationsEnabled()){
@@ -4619,18 +4630,18 @@ function toggleNotifications(){
     if (local) local.cancel(notificationIds);
     syncNotificationUI(); return;
   }
-  if (!local){ toast('Уведомления доступны в приложении Android'); return; }
-  local.requestPermission(granted => {
-    try{ localStorage.setItem('ag_notifications', granted ? 'on' : 'off'); }catch(e){}
-    syncNotificationUI();
-    if (granted){ scheduleSystemNotifications(); testNotification(); }
-    else toast('Разреши уведомления в настройках Android');
-  });
+  enableNotifications(testNotification);
 }
 function testNotification(){
   const local = notificationPlugin();
-  if (!local || !notificationsEnabled()){ toast('Включи уведомления в настройках'); return; }
-  local.schedule({id:8199, title:'🔔 Уведомления работают!', text:'Арсений God на связи. Увидимся в игре!'});
+  if (!local){ toast('Модуль уведомлений не загрузился. Обнови приложение.'); return; }
+  if (!notificationsEnabled()){ enableNotifications(testNotification); return; }
+  local.hasPermission(granted => {
+    if (!granted){ toast('Разреши уведомления для игры в настройках телефона'); return; }
+    local.schedule({id:8199, title:'🔔 Уведомления работают!', text:'Арсений God на связи. Увидимся в игре!'}, success => {
+      if (success === false) toast('Не удалось отправить уведомление: проверь разрешение телефона');
+    });
+  });
 }
 function scheduleSystemNotifications(){
   const local = notificationPlugin();
@@ -4669,7 +4680,9 @@ document.addEventListener('deviceready', () => {
       try{ localStorage.setItem('ag_notifications', granted ? 'on' : 'off'); }catch(e){}
       syncNotificationUI(); if (granted){ scheduleSystemNotifications(); testNotification(); }
     });
-  } else if (notificationsEnabled()) scheduleSystemNotifications();
+  } else if (notificationsEnabled()) {
+    local.hasPermission(granted => { if (granted) scheduleSystemNotifications(); });
+  }
   syncNotificationUI();
 }, false);
 document.addEventListener('pause', scheduleSystemNotifications, false);
