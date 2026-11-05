@@ -57,6 +57,17 @@ jobs:
       - name: Add Android platform
         run: cordova platform add android@13 --no-telemetry
 
+      - name: Verify Android notification plugin
+        run: |
+          if ! cordova plugin list | grep -q '^cordova-plugin-local-notification '; then
+            cordova plugin add cordova-plugin-local-notification@1.2.3 --no-save --no-telemetry
+          fi
+          cordova prepare android --no-telemetry
+          cordova plugin list | grep '^cordova-plugin-local-notification '
+          grep -q 'cordova-plugin-local-notification' platforms/android/app/src/main/assets/www/cordova_plugins.js
+          grep -q 'android.permission.POST_NOTIFICATIONS' platforms/android/app/src/main/AndroidManifest.xml
+          grep -q 'src="cordova.js"' platforms/android/app/src/main/assets/www/index.html
+
       - name: Prepare keystore (secrets or fresh + warning)
         run: |
           set -e
