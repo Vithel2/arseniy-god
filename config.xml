@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<widget id="com.vithel.arseniygod" version="1.1.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="com.vithel.arseniygod" version="1.1.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0" xmlns:android="http://schemas.android.com/apk/res/android">
     <name>Арсений God</name>
     <description>Игра в стиле алхимии: соединяй элементы и проходи квесты.</description>
     <author email="vithel@example.com" href="https://example.com">Vithel</author>
@@ -18,6 +18,9 @@
     <preference name="AndroidInsecureFileModeEnabled" value="true" />
     <preference name="DisallowOverscroll" value="true" />
     <platform name="android">
+        <config-file target="AndroidManifest.xml" parent="/manifest">
+            <uses-permission android:name="android.permission.VIBRATE" />
+        </config-file>
         <icon density="ldpi" src="res/icon.png" />
         <icon density="mdpi" src="res/icon.png" />
         <icon density="hdpi" src="res/icon.png" />

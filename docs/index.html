@@ -1028,6 +1028,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
     <div class="sgroup">Игра</div>
     <div class="srow"><span>Системные уведомления</span><button class="sw" id="sw-notifications" role="switch" aria-label="Системные уведомления" onclick="toggleNotifications()"></button></div>
     <button class="btn wide" onclick="testNotification()">🔔 Проверить уведомление</button>
+    <div class="srow"><span>Вибрация</span><button class="sw" id="sw-haptic" role="switch" aria-label="Вибрация" onclick="toggleHaptic()"></button></div>
     <div class="srow"><span>Поиск элементов</span><button class="sw" id="sw-search" onclick="toggleSearch()"></button></div>
     <div class="srow"><span>Тема оформления</span><span id="theme-row"><button class="theme-sw" data-th="" title="Песок" style="background:linear-gradient(135deg,#f7f1e1,#c98f00)" onclick="setTheme('')"></button> <button class="theme-sw" data-th="mint" title="Мята" style="background:linear-gradient(135deg,#e9f3e4,#2f9e6e)" onclick="setTheme('mint')"></button> <button class="theme-sw" data-th="sky" title="Небо" style="background:linear-gradient(135deg,#e7f0f9,#2f7fd6)" onclick="setTheme('sky')"></button> <button class="theme-sw" data-th="berry" title="Малина" style="background:linear-gradient(135deg,#f7e8ee,#c2437f)" onclick="setTheme('berry')"></button></span></div>
     <div class="srow"><span>Плавные анимации <small class="rec">рекомендуется</small></span><button class="sw" id="sw-fx" onclick="toggleFx()"></button></div>
@@ -1862,6 +1863,10 @@ function tutorEnd(){
   setTimeout(() => { el.classList.remove('show'); el.classList.remove('fadeout'); }, 250);
 }
 /* ---------- prefs ---------- */
+let hapticOn = true;
+function haptic(pattern){ if (!hapticOn || document.hidden) return; try{ if (navigator.vibrate) navigator.vibrate(pattern); }catch(e){} }
+function toggleHaptic(){ hapticOn = !hapticOn; if (!hapticOn){ try{ if (navigator.vibrate) navigator.vibrate(0); }catch(e){} } else haptic([15,45,24]); savePrefs(); syncPrefsUI(); }
+
 function loadPrefs(){
   try{
     const p = JSON.parse(localStorage.getItem('ag_prefs') || '{}');
@@ -1871,11 +1876,14 @@ function loadPrefs(){
     if (typeof p.svol === 'number') sfxVol = p.svol;
     if (typeof p.fps === 'boolean') fpsOn = p.fps;
     if (typeof p.fx === 'boolean') fxOn = p.fx;
+    if (typeof p.haptic === 'boolean') hapticOn = p.haptic;
   }catch(e){}
 }
-function savePrefs(){ try{ localStorage.setItem('ag_prefs', JSON.stringify({sfx:sfxOn, music:musicOn, vol:musicVol, svol:sfxVol, fps:fpsOn, fx:fxOn})); }catch(e){} }
+function savePrefs(){ try{ localStorage.setItem('ag_prefs', JSON.stringify({sfx:sfxOn, music:musicOn, vol:musicVol, svol:sfxVol, fps:fpsOn, fx:fxOn, haptic:hapticOn})); }catch(e){} }
 function syncPrefsUI(){
   syncNotificationUI();
+  document.getElementById('sw-haptic').classList.toggle('on', hapticOn);
+  document.getElementById('sw-haptic').setAttribute('aria-checked', String(hapticOn));
   document.getElementById('sw-music').classList.toggle('on', musicOn);
   document.getElementById('sw-sfx').classList.toggle('on', sfxOn);
   document.getElementById('sw-fps').classList.toggle('on', fpsOn);
@@ -1887,6 +1895,7 @@ function syncPrefsUI(){
   try{ let th = localStorage.getItem('ag_theme') || ''; if (th === 'neon'){ th = ''; try{ localStorage.setItem('ag_theme', ''); }catch(e){} } document.body.dataset.theme = th; document.querySelectorAll('.theme-sw').forEach(b => b.classList.toggle('on', (b.dataset.th || '') === th)); }catch(e){}
   document.getElementById('fps-pill').style.display = fpsOn ? '' : 'none';
 }
+document.getElementById('settings').addEventListener('click', e => { const b = e.target.closest('button'); if (b && b.id !== 'sw-haptic' && (b.classList.contains('sw') || b.classList.contains('theme-sw'))) haptic(12); });
 function setTheme(th){
   try{ localStorage.setItem('ag_theme', th || ''); }catch(e){}
   document.body.dataset.theme = th || '';
@@ -2332,7 +2341,7 @@ function miniMenuGo(){
   const pr = miniPrice();
   if (energy < pr){ snd('wrong'); toast('Не хватает энергии! Нужно: ' + pr + ' ⚡'); return; }
   energy -= pr; miniOn = true;
-  save(); renderAll(); renderFunMenu(); snd('buy');
+  save(); renderAll(); renderFunMenu(); snd('buy'); haptic([18,40,32]);
   toast('Куплена мини-игра! Приятной игры!');
   miniFromFun = true; openMini();
 }
@@ -3366,13 +3375,13 @@ function renderShop(){
 function buyMusic(){
   if (ownedMusic || energy < 50){ snd('wrong'); return; }
   energy -= 50; ownedMusic = true;
-  save(); renderShop(); renderAll(); snd('buy');
+  save(); renderShop(); renderAll(); snd('buy'); haptic([18,40,32]);
   toast('Куплена своя музыка! Выбирай трек.');
 }
 function buyHint(){
   if (energy < 5){ snd('wrong'); return; }
   energy -= 5; hints++;
-  save(); renderShop(); renderAll(); snd('buy');
+  save(); renderShop(); renderAll(); snd('buy'); haptic([18,40,32]);
   toast('Куплена подсказка! Осталось: ' + hints);
 }
 function setTrack(i){
@@ -3385,7 +3394,7 @@ function setTrack(i){
 function claimKeys(){
   if (!canClaim()){ snd('wrong'); return; }
   keys += CLAIM_N; lastClaim = Date.now(); scheduleSystemNotifications();
-  save(); renderShop(); renderAll(); snd('new_a');
+  save(); renderShop(); renderAll(); snd('new_a'); haptic([25,55,45]);
   toast('Получено 5 автоключей!');
 }
 function useKey(){
@@ -3483,7 +3492,7 @@ function spinRoulette(paid){
   let over = false;
   const fin = () => {
     if (over) return; over = true;
-    spinning = false;
+    spinning = false; haptic([30,60,65]);
     if (!paid){ lastRoulette = Date.now(); scheduleSystemNotifications(); }
     if (elPrize){
       if (unlock(elPrize)){ newSet.add(elPrize); energy += 5; energyEarned += 5; }
@@ -3505,9 +3514,12 @@ function spinRoulette(paid){
     if (k < 1) setTimeout(tickLoop, 90 + k * 420);
   };
   tickLoop();
+  let lastReelStep = -1, lastReelPulse = 0;
   const frame = t => {
     const k = Math.min(1, (t - t0) / dur);
     const ez = k >= 1 ? 1 : 1 - Math.pow(2, -10 * k);
+    const step = Math.floor(Math.abs(target * ez) / W);
+    if (step !== lastReelStep){ lastReelStep = step; if (k < 1 && t - lastReelPulse >= 65){ haptic(k < .55 ? 7 : 13); lastReelPulse = t; } }
     strip.style.transform = 'translateX(' + (target * ez) + 'px)';
     if (k < 1) requestAnimationFrame(frame); else fin();
   };
@@ -3532,7 +3544,7 @@ function buyBlind(tr){
   const cnt = tr === 3 ? 3 : (tr === 2 ? 2 : 1);
   const pr = BLIND_PRICE[tr] || 10;
   if (energy < pr){ snd('wrong'); toast('Не хватает энергии! Нужно: ' + pr + ' ⚡'); return; }
-  energy -= pr;
+  energy -= pr; haptic([20,45,35]);
   const pool = [...left], got = [];
   for (let k = 0; k < cnt && pool.length; k++){
     let tot = 0;
@@ -3598,7 +3610,7 @@ function buyClean(){
   if (energy < 400){ snd('wrong'); toast('Нужно 400 ⚡'); return; }
   energy -= 400;
   cand.forEach(n => hideSet.add(n));
-  save(); renderShop(); renderGrid(); snd('buy');
+  save(); renderShop(); renderGrid(); snd('buy'); haptic([18,40,32]);
   toast('🧹 Спрятано: ' + cand.length);
 }
 function unhideAll(){
@@ -3610,21 +3622,21 @@ function buySense(){
   if (ownedSense){ return; }
   if (energy < 2000){ snd('wrong'); toast('Нужно 2000 ⚡'); return; }
   energy -= 2000; ownedSense = true;
-  save(); renderShop(); renderAll(); snd('buy');
+  save(); renderShop(); renderAll(); snd('buy'); haptic([18,40,32]);
   toast('Чутьё активно! Выбери элемент — пары подсветятся.');
 }
 function buyBlue(){
   const p = bluePrice();
   if (ownedBlue || energy < p){ snd('wrong'); return; }
   energy -= p; ownedBlue = true; liveDirty = true;
-  save(); renderShop(); renderAll(); renderGrid(); snd('buy');
+  save(); renderShop(); renderAll(); renderGrid(); snd('buy'); haptic([18,40,32]);
   toast('Куплены синие рамки! Элементы без новых комбинаций теперь синие.');
 }
 function buyDash(){
   const p = dashPrice();
   if (ownedDash || energy < p){ snd('wrong'); return; }
   energy -= p; ownedDash = true; liveDirty = true;
-  save(); renderShop(); renderAll(); renderGrid(); snd('buy');
+  save(); renderShop(); renderAll(); renderGrid(); snd('buy'); haptic([18,40,32]);
   toast('Куплен пунктир! Элементам без открытых пар теперь пунктир.');
 }
 let liveSet = new Set(), tempSet = new Set();
@@ -4194,7 +4206,7 @@ function dragBegin(){
   if (!p || dragOn || busy || qBusy) return;
   dragOn = true; dragName = p.name; dragMode = p.mode; dragCol = p.col;
   snd('click');
-  try{ if (navigator.vibrate) navigator.vibrate(15); }catch(e){}
+  haptic(15);
     dragGhost = document.createElement('img');
     dragGhost.className = 'draghost';
   dragGhost.src = imgP(p.name); dragGhost.alt = '';
@@ -6416,7 +6428,7 @@ function simPoke(){
     if (im){ im.src = encodeURI(imgP('Демон Арсения')); im.classList.add('demon'); }
     snd('no');
     toast('😈 Арсений разозлился! Хватит тыкать!');
-    try{ if (navigator.vibrate) navigator.vibrate([40, 40, 40]); }catch(e){}
+    haptic([40, 40, 40]);
   }
   if (simDemon){
     if (im){ im.classList.remove('poke'); void im.offsetWidth; im.classList.add('poke'); }
@@ -6428,7 +6440,7 @@ function simPoke(){
     snd('click');
     toast(SIM_POKE_PHRASES[Math.floor(Math.random() * SIM_POKE_PHRASES.length)] + (simPokes % 25 === 0 ? ' (тыков: ' + simPokes + ')' : ''));
   }
-  try{ if (navigator.vibrate) navigator.vibrate(10); }catch(e){}
+  haptic(10);
   clearTimeout(simCalmT);
   simCalmT = setTimeout(() => {
     simPokeTimes = [];
@@ -6563,7 +6575,7 @@ function checkRank(){
   if (tr > last){
     try{ localStorage.setItem('ag_rank', String(tr)); }catch(e){}
     if (last >= 0){ snd('quest'); toast('🎖 Новое звание: ' + rankIcon(discovered.size) + ' ' + rankName(discovered.size) + '!');
-      try{ if (navigator.vibrate) navigator.vibrate([30, 50, 30]); }catch(e){} }
+      haptic([30, 50, 30]); }
   }
 }
 function isGod(){
