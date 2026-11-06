@@ -381,6 +381,15 @@ img{-webkit-touch-callout:none;-webkit-user-drag:none;user-select:none;-webkit-u
 .mz{min-width:0;min-height:0;overflow:hidden}
 .mz img{min-width:0;min-height:0}
 #mazegrid{width:100%;box-sizing:border-box}
+#mafia .box{padding:14px;max-height:92dvh;overflow-y:auto}
+#mafia h2{font-size:21px;margin:0 0 4px}
+#mafia p{font-size:12px;margin:4px 0 7px}
+#mafia-grid{gap:4px!important}
+#mafia-grid .ec{padding:3px;gap:1px;font-size:11px}
+#mafia-grid .ec img{width:58px;height:58px;max-width:100%;object-fit:contain}
+#mafia .mafia-questions .btn,#mafia .mafia-actions .btn{min-height:36px;padding:6px;font-size:12px}
+#mafia-log{max-height:100px!important}
+#mafia.is-intro .mafia-questions,#mafia.is-intro .mafia-actions,#mafia.is-intro #mafia-sel{display:none!important}
 #mafia-grid.night{filter:brightness(.55) saturate(.8)}
 #mafia-grid.night .ec{background:rgba(20,20,40,.45)}
 #mafia-grid .ec.tried img{filter:grayscale(.75) brightness(.96);opacity:.9}
@@ -546,8 +555,6 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 #blind-imgs{display:none;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}
 #blind-imgs.pop img{width:84px;height:84px;object-fit:contain;border-radius:16px;background:rgba(255,253,246,.8);animation:tin .3s var(--spring) backwards}
 .qcard{background:linear-gradient(180deg,var(--surf-hi),var(--surf));border:1.5px solid var(--line);border-radius:20px;padding:14px;margin-bottom:10px;text-align:left;box-shadow:var(--sh-card);position:relative}
-.quest-art{width:100%;height:110px;background-image:url("quest-art.png");background-size:300% 300%;background-repeat:no-repeat;border-radius:14px;margin-bottom:10px;border:1px solid var(--line)}
-.quest-art.locked{filter:blur(7px);opacity:.5}
 .qcard.done{border-color:rgba(18,128,90,.55);background:linear-gradient(180deg,#f1f6e6,#e0ecd6)}
 .qcard.qlock{opacity:.88}
 .blurred{filter:blur(3px);-webkit-user-select:none;user-select:none;pointer-events:none}
@@ -1072,7 +1079,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
       Файл: <b id="save-hint-name">arseniy-god-save.json</b>. На ПК — «Сохранить как». На телефоне надёжнее «Поделиться» или «Копировать код»: скачивание в WebView иногда молча пропадает.
     </details>
     <div class="sgroup">О игре</div>
-    <div class="credits">Разработчик: <b>Vithel</b><br>Рисовщики: <b>Vithel</b> и <b>Mathil</b><br><span id="verclick" onclick="verTap()" title="v1.48 beta · уведомления 2" style="font-size:11px;cursor:pointer;-webkit-user-select:none;user-select:none;color:var(--ink2)">v1.48 beta · уведомления 2</span></div>
+    <div class="credits">Разработчик: <b>Vithel</b><br>Рисовщики: <b>Vithel</b> и <b>Mathil</b><br><span id="verclick" onclick="verTap()" title="v1.49" style="font-size:11px;cursor:pointer;-webkit-user-select:none;user-select:none;color:var(--ink2)">v1.49</span></div>
     <div class="credits donate" style="text-align:center"><svg class="ic"><use href="#i-heart" xlink:href="#i-heart"/></svg> Поддержи разработчика<br><span style="font-size:11px">Чтобы увидеть номер, кликни по тексту</span><br><b id="donate-num" onclick="revealDonate()" style="filter:blur(5px);cursor:pointer;-webkit-user-select:none;user-select:none">4279 3806 8503 3450</b><br><span id="donate-name" style="display:none">Шакин В.<br><span style="font-size:11px">Спасибо за доброту! Ты лучший! ❤️</span></span></div>
     <button class="btn wide" onclick="openPrivacy()"><svg class="ic"><use href="#i-lock" xlink:href="#i-lock"/></svg> Политика конфиденциальности</button>
     <div class="sgroup">Опасная зона</div>
@@ -1193,6 +1200,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
     <h2>Новости</h2>
     <p>Что нового в игре:</p>
     <div class="hlist">
+      <div class="hrow"><b>v1.49</b><span>Мафия стала удобнее: новые названия деревень и компактный стол. Добавлены реакции по историям игроков, выбор иконки и вибрация.</span></div>
       <div class="hrow"><b>v1.48</b><span>23 новые реакции: Миша, Варвара, стихии, семейство и другие</span></div>
     </div>
     <button class="bigbtn" style="margin-top:14px" onclick="closeOvl('news')">Закрыть</button>
@@ -1362,13 +1370,13 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
     <p><span id="mafia-phase">☀️ День</span> <b id="mafia-day">1</b> · Очки: <b id="mafia-pts">0</b> · Подозрение: <b id="mafia-mysusp">0</b> <button class="btn sm" onclick="mafiaCard()" title="Посмотреть свою карту">🃏</button></p>
     <div id="mafia-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px"></div>
     <div class="qd" style="margin:8px 0">Подозреваемый: <b id="mafia-sel">—</b></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+    <div class="mafia-questions" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
       <button class="btn" onclick="mafiaAsk('where')">Где был? −1</button>
       <button class="btn" onclick="mafiaAsk('who')">Кого подозреваешь? −1</button>
       <button class="btn" onclick="mafiaAsk('saw')">Что видел? −1</button>
       <button class="btn" onclick="mafiaAsk('search')">Обыск −5</button>
     </div>
-    <div class="btnrow">
+    <div class="btnrow mafia-actions">
       <button class="btn hint" style="flex:1" id="mafia-act-btn" onclick="mafiaAct()">🗳 Голосовать</button>
       <button class="btn hint" style="flex:1;display:none" id="mafia-kill-btn" onclick="mafiaKill()">🔪 Убить!</button>
       <button class="btn sm" style="flex:1;display:none" id="mafia-cam-btn" onclick="mafiaCam()">📷 Камеры</button>
@@ -3301,9 +3309,6 @@ function renderQuests(){
     const locked = qi > 1 && passed < ((q.req !== undefined) ? q.req : qi - 1);
     const d = document.createElement('div');
     d.className = 'qcard' + (questDone[q.id] ? ' done' : '') + (locked ? ' qlock' : '');
-    const art = document.createElement('div'); art.className = 'quest-art' + (locked ? ' locked' : '');
-    art.style.backgroundPosition = ((qi % 3) * 50) + '% ' + (Math.floor(qi / 3) * 50) + '%';
-    art.setAttribute('aria-hidden', 'true');
     let starts = '';
     q.start.forEach(n => { starts += '<span class="qs">' + n + '</span>'; });
     if (locked){
@@ -3311,7 +3316,6 @@ function renderQuests(){
         + '<div class="qd blurred">' + q.title + ' — ' + q.desc + '</div>'
         + '<div class="qmini blurred"><img src="' + imgP(CANON[norm(q.goal)] || q.goal) + '" alt=""><span>Цель: ' + q.goal + ' · шагов: ' + q.need.length + '</span></div>'
         + '<div class="qd">🔒 Пройди прошлые квесты (' + passed + ') — откроется новый</div>';
-      d.prepend(art);
       const b = document.createElement('button');
       b.className = 'btn'; b.style.width = '100%'; b.disabled = true;
       b.textContent = '🔒 Закрыто';
@@ -3323,7 +3327,6 @@ function renderQuests(){
       + '<div class="qd">' + q.desc + '</div>'
       + '<div class="qmini"><img src="' + imgP(CANON[norm(q.goal)] || q.goal) + '" alt=""><span>Цель: ' + q.goal + ' · шагов: ' + q.need.length + '</span></div>'
       + '<div class="qd">Даётся: </div><div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:9px">' + starts + '</div>';
-    d.prepend(art);
     const b = document.createElement('button');
     b.className = 'btn'; b.style.width = '100%';
     b.textContent = (questProg[q.id]) ? 'Продолжить квест' : (questDone[q.id] ? 'Ещё раз' : 'Начать квест');
@@ -5448,7 +5451,7 @@ function mafF(n){ return n === 'Анжелика' || n === 'Вика' || n === '
 function mafHer(n){ return mafF(n) ? 'неё' : 'него'; }
 let mafia = null;
 function openMafia(){ snd('qstart'); if (!mafia || mafia.over) mafiaNew(); else mafiaDraw(); document.getElementById('mafia').classList.add('show'); }
-const MAFIA_VILLAGES = ['Сергиополь', 'Давлеканово', 'Тихий Омут', 'Большие Васюки', 'Новое Чекушево'];
+const MAFIA_VILLAGES = ['Лаврушино', 'Тимофеевка', 'Чекушкино', 'Даниловка', 'Арсеньевка', 'Буриково', 'Матхилово', 'Серёжкино', 'Рамильбург', 'Тимермаликово', 'Новое Чекушево', 'Сергиополь'];
 function mafiaCard(){
   if (!mafia || mafia.over){ snd('wrong'); toast('Нет игры — начни заново'); return; }
   snd('dialog');
@@ -5502,7 +5505,9 @@ function mafiaIntroSeat(g0){
 }
 function mafiaIntroNames(){
   if (!mafia || mafia.over || mafia.phase !== 'intro') return;
-  const names = [...MAFIA_VILLAGES].sort(() => Math.random() - 0.5).slice(0, 3);
+  const names = [...MAFIA_VILLAGES];
+  for (let i = names.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [names[i], names[j]] = [names[j], names[i]]; }
+  names.length = 3;
   mafia.village = names[0];
   const box = document.getElementById('mafia-vnames');
   if (box){
@@ -5643,7 +5648,7 @@ function mafiaLog(s){
   mafia.log.push('День ' + mafia.day + ': ' + s);
   if (mafia.log.length > 40) mafia.log.shift();
   const L = document.getElementById('mafia-log');
-  if (L){ L.innerHTML = mafia.log.map(x => '<div class="hrow"><span>' + x + '</span></div>').join(''); L.scrollTop = L.scrollHeight; }
+  if (L){ L.replaceChildren(); mafia.log.forEach(x => { const row = document.createElement('div'), span = document.createElement('span'); row.className = 'hrow'; span.textContent = x; row.appendChild(span); L.appendChild(row); }); L.scrollTop = L.scrollHeight; }
 }
 function mafiaNeedSel(){
   if (!mafia || mafia.over) return null;
@@ -5656,6 +5661,7 @@ function mafiaNeedSel(){
   return c;
 }
 function mafiaDraw(){
+  document.getElementById('mafia').classList.toggle('is-intro', !!mafia && mafia.phase === 'intro');
   if (!mafia) return;
   if (mafia.over){ const qq = document.getElementById('mafia-q'); if (qq) qq.style.display = 'none'; const rm = document.getElementById('mafia-inside'); if (rm) rm.style.display = 'none'; }
   if (mafia.phase === 'day' && !mafia.roomAnim){ const rm2 = document.getElementById('mafia-inside'); if (rm2 && rm2.style.display !== 'none'){ rm2.style.display = 'none'; mafiaRoomFor = null; mafiaRoomMode = null; } }
