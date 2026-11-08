@@ -4263,7 +4263,7 @@ function dragStart(ev, name, col, mode){
   dragSX = sx; dragSY = sy;
   dragCol = col || null;
   dragPend = {name: name, col: col || null, mode: mode, sx: sx, sy: sy};
-  dragTimer = setTimeout(() => { dragTimer = null; dragBegin(); }, 350);
+  dragTimer = setTimeout(() => { dragTimer = null; dragBegin(); }, 180);
 }
 function dragBegin(){
   const p = dragPend; dragPend = null;
@@ -4359,7 +4359,7 @@ function openChapter2(){
   if (!chapter2Unlocked()){ const left = CHAPTER1_CORE.filter(n => !discovered.has(n)).length; toast('Глава 2 откроется после первых 303 элементов. Осталось: ' + left); return; }
   const d = JSON.parse(localStorage.getItem('ag_v5') || '{}'); d.c2 = d.c2 || {}; d.c2.announced = true; localStorage.setItem('ag_v5', JSON.stringify(d));
   if (music) { music.pause(); music = null; musicStarted = false; }
-  location.href = 'chapter2.html';
+  document.body.animate([{opacity:1},{opacity:0}],{duration:260,easing:'ease-in'}).onfinish=()=>{ location.href='chapter2.html'; };
 }
 function offerChapter2(){
   if (!chapter2Unlocked()) return;
@@ -6973,5 +6973,6 @@ try{ if (typeof FIREBASE_CONFIG !== 'undefined' && FIREBASE_CONFIG && navigator.
     if (ok){ try{ FB.auth.getRedirectResult().then(r => { if (r && r.user){ try{ renderAccount(); }catch(e){} toast('Вошёл через Google!'); } }).catch(()=>{}); }catch(e){} }
   }, true); }catch(e){}
 </script>
+<script src="shared-ui.js"></script>
 </body>
 </html>

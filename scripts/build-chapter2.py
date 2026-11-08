@@ -60,6 +60,11 @@ s=s.replace("c2btn.textContent = chapter2Unlocked() ? '🌌 Глава 2: Кос
 # Chapter-specific group icons; original chapter assets are untouched.
 a=s.index('function gIcon(gid, sz){'); b=s.index('\nfunction buildSidebar()',a)
 s=s[:a]+"function gIcon(gid, sz){ const name=['all','people','incidents','content','ai','school','memes','places','concepts'].includes(gid)?gid:'all'; return '<img src=\"Chapter2/groups/'+name+'.webp\" alt=\"\" style=\"border-color:'+(gid==='all'?'var(--gold)':GROUPS[gid].color)+'\">'; }"+s[b:]
+# Chapter-two sound effects, keeping chapter-one sounds intact.
+for name,path in [('click','element.wav'),('btn','button.wav'),('grp','group.wav'),('wrong','wrong.wav')]:
+ s=re.sub(r'('+name+r':\s*A\()([^,]+)',lambda m:m.group(1)+"'Chapter2/sounds/"+path+"'",s,count=1)
+s=s.replace("function skipIntro(){\n  if (!introPlaying) return;", "function skipIntro(){\n  if (!introPlaying) return; snd('skipChapter');")
+s=s.replace('const SFX = {', "const SFX = {\n  skipChapter: A('Chapter2/sounds/skip.wav', .22),",1)
 # Same game controls and layout, chapter-two soundtrack.
 a=s.index('const TRACKS = [');b=s.index('\nconst TRACK_NAMES',a)
 s=s[:a]+"const TRACKS = ['Chapter2/music/elements.mp3','Chapter2/music/city.mp3','Chapter2/music/main.mp3','Chapter2/music/store-1.mp3','Chapter2/music/store-2.mp3','Chapter2/music/main.mp3','Chapter2/music/city.mp3'];"+s[b:]
@@ -80,6 +85,7 @@ css='''<style id="chapter2-style">
 .slot,.rslot{background:rgba(36,46,51,.7);border-color:rgba(222,226,214,.5);color:var(--ink)}
 .slot .pl,.rslot .pl{color:var(--ink2)}
 #msg{color:var(--ink)}
+.hdr-actions{display:flex!important;justify-content:center;gap:8px!important} .hdr-actions .tab{flex:0 1 100px!important} #chapter2-button{animation:menuappear .55s both!important}
 #hdr,#qhdr{box-shadow:0 12px 24px -16px rgba(0,0,0,.45)!important}
 #hdr h1,.hdr-actions .tab[onclick="openShop()"],.hdr-actions .tab[onclick="openAch()"],.hdr-actions .tab[onclick="openQuests()"]{display:none!important}
 .rslot.nw{background:linear-gradient(#526b68,#344d50);color:#fff} .rslot.ok{background:linear-gradient(#4a6a5a,#304a40);color:#fff} .rslot.no{background:linear-gradient(#765252,#4e363b);color:#fff}
@@ -96,7 +102,7 @@ css='''<style id="chapter2-style">
 #newbanner .box{background:radial-gradient(circle at 50% 20%,#61747b,#34454b 70%)!important}
 #newbanner .box::before{opacity:.35}
 .btn.tab.q{background:linear-gradient(#5e7876,#405955)!important;color:#fff!important}
-#t2048 .t2048,#ezgrid .ezcell{background:#58696b;color:#fff}
+#t2048 .t2048,#ezgrid .ez{background:#58696b;color:#fff}
 #t2048 .t2048{background:#3e555a;color:#fff}
 #settings .srow:has(#theme-row){display:none}
 #quests.ovl.show,#shop.ovl.show{animation:none!important}
@@ -142,7 +148,7 @@ s=s.replace('dragTimer = setTimeout(() => { dragTimer = null; dragBegin(); }, 35
 s=s.replace("function openShop(){\n  snd('store');", "function openShop(){\n  compactShop(); snd('store');")
 s=s.replace("function openShop(){", "function compactShop(){ const box=document.querySelector('#shop .box'); if(!box || box.dataset.compact) return; box.dataset.compact='1'; const items=[...box.querySelectorAll(':scope > .shop-item')]; if(items.length<3)return; const section=document.createElement('details'); section.className='shop-more'; const title=document.createElement('summary');title.textContent='🛍️ Улучшения и покупки';section.appendChild(title);items[2].before(section);items.slice(2).forEach(el=>section.appendChild(el)); }\nfunction openShop(){",1)
 s=s.replace("snd('quest'); toast('🎖 Новое звание: ' + rankIcon(discovered.size) + ' ' + rankName(discovered.size) + '!');", "snd('quest'); showRankCelebration();")
-s=s.replace('function checkRank(){', "function showRankCelebration(){ const overlay=document.createElement('div');overlay.className='rank-celebration';overlay.innerHTML='<div><span>✨ Новое звание ✨</span><img alt=\"\"><strong></strong><small>Открывай элементы и двигайся дальше!</small></div>';overlay.querySelector('img').src=rankImg(discovered.size);overlay.querySelector('strong').textContent=rankIcon(discovered.size)+' '+rankName(discovered.size);document.body.appendChild(overlay);overlay.onclick=()=>overlay.remove();setTimeout(()=>overlay.remove(),3800); }\nfunction checkRank(){")
+s=s.replace('function checkRank(){', "function showRankCelebration(){ const overlay=document.createElement('div');overlay.className='rank-celebration';overlay.innerHTML='<div><span>✨ Новое звание ✨</span><img alt=\"\"><strong></strong><small>Нажми, чтобы закрыть</small></div>';overlay.querySelector('img').src=rankImg(discovered.size);overlay.querySelector('strong').textContent=rankIcon(discovered.size)+' '+rankName(discovered.size);document.body.appendChild(overlay);let closing=false;const close=()=>{if(closing)return;closing=true;overlay.style.animation='appout .3s ease forwards';setTimeout(()=>overlay.remove(),300)};overlay.onclick=close;setTimeout(close,3800); }\nfunction checkRank(){")
 # Fold settings into sections while keeping the original controls and event handlers.
 s=s.replace("function openSettings(){ snd('btn');", "function openSettings(){ compactSettings(); snd('btn');")
 s=s.replace("function openSettings(){", "function compactSettings(){ const box=document.querySelector('#settings .box'); if(!box || box.dataset.compact) return; box.dataset.compact='1'; let section=null; [...box.children].forEach(el=>{ if(el.classList.contains('sgroup')){ section=document.createElement('details'); const title=document.createElement('summary'); title.textContent=el.textContent; section.appendChild(title); el.replaceWith(section); } else if(section){ section.appendChild(el); } }); }\nfunction openSettings(){",1)
