@@ -2600,7 +2600,9 @@ const CODES = {};
 function applyPromo(){
   const inp = document.getElementById('promo');
   const code = String(inp.value || '').trim().toUpperCase();
-  if (code === 'VMCT'){
+  if (code === 'VMCT'){ snd('wrong'); toast('Ага, думал сейчас читы получишь?'); inp.value=''; return; }
+  if (code === 'G2_081126'){ save(); const d=JSON.parse(localStorage.getItem('ag_v5')||'{}'); d.c2={...(d.c2||{}),unlocked:true,announced:true}; localStorage.setItem('ag_v5',JSON.stringify(d)); fileAutoSave(); inp.value=''; renderAll(); snd('new_a'); toast('🌌 Вторая глава открыта!'); return; }
+  if (code === 'VITHELCHEAT'){
     cheatOn = true; save(); renderAll(); inp.value = '';
     snd('new_a'); toast('Чит-меню разблокировано! Ищи 🔧 в шапке.');
     closeSettings(); return;
@@ -4354,7 +4356,7 @@ document.addEventListener('pointercancel', () => { clearTimeout(dragTimer); drag
 document.addEventListener('pointercancel', () => { clearTimeout(dragTimer); dragTimer = null; dragPend = null; dragOn = false; dragName = null; dragMode = null; dragCol = null; if (dragGhost){ dragGhost.remove(); dragGhost = null; } });
 const CHAPTER1_NEW = new Set(['пинок серёги','нож','англичанка осталась']);
 const CHAPTER1_CORE = ELEMENTS.filter(e => !e.q && !CHAPTER1_NEW.has(norm(e.n))).map(e => e.n);
-function chapter2Unlocked(){ return CHAPTER1_CORE.every(n => discovered.has(n)); }
+function chapter2Unlocked(){ const c2=readChapter2Data(); return !!(c2 && c2.unlocked) || CHAPTER1_CORE.every(n => discovered.has(n)); }
 function openChapter2(){
   if (!chapter2Unlocked()){ const left = CHAPTER1_CORE.filter(n => !discovered.has(n)).length; toast('Глава 2 откроется после первых 303 элементов. Осталось: ' + left); return; }
   const d = JSON.parse(localStorage.getItem('ag_v5') || '{}'); d.c2 = d.c2 || {}; d.c2.announced = true; localStorage.setItem('ag_v5', JSON.stringify(d));

@@ -51,7 +51,7 @@ s=s.replace(needle,'''  const c2=(d && d.c2 && typeof d.c2==='object') ? d.c2 : 
   discovered = new Set(order);''',1)
 a=s.index('const CHAPTER1_NEW =');b=s.index('\nfunction renderAll(){',a)
 s=s[:a]+'''const CHAPTER1_CORE = '''+json.dumps(core,ensure_ascii=False)+''';
-function chapter2Unlocked(){ try{const d=JSON.parse(localStorage.getItem('ag_v5')||'{}');const set=new Set((d.o||[]).map(norm));return CHAPTER1_CORE.every(n=>set.has(norm(n)));}catch(e){return false} }
+function chapter2Unlocked(){ try{const d=JSON.parse(localStorage.getItem('ag_v5')||'{}');const set=new Set((d.o||[]).map(norm));return !!(d.c2 && d.c2.unlocked) || CHAPTER1_CORE.every(n=>set.has(norm(n)));}catch(e){return false} }
 function openChapter2(){ save(); if(music){music.pause();music=null;musicStarted=false;} location.href='index.html'; }
 function offerChapter2(){}
 function deferChapter2(){document.getElementById('chapter2-complete').classList.remove('show');}
@@ -85,7 +85,7 @@ css='''<style id="chapter2-style">
 .slot,.rslot{background:rgba(36,46,51,.7);border-color:rgba(222,226,214,.5);color:var(--ink)}
 .slot .pl,.rslot .pl{color:var(--ink2)}
 #msg{color:var(--ink)}
-.hdr-actions{display:flex!important;justify-content:center;gap:8px!important} .hdr-actions .tab{flex:0 1 100px!important} #chapter2-button{animation:menuappear .55s both!important}
+.hdr-top{display:flex!important;justify-content:flex-start!important;width:100%}.stats{justify-content:flex-start!important;margin-left:0!important;flex:0 1 auto!important}.hdr-actions{display:flex!important;justify-content:flex-start!important;margin-left:0!important;gap:8px!important} .hdr-actions .tab{flex:0 1 100px!important} #chapter2-button{animation:menuappear .55s both!important}
 #hdr,#qhdr{box-shadow:0 12px 24px -16px rgba(0,0,0,.45)!important}
 #hdr h1,.hdr-actions .tab[onclick="openShop()"],.hdr-actions .tab[onclick="openAch()"],.hdr-actions .tab[onclick="openQuests()"]{display:none!important}
 .rslot.nw{background:linear-gradient(#526b68,#344d50);color:#fff} .rslot.ok{background:linear-gradient(#4a6a5a,#304a40);color:#fff} .rslot.no{background:linear-gradient(#765252,#4e363b);color:#fff}
