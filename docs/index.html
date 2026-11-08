@@ -2586,8 +2586,8 @@ function openMini(){
   document.getElementById('mini').classList.add('show');
 }
 function toStart(){ snd('btn'); document.getElementById('start').classList.remove('hide'); screenSwap(); menuMusicEnter(); }
-function newGame(){
-  if (!confirm('Начать заново? Весь прогресс будет стёрт.')) return;
+function newGame(confirmed){
+  if (confirmed !== true && !confirm('Начать заново? Весь прогресс будет стёрт.')) return;
   hardReset(); introSeen = false; tutorSeen = false; save();
   menuMusicExit();
   document.getElementById('start').classList.add('hide');
@@ -6967,6 +6967,7 @@ function feedDel(id){
 setInterval(() => { if (!document.hidden){ playSec += 30; try{ simAccrue(); save(); }catch(e){} } }, 30000);
 
 loadPrefs(); syncPrefsUI(); load(); layout(); setTimeout(offerChapter2, 1200); try{ cheatGApply(); }catch(e){} try{ syncSaveNameUI(); }catch(e){} renderAll();
+if (new URLSearchParams(location.search).get('newgame') === '1'){ history.replaceState(null, '', location.pathname); newGame(true); }
 try{ if (typeof FIREBASE_CONFIG !== 'undefined' && FIREBASE_CONFIG && navigator.onLine) ensureFB(ok => {
     if (ok){ try{ FB.auth.getRedirectResult().then(r => { if (r && r.user){ try{ renderAccount(); }catch(e){} toast('Вошёл через Google!'); } }).catch(()=>{}); }catch(e){} }
   }, true); }catch(e){}

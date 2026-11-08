@@ -1,16 +1,19 @@
 from pathlib import Path
 import json,re
 s=Path('index.html').read_text();dec=json.JSONDecoder();original=dec.raw_decode(s.split('const ELEMENTS = ',1)[1])[0];oldrecipes=dec.raw_decode(s.split('const RECIPES_RAW = ',1)[1])[0];origmap=dec.raw_decode(s.split('const IMG_MAP = ',1)[1])[0];items=json.loads(Path('docs/Chapter2/elements.json').read_text());game=json.loads(Path('docs/Chapter2/recipes.json').read_text());newnames={x['n'].lower() for x in items};
+# Тимофей пока использует карточку первой главы.
+newnames.add('тимофей')
 groups={
 'people':['Арсений','Данил','Вадим','Матвей','Виталик','Дриггерт','Витя','Дианка','Меллстрой','Хакер','Космонавт'],
 'incidents':['Задержание','Задержание Арсения','Задержание убийцы Арсения','Розыск','Розыск Арсения','Инцидент со снежком','Взлом YouTube','Взлом Гта 6','Уголовное Преследование'],
 'content':['Канал Hi 3000','Разбан канала Hi 3000','YouTube','YouPrime','Игры','Гта 6','Арсен-Gta','Фильм про убийцу 2 не выйдет','Арсений God','Стендофф','Стрим','АрсенTube','Космический ЭЖП','Коллаба Арсения и Меллстроя','Статьи Виталика'],
-'ai':['Арсений Инопланетянин','Арсений Киборг','КиберЕленка','Инопланетянин','ИноАрмия','ИноЧекушка','Арсениус-3000','Арсемус','КриптоАрсений','КриптоВиталик','КриптоМатвей','КриптоВадим','КриптоДанил','КриптоДриггерт','КриптоТимофей'],
+'ai':['Арсений Инопланетянин','Арсений Киборг','КиберЕленка','Инопланетянин','ИноАрмия','ИноЧекушка','Арсемус','КриптоАрсений','КриптоВиталик','КриптоМатвей','КриптоВадим','КриптоДанил','КриптоДриггерт','КриптоТимофей'],
 'school':['7 класс','8 класс','Космическая Школа'],
 'memes':['Мемы','Энергичный Арсений'],
-'places':['Земля','Космический Сергиополь','Сергиополь 2.0','Вселенная','Космос','Деревня','Страна Арсения','Чёрная Дыра','Солнце','Банк','АрсенБанк','КриптоИмперия']}
+'places':['Земля','Космический Сергиополь','Сергиополь 2.0','Вселенная','Космос','Деревня','Страна Арсения','Чёрная Дыра','Солнце','Банк','АрсенБанк','КриптоИмперия','Арсениус-3000']}
 cat={x:g for g,names in groups.items() for x in names}
 cosmic=[{'n':e['n'],'g':cat.get(e['n'],'concepts'),'s':e['n'] in game['starters']} for e in items]
+cosmic.append({'n':'Тимофей','g':'people','s':True})
 # Первые элементы остаются доступны для квестов первой главы, но не входят в коллекцию второй.
 fallback=[{**e,'q':True,'s':False} for e in original if e['n'].lower() not in newnames]
 core=[e['n'] for e in original if not e.get('q') and e['n'] not in ('Пинок Серёги','Нож','Англичанка осталась')];assert len(core)==303
@@ -77,6 +80,15 @@ css='''<style id="chapter2-style">
 .slot,.rslot{background:rgba(36,46,51,.7);border-color:rgba(222,226,214,.5);color:var(--ink)}
 .slot .pl,.rslot .pl{color:var(--ink2)}
 #msg{color:var(--ink)}
+#chapter2-button{border-color:rgba(193,209,207,.55)}
+#start-logo-txt::after{content:'ГЛАВА 2 · КОСМОС';display:block;margin-top:9px;font-size:12px;letter-spacing:.16em;color:#d0dcd7}
+/* Light surfaces retain their own readable text colours. */
+#intro{--ink:#30271c;--gold-d:#725d3a}
+#qgame{--ink:#30271c;--ink2:#625747;--paper:#e9dfc8}
+#qgame .btn{color:#f5f4ec} #qgame .btn.q{color:#172320}
+.qcard.done h3{color:#234b32}.qcard.done .qd{color:#455c46}
+#start-art{display:none!important} #start-logo-txt{display:flex!important;flex-direction:column;align-items:center;justify-content:center;margin:18px 0 8px;min-height:0!important}
+body:has(#start:not(.hide)) #cheat-fab,body:has(.ovl.show) #cheat-fab,body:has(#qgame.show) #cheat-fab,body:has(#intro[style*="flex"]) #cheat-fab{display:none!important}
 </style>'''
 s=s.replace('</head>',css+'\n</head>',1)
 # Prevent chapter-1 completion modal on this page; start directly in the same game view.
@@ -88,6 +100,10 @@ if (!chapter2Unlocked()){ location.replace('index.html'); } else {
  layout(); try{cheatGApply()}catch(e){} try{syncSaveNameUI()}catch(e){} renderAll();
  document.addEventListener('pointerdown',()=>{if(musicOn&&!musicStarted){startMusic()}},{once:true});
 }''',1)
+# Restart always returns to chapter one; the first chapter performs the reset.
+a=s.index('function newGame(confirmed){');b=s.index('\n\n/* ---------- код ---------- */',a)
+s=s[:a]+"function newGame(){ if (!confirm('Начать заново? Весь прогресс будет стёрт.')) return; location.replace('index.html?newgame=1'); }"+s[b:]
+s=s.replace("if (new URLSearchParams(location.search).get('newgame') === '1'){ history.replaceState(null, '', location.pathname); newGame(true); }",'')
 # Chapter switching stays explicit in the main menu.
 s=s.replace('🌌 Глава 2: Космос</button>','🌍 Первая глава</button>',1)
 Path('docs/chapter2.html').write_text(s)
