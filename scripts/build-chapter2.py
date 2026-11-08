@@ -80,7 +80,18 @@ css='''<style id="chapter2-style">
 .slot,.rslot{background:rgba(36,46,51,.7);border-color:rgba(222,226,214,.5);color:var(--ink)}
 .slot .pl,.rslot .pl{color:var(--ink2)}
 #msg{color:var(--ink)}
-#start{background:#26343b url('Chapter2/backgrounds/menu.png') center/cover!important}
+#hdr,#qhdr{box-shadow:0 12px 24px -16px rgba(0,0,0,.45)!important}
+#hdr h1,.hdr-actions .tab[onclick="openShop()"],.hdr-actions .tab[onclick="openAch()"],.hdr-actions .tab[onclick="openQuests()"]{display:none!important}
+.rslot.nw{background:linear-gradient(#526b68,#344d50);color:#fff} .rslot.ok{background:linear-gradient(#4a6a5a,#304a40);color:#fff} .rslot.no{background:linear-gradient(#765252,#4e363b);color:#fff}
+.rslot .rn,.rslot .rs{color:#fff} .rslot.no span{font-size:10px!important;line-height:1.1;text-align:center;overflow-wrap:anywhere;color:#fff!important}
+#t2048 .t2048.lv{background:linear-gradient(#607573,#394f53)!important;box-shadow:0 0 0 2px #9aaead}
+#funmenu{justify-items:center;align-content:center!important} #funmenu h2{text-align:center}
+.shop-more summary{list-style:none;cursor:pointer;padding:14px;border-radius:14px;background:#405557;margin-bottom:10px;font-weight:900} .shop-more[open] summary{margin-bottom:12px}
+.rank-celebration{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;background:rgba(9,17,23,.75);animation:appin .3s ease} .rank-celebration>div{display:flex;flex-direction:column;align-items:center;gap:12px;padding:28px;border-radius:28px;background:linear-gradient(#607b79,#30424a);box-shadow:0 0 45px #d0c39988;text-align:center;color:white;animation:pop .5s ease}.rank-celebration img{width:110px;height:110px;object-fit:contain}.rank-celebration strong{font-size:24px}
+#settings details[open]>:not(summary){animation:appin .23s ease}
+@media(max-width:600px){.bar{gap:4px!important;padding-left:6px!important;padding-right:6px!important}.bar .slot{width:clamp(42px,14vw,56px);min-width:0;flex:0 1 56px}.bar .rslot{width:clamp(58px,19vw,74px);min-width:0;flex:0 1 74px}.bar .btn.hint{min-width:0;flex:1;padding:4px;font-size:10px}.bar .rslot .rn{font-size:9px}}
+
+#start{background:#26343b url('Chapter2/backgrounds/space-portrait.png') center/cover!important}
 #fun{background:#26343b url('Chapter2/backgrounds/space-portrait.png') center/cover!important}
 #newbanner .box{background:radial-gradient(circle at 50% 20%,#61747b,#34454b 70%)!important}
 #newbanner .box::before{opacity:.35}
@@ -99,7 +110,7 @@ css='''<style id="chapter2-style">
 #qgame{--ink:#f5f4ec;--ink2:#d0d4d2;--paper:#28343b;background:#26343b url('Chapter2/backgrounds/space-portrait.png') center/cover!important}
 #qgame .qwrap{background:rgba(30,40,44,.3)} #qhdr{background:linear-gradient(#56676a,#34464a)!important} #qtodo{background:#34464a!important;color:#eff5ee} #qgoal{background:#415b58;color:#fff} #qgame .qs{background:#485b5c;color:#f5f4ec} #qgame .qs.done{background:#315f4d;color:#e8fff0}
 #funmenu .mbtn{width:100%} #funmenu{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-content:start;gap:8px;padding:24px 16px;overflow:auto}
-#funmenu h2,#funmenu button:last-child{grid-column:1/-1} #funmenu .mbtn{margin:0;min-height:62px;font-size:14px}
+#funmenu h2,#funmenu button:last-child{grid-column:1/-1} #funmenu button:nth-last-child(2){grid-column:1/-1;width:calc(50% - 4px);justify-self:center} #funmenu .mbtn{margin:0;min-height:62px;font-size:14px}
 #ach details{margin:8px 0} #ach summary{cursor:pointer;list-style:none} #settings details{border-bottom:1px solid var(--line);padding:6px 0} #settings summary{cursor:pointer;list-style:none;font-weight:900;padding:12px 4px} #settings summary::after{content:'▾';float:right}
 #qgame .btn{color:#f5f4ec} #qgame .btn.q{color:#172320}
 .qcard.done h3{color:#234b32}.qcard.done .qd{color:#455c46}
@@ -112,7 +123,7 @@ needle='loadPrefs(); syncPrefsUI(); load(); layout(); setTimeout(offerChapter2, 
 assert needle in s
 s=s.replace(needle,'''loadPrefs(); syncPrefsUI(); document.body.dataset.theme=''; load();
 if (!chapter2Unlocked()){ location.replace('index.html'); } else {
- trackIdx=0; introSeen=true; document.getElementById('start').classList.add('hide'); document.querySelector('.ttl .t1').innerHTML='Арсений <em>God</em> · Глава 2';
+ trackIdx=0; introSeen=true; document.getElementById('start').classList.remove('hide'); document.querySelector('.ttl .t1').innerHTML='Арсений <em>God</em> · Глава 2';
  layout(); try{cheatGApply()}catch(e){} try{syncSaveNameUI()}catch(e){} renderAll();
  if (!localStorage.getItem('ag_c2_intro')) { const story=document.createElement('div'); story.className='ovl show'; story.id='c2-story'; story.innerHTML='<div class="box"><h2>🌌 Глава 2</h2><p>Все привычные элементы открыты, но за пределами Сергиополя ждёт целая вселенная.</p><p>Арсений и друзья отправляются в космос. Новые встречи, открытия и неожиданные реакции уже рядом!</p><button class="bigbtn" id="c2-story-go">Начать приключение</button></div>'; document.body.appendChild(story); document.getElementById('c2-story-go').onclick=()=>{localStorage.setItem('ag_c2_intro','1');story.remove();}; }
  document.addEventListener('pointerdown',()=>{if(musicOn&&!musicStarted){startMusic()}},{once:true});
@@ -126,9 +137,20 @@ a=s.index('function renderAch(){'); b=s.index('\nfunction openAch()',a)
 section=s[a:b].replace("const h = document.createElement('div');", "const section=document.createElement('details'); const h = document.createElement('summary');")
 section=section.replace("box.appendChild(h);", "section.appendChild(h); box.appendChild(section);").replace("box.appendChild(d);", "section.appendChild(d);")
 s=s[:a]+section+s[b:]
+s=s.replace('dragTimer = setTimeout(() => { dragTimer = null; dragBegin(); }, 350);','dragTimer = setTimeout(() => { dragTimer = null; dragBegin(); }, 180);')
+# Organize optional purchases under a compact section, leaving daily rewards visible.
+s=s.replace("function openShop(){\n  snd('store');", "function openShop(){\n  compactShop(); snd('store');")
+s=s.replace("function openShop(){", "function compactShop(){ const box=document.querySelector('#shop .box'); if(!box || box.dataset.compact) return; box.dataset.compact='1'; const items=[...box.querySelectorAll(':scope > .shop-item')]; if(items.length<3)return; const section=document.createElement('details'); section.className='shop-more'; const title=document.createElement('summary');title.textContent='🛍️ Улучшения и покупки';section.appendChild(title);items[2].before(section);items.slice(2).forEach(el=>section.appendChild(el)); }\nfunction openShop(){",1)
+s=s.replace("snd('quest'); toast('🎖 Новое звание: ' + rankIcon(discovered.size) + ' ' + rankName(discovered.size) + '!');", "snd('quest'); showRankCelebration();")
+s=s.replace('function checkRank(){', "function showRankCelebration(){ const overlay=document.createElement('div');overlay.className='rank-celebration';overlay.innerHTML='<div><span>✨ Новое звание ✨</span><img alt=\"\"><strong></strong><small>Открывай элементы и двигайся дальше!</small></div>';overlay.querySelector('img').src=rankImg(discovered.size);overlay.querySelector('strong').textContent=rankIcon(discovered.size)+' '+rankName(discovered.size);document.body.appendChild(overlay);overlay.onclick=()=>overlay.remove();setTimeout(()=>overlay.remove(),3800); }\nfunction checkRank(){")
 # Fold settings into sections while keeping the original controls and event handlers.
 s=s.replace("function openSettings(){ snd('btn');", "function openSettings(){ compactSettings(); snd('btn');")
 s=s.replace("function openSettings(){", "function compactSettings(){ const box=document.querySelector('#settings .box'); if(!box || box.dataset.compact) return; box.dataset.compact='1'; let section=null; [...box.children].forEach(el=>{ if(el.classList.contains('sgroup')){ section=document.createElement('details'); const title=document.createElement('summary'); title.textContent=el.textContent; section.appendChild(title); el.replaceWith(section); } else if(section){ section.appendChild(el); } }); }\nfunction openSettings(){",1)
+# The first chapter retains its original art; these replacements apply only inside mini-games.
+s=s.replace('function mafImg(n){', "const MINI_ART={'демон арсения':'demon','анджелика':'andzhelika','бурик':'burik','еленка':'elenka','саша':'sasha','vithel':'vithel'};\nfunction miniImg(n){const f=MINI_ART[norm(n)];return f?'Chapter2/minigames/'+f+'.webp':imgP(n)}\nfunction mafImg(n){")
+s=s.replace('imgP(mafImg(', 'miniImg(mafImg(')
+s=s.replace("imgP('Еленка')", "miniImg('Еленка')").replace("imgP('Саша')", "miniImg('Саша')").replace("imgP('Демон Арсения')", "miniImg('Демон Арсения')")
+s=s.replace('if (!rnImgs[nm]){ const im = new Image(); im.src = encodeURI(imgP(nm));', 'if (!rnImgs[nm]){ const im = new Image(); im.src = encodeURI(miniImg(nm));')
 # Chapter switching stays explicit in the main menu.
 s=s.replace('🌌 Глава 2: Космос</button>','🌍 Первая глава</button>',1)
 Path('docs/chapter2.html').write_text(s)
