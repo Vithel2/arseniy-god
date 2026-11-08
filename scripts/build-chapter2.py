@@ -1,10 +1,8 @@
 from pathlib import Path
 import json,re
 s=Path('index.html').read_text();dec=json.JSONDecoder();original=dec.raw_decode(s.split('const ELEMENTS = ',1)[1])[0];oldrecipes=dec.raw_decode(s.split('const RECIPES_RAW = ',1)[1])[0];origmap=dec.raw_decode(s.split('const IMG_MAP = ',1)[1])[0];items=json.loads(Path('docs/Chapter2/elements.json').read_text());game=json.loads(Path('docs/Chapter2/recipes.json').read_text());newnames={x['n'].lower() for x in items};
-# Тимофей пока использует карточку первой главы.
-newnames.add('тимофей')
 groups={
-'people':['Арсений','Данил','Вадим','Матвей','Виталик','Дриггерт','Витя','Дианка','Меллстрой','Хакер','Космонавт'],
+'people':['Арсений','Данил','Вадим','Матвей','Виталик','Дриггерт','Витя','Тимофей','Дианка','Меллстрой','Хакер','Космонавт'],
 'incidents':['Задержание','Задержание Арсения','Задержание убийцы Арсения','Розыск','Розыск Арсения','Инцидент со снежком','Взлом YouTube','Взлом Гта 6','Уголовное Преследование'],
 'content':['Канал Hi 3000','Разбан канала Hi 3000','YouTube','YouPrime','Игры','Гта 6','Арсен-Gta','Фильм про убийцу 2 не выйдет','Арсений God','Стендофф','Стрим','АрсенTube','Космический ЭЖП','Коллаба Арсения и Меллстроя','Статьи Виталика'],
 'ai':['Арсений Инопланетянин','Арсений Киборг','КиберЕленка','Инопланетянин','ИноАрмия','ИноЧекушка','Арсемус','КриптоАрсений','КриптоВиталик','КриптоМатвей','КриптоВадим','КриптоДанил','КриптоДриггерт','КриптоТимофей'],
@@ -13,7 +11,6 @@ groups={
 'places':['Земля','Космический Сергиополь','Сергиополь 2.0','Вселенная','Космос','Деревня','Страна Арсения','Чёрная Дыра','Солнце','Банк','АрсенБанк','КриптоИмперия','Арсениус-3000']}
 cat={x:g for g,names in groups.items() for x in names}
 cosmic=[{'n':e['n'],'g':cat.get(e['n'],'concepts'),'s':e['n'] in game['starters']} for e in items]
-cosmic.append({'n':'Тимофей','g':'people','s':True})
 # Первые элементы остаются доступны для квестов первой главы, но не входят в коллекцию второй.
 fallback=[{**e,'q':True,'s':False} for e in original if e['n'].lower() not in newnames]
 core=[e['n'] for e in original if not e.get('q') and e['n'] not in ('Пинок Серёги','Нож','Англичанка осталась')];assert len(core)==303
@@ -60,6 +57,9 @@ function offerChapter2(){}
 function deferChapter2(){document.getElementById('chapter2-complete').classList.remove('show');}
 ''' + s[b:]
 s=s.replace("c2btn.textContent = chapter2Unlocked() ? '🌌 Глава 2: Космос' : '🔒 Глава 2: Космос';", "c2btn.textContent = '🌍 Первая глава';")
+# Chapter-specific group icons; original chapter assets are untouched.
+a=s.index('function gIcon(gid, sz){'); b=s.index('\nfunction buildSidebar()',a)
+s=s[:a]+"function gIcon(gid, sz){ const name=['all','people','incidents','content','ai','school','memes','places','concepts'].includes(gid)?gid:'all'; return '<img src=\"Chapter2/groups/'+name+'.webp\" alt=\"\" style=\"border-color:'+(gid==='all'?'var(--gold)':GROUPS[gid].color)+'\">'; }"+s[b:]
 # Same game controls and layout, chapter-two soundtrack.
 a=s.index('const TRACKS = [');b=s.index('\nconst TRACK_NAMES',a)
 s=s[:a]+"const TRACKS = ['Chapter2/music/elements.mp3','Chapter2/music/city.mp3','Chapter2/music/main.mp3','Chapter2/music/store-1.mp3','Chapter2/music/store-2.mp3','Chapter2/music/main.mp3','Chapter2/music/city.mp3'];"+s[b:]
@@ -80,30 +80,55 @@ css='''<style id="chapter2-style">
 .slot,.rslot{background:rgba(36,46,51,.7);border-color:rgba(222,226,214,.5);color:var(--ink)}
 .slot .pl,.rslot .pl{color:var(--ink2)}
 #msg{color:var(--ink)}
+#start{background:#26343b url('Chapter2/backgrounds/menu.png') center/cover!important}
+#fun{background:#26343b url('Chapter2/backgrounds/space-portrait.png') center/cover!important}
+#newbanner .box{background:radial-gradient(circle at 50% 20%,#61747b,#34454b 70%)!important}
+#newbanner .box::before{opacity:.35}
+.btn.tab.q{background:linear-gradient(#5e7876,#405955)!important;color:#fff!important}
+#t2048 .t2048,#ezgrid .ezcell{background:#58696b;color:#fff}
+#t2048 .t2048{background:#3e555a;color:#fff}
+#settings .srow:has(#theme-row){display:none}
+#quests.ovl.show,#shop.ovl.show{animation:none!important}
+#quests.ovl.show.fadeout,#shop.ovl.show.fadeout{animation:appout .2s ease forwards!important}
+#chapter2-button{animation:appin .6s ease both;animation-delay:.18s}
+
 #chapter2-button{border-color:rgba(193,209,207,.55)}
 #start-logo-txt::after{content:'ГЛАВА 2 · КОСМОС';display:block;margin-top:9px;font-size:12px;letter-spacing:.16em;color:#d0dcd7}
 /* Light surfaces retain their own readable text colours. */
 #intro{--ink:#30271c;--gold-d:#725d3a}
-#qgame{--ink:#30271c;--ink2:#625747;--paper:#e9dfc8}
+#qgame{--ink:#f5f4ec;--ink2:#d0d4d2;--paper:#28343b;background:#26343b url('Chapter2/backgrounds/space-portrait.png') center/cover!important}
+#qgame .qwrap{background:rgba(30,40,44,.3)} #qhdr{background:linear-gradient(#56676a,#34464a)!important} #qtodo{background:#34464a!important;color:#eff5ee} #qgoal{background:#415b58;color:#fff} #qgame .qs{background:#485b5c;color:#f5f4ec} #qgame .qs.done{background:#315f4d;color:#e8fff0}
+#funmenu .mbtn{width:100%} #funmenu{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-content:start;gap:8px;padding:24px 16px;overflow:auto}
+#funmenu h2,#funmenu button:last-child{grid-column:1/-1} #funmenu .mbtn{margin:0;min-height:62px;font-size:14px}
+#ach details{margin:8px 0} #ach summary{cursor:pointer;list-style:none} #settings details{border-bottom:1px solid var(--line);padding:6px 0} #settings summary{cursor:pointer;list-style:none;font-weight:900;padding:12px 4px} #settings summary::after{content:'▾';float:right}
 #qgame .btn{color:#f5f4ec} #qgame .btn.q{color:#172320}
 .qcard.done h3{color:#234b32}.qcard.done .qd{color:#455c46}
 #start-art{display:none!important} #start-logo-txt{display:flex!important;flex-direction:column;align-items:center;justify-content:center;margin:18px 0 8px;min-height:0!important}
-body:has(#start:not(.hide)) #cheat-fab,body:has(.ovl.show) #cheat-fab,body:has(#qgame.show) #cheat-fab,body:has(#intro[style*="flex"]) #cheat-fab{display:none!important}
+body:has(#start:not(.hide)) #cheat-fab,body:has(.ovl.show:not(#cheat)) #cheat-fab,body:has(#qgame.show) #cheat-fab,body:has(#intro[style*="flex"]) #cheat-fab{display:none!important}
 </style>'''
 s=s.replace('</head>',css+'\n</head>',1)
 # Prevent chapter-1 completion modal on this page; start directly in the same game view.
 needle='loadPrefs(); syncPrefsUI(); load(); layout(); setTimeout(offerChapter2, 1200); try{ cheatGApply(); }catch(e){} try{ syncSaveNameUI(); }catch(e){} renderAll();'
 assert needle in s
-s=s.replace(needle,'''loadPrefs(); syncPrefsUI(); load();
+s=s.replace(needle,'''loadPrefs(); syncPrefsUI(); document.body.dataset.theme=''; load();
 if (!chapter2Unlocked()){ location.replace('index.html'); } else {
  trackIdx=0; introSeen=true; document.getElementById('start').classList.add('hide'); document.querySelector('.ttl .t1').innerHTML='Арсений <em>God</em> · Глава 2';
  layout(); try{cheatGApply()}catch(e){} try{syncSaveNameUI()}catch(e){} renderAll();
+ if (!localStorage.getItem('ag_c2_intro')) { const story=document.createElement('div'); story.className='ovl show'; story.id='c2-story'; story.innerHTML='<div class="box"><h2>🌌 Глава 2</h2><p>Все привычные элементы открыты, но за пределами Сергиополя ждёт целая вселенная.</p><p>Арсений и друзья отправляются в космос. Новые встречи, открытия и неожиданные реакции уже рядом!</p><button class="bigbtn" id="c2-story-go">Начать приключение</button></div>'; document.body.appendChild(story); document.getElementById('c2-story-go').onclick=()=>{localStorage.setItem('ag_c2_intro','1');story.remove();}; }
  document.addEventListener('pointerdown',()=>{if(musicOn&&!musicStarted){startMusic()}},{once:true});
 }''',1)
 # Restart always returns to chapter one; the first chapter performs the reset.
 a=s.index('function newGame(confirmed){');b=s.index('\n\n/* ---------- код ---------- */',a)
 s=s[:a]+"function newGame(){ if (!confirm('Начать заново? Весь прогресс будет стёрт.')) return; location.replace('index.html?newgame=1'); }"+s[b:]
 s=s.replace("if (new URLSearchParams(location.search).get('newgame') === '1'){ history.replaceState(null, '', location.pathname); newGame(true); }",'')
+# Group achievements in collapsible sections to keep the list manageable.
+a=s.index('function renderAch(){'); b=s.index('\nfunction openAch()',a)
+section=s[a:b].replace("const h = document.createElement('div');", "const section=document.createElement('details'); const h = document.createElement('summary');")
+section=section.replace("box.appendChild(h);", "section.appendChild(h); box.appendChild(section);").replace("box.appendChild(d);", "section.appendChild(d);")
+s=s[:a]+section+s[b:]
+# Fold settings into sections while keeping the original controls and event handlers.
+s=s.replace("function openSettings(){ snd('btn');", "function openSettings(){ compactSettings(); snd('btn');")
+s=s.replace("function openSettings(){", "function compactSettings(){ const box=document.querySelector('#settings .box'); if(!box || box.dataset.compact) return; box.dataset.compact='1'; let section=null; [...box.children].forEach(el=>{ if(el.classList.contains('sgroup')){ section=document.createElement('details'); const title=document.createElement('summary'); title.textContent=el.textContent; section.appendChild(title); el.replaceWith(section); } else if(section){ section.appendChild(el); } }); }\nfunction openSettings(){",1)
 # Chapter switching stays explicit in the main menu.
 s=s.replace('🌌 Глава 2: Космос</button>','🌍 Первая глава</button>',1)
 Path('docs/chapter2.html').write_text(s)

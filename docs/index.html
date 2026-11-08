@@ -1205,6 +1205,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
     <h2>Новости</h2>
     <p>Что нового в игре:</p>
     <div class="hlist">
+      <div class="hrow"><b>Глава 2</b><span>Космические элементы, новые реакции и музыка. Исправлены оформление, переходы между главами и работа окон.</span></div>
       <div class="hrow"><b>v1.49</b><span>Мафия стала удобнее: новые названия деревень и компактный стол. Добавлены реакции по историям игроков, выбор иконки и вибрация.</span></div>
       <div class="hrow"><b>v1.48</b><span>23 новые реакции: Миша, Варвара, стихии, семейство и другие</span></div>
     </div>
@@ -1229,13 +1230,13 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
   <div id="funbox"></div>
   <div id="funmenu">
     <h2>Мини-игры</h2>
-    <button class="mbtn play" onclick="funPlay()">🎈 Падалки — бесплатно</button>
+    <button class="mbtn play" onclick="funPlay()">🎈 Падалки</button>
     <button class="mbtn small" id="fun-mini-btn" onclick="miniMenuGo()">🧩 Три в ряд</button>
-    <button class="mbtn small" onclick="open2048()">🔢 2048 — бесплатно</button>
-    <button class="mbtn small" onclick="openMole()">🐹 Поймай — бесплатно</button>
+    <button class="mbtn small" onclick="open2048()">🔢 2048</button>
+    <button class="mbtn small" onclick="openMole()">🐹 Поймай</button>
     <button class="mbtn small" onclick="openElena()">🏃 Еленка ловит Саш</button>
     <button class="mbtn small" onclick="runStartMenu()">🧴 Сбеги от шампуня</button>
-    <button class="mbtn small" onclick="openMafia()">🕵️ Мафия — бесплатно</button>
+    <button class="mbtn small" onclick="openMafia()">🕵️ Мафия</button>
     <button class="mbtn small" onclick="openSim()">🤖 Симулятор Арсения</button>
     <button class="mbtn small" onclick="openQuiz2()">✏️ Угадай элемент</button>
     <button class="mbtn small" onclick="closeOvl('fun')">Закрыть</button>
@@ -2703,7 +2704,7 @@ function load(){
   liveDirty = true;
 }
 function hardReset(){
-  ['ag_v5', 'ag_v4', 'ag_v3', 'ag_v2'].forEach(k => localStorage.removeItem(k));
+  ['ag_v5', 'ag_v4', 'ag_v3', 'ag_v2', 'ag_c2_intro'].forEach(k => localStorage.removeItem(k));
   order = [...STARTERS]; discovered = new Set(order); liveDirty = true; newSet = new Set();
   reactions = 0; hist = []; undoStack = []; questDone = {}; tried = new Set();
   keys = 1; lastClaim = 0; hints = 5;
@@ -4073,7 +4074,7 @@ function layoutFab(){
   const up = () => {
     if (!drag) return;
     drag = false;
-    if (!moved){ openCheat(); return; }
+    if (!moved){ setTimeout(openCheat, 0); return; }
     cheatPos = {x: parseFloat(f.style.left) || 0, y: parseFloat(f.style.top) || 0};
     save();
   };
@@ -4765,7 +4766,7 @@ function scheduleSystemNotifications(){
   const reminders = [];
   if (!canClaim()) reminders.push({id:8101, title:'🔑 Автоключи готовы!', text:'Загляни в магазин и забери бесплатные ключи.', trigger:{at:new Date(lastClaim + CLAIM_MS)}});
   if (!canSpin()) reminders.push({id:8102, title:'🎰 Рулетка снова доступна!', text:'Заходи за бесплатным вращением и призами.', trigger:{at:new Date(lastRoulette + SPIN_MS)}});
-  [1, 3, 6, 12, 24, 36, 48, 60, 72, 96, 120, 144, 168, 216, 288, 336].forEach((hours, i) => reminders.push({id:8110+i, title:messages[i][0], text:messages[i][1], trigger:{at:new Date(now+hours*3600000)}}));
+  [0.25, 1, 2, 3, 4, 6, 8, 10, 12, 16, 20, 24, 30, 36, 48, 72].forEach((hours, i) => reminders.push({id:8110+i, title:messages[i][0], text:messages[i][1], trigger:{at:new Date(now+hours*3600000)}}));
   local.cancel(notificationIds.filter(id => id !== 8199), () => { if (notificationsEnabled()) local.schedule(reminders); });
 }
 document.addEventListener('deviceready', () => {
